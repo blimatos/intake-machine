@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Intake Machine · [The Platform]</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1a1d2e;--ink-soft:#4a5070;--ink-faint:#8a8fa8;
+    --paper:#fbf8f1;--paper-warm:#f3ede0;--rule:#d9d2c2;--rule-soft:#ebe5d5;
+    --scoutp:#0f5e6f;--scoutp-soft:#cfe9ed;
+    --scouta:#0a7d63;--scouta-soft:#cdece2;
+    --wanderer:#1e4d8c;--wanderer-soft:#dbe7f5;
+    --sprinter:#b45309;--sprinter-soft:#fde9c8;
+    --marathoner:#b83a3a;--marathoner-soft:#fbe5e5;
+    --all:#2e7d5b;--all-soft:#dcefe5;
+    --premium:#7a4fab;--premium-soft:#ecdcf5;
+    --teal:#2a7e8e;--teal-soft:#e0f2f5;
+    --orange:#c2410c;--orange-soft:#fde4cf;
+    --free:#2e7d5b;--free-soft:#dcefe5;
+    --serif:'Fraunces',Georgia,serif;--sans:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;background:var(--paper);}
+
+  /* ===== TOP BAR + TABS ===== */
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(251,248,241,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--rule);padding:14px 24px;}
+  .topbar-inner{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .brand{font-family:var(--serif);font-size:19px;font-weight:600;display:flex;align-items:center;gap:9px;white-space:nowrap;}
+  .brand-dot{width:9px;height:9px;border-radius:50%;background:var(--orange);box-shadow:0 0 10px var(--orange);}
+  .tabs{display:flex;gap:6px;background:var(--paper-warm);padding:4px;border-radius:12px;border:1px solid var(--rule);}
+  .tab{font-family:var(--sans);font-size:13.5px;font-weight:600;padding:8px 18px;border-radius:9px;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px;}
+  .tab:hover{color:var(--ink);}
+  .tab.active{background:white;color:var(--ink);box-shadow:0 2px 8px rgba(26,29,46,0.08);}
+  .tab .tnum{font-family:var(--mono);font-size:10px;opacity:0.6;}
+  .topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
+  .edit-toggle{font-family:var(--sans);font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:9px;border:1.5px solid var(--rule);background:var(--paper);color:var(--ink-soft);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px;}
+  .edit-toggle:hover{border-color:var(--orange);color:var(--orange);}
+  .edit-toggle.on{background:var(--orange);color:white;border-color:var(--orange);}
+  .save-note{font-family:var(--mono);font-size:10px;color:var(--ink-faint);letter-spacing:0.04em;}
+
+  .view{display:none;animation:fade .3s ease;}
+  .view.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .container{max-width:1240px;margin:0 auto;padding:32px 24px 90px;}
+
+  /* ===== shared header ===== */
+  .vhead{text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--rule);position:relative;}
+  .vhead::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:60px;height:3px;background:var(--orange);}
+  .vhead .pre{font-family:var(--mono);font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--orange);margin-bottom:10px;}
+  .vhead h1{font-family:var(--serif);font-size:38px;font-weight:500;letter-spacing:-0.02em;margin-bottom:10px;}
+  .vhead h1 em{font-style:italic;color:var(--orange);}
+  .vhead .sub{font-family:var(--serif);font-style:italic;font-size:15.5px;color:var(--ink-soft);max-width:680px;margin:0 auto;}
+
+  /* ===== edit mode banner ===== */
+  .editbanner{display:none;background:var(--orange-soft);border:1px solid var(--orange);border-radius:12px;padding:12px 18px;margin-bottom:20px;font-size:13px;color:var(--ink);}
+  body.editing .editbanner{display:block;}
+  .editbanner b{color:var(--orange);}
+
+  /* editable affordance */
+  body.editing .editable{cursor:text;border-radius:5px;transition:background .12s;outline:1px dashed transparent;}
+  body.editing .editable:hover{background:rgba(194,65,12,0.07);outline-color:rgba(194,65,12,0.35);}
+  body.editing .opt-editable:hover{background:rgba(194,65,12,0.10);}
+  body.editing .add-opt{display:inline-flex;}
+  .add-opt{display:none;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;letter-spacing:0.04em;color:var(--orange);background:var(--orange-soft);border:1px dashed var(--orange);border-radius:6px;padding:5px 10px;margin-top:6px;cursor:pointer;}
+  .del-opt{display:none;margin-left:6px;color:var(--marathoner);cursor:pointer;font-weight:700;font-size:13px;}
+  body.editing .del-opt{display:inline;}
+  /* ===== MACHINE VIEW ===== */
+  .colkey{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 18px;}
+  .colkey-item{background:var(--paper);border:1px solid var(--rule);border-radius:11px;padding:12px 16px;text-align:center;}
+  .colkey-badge{font-family:var(--mono);font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;font-weight:600;margin-bottom:5px;}
+  .ck-q{color:var(--ink);} .ck-w{color:var(--wanderer);} .ck-o{color:var(--orange);}
+  .colkey-desc{font-size:12px;color:var(--ink-soft);line-height:1.4;}
+
+  .filter-label{text-align:center;font-family:var(--mono);font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:9px;}
+  .filters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;}
+  .fbtn{font-family:var(--sans);font-size:12.5px;font-weight:600;padding:8px 15px;border-radius:999px;border:1.5px solid var(--rule);background:var(--paper);color:var(--ink-soft);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px;}
+  .fbtn:hover{border-color:var(--ink-faint);}
+  .fbtn .fdot{width:11px;height:11px;border-radius:50%;}
+  .fd-all{background:var(--ink);} .fd-scoutp{background:var(--scoutp);} .fd-scouta{background:var(--scouta);}
+  .fd-wanderer{background:var(--wanderer);} .fd-sprinter{background:var(--sprinter);} .fd-marathoner{background:var(--marathoner);}
+  .fbtn.active{color:white;border-color:transparent;}
+  .fbtn.active.b-all{background:var(--ink);} .fbtn.active.b-scoutp{background:var(--scoutp);} .fbtn.active.b-scouta{background:var(--scouta);}
+  .fbtn.active.b-wanderer{background:var(--wanderer);} .fbtn.active.b-sprinter{background:var(--sprinter);} .fbtn.active.b-marathoner{background:var(--marathoner);}
+  .filter-hint{text-align:center;font-size:11.5px;color:var(--ink-faint);font-style:italic;margin-bottom:24px;}
+
+  .stage-banner{display:flex;align-items:center;gap:12px;margin:32px 0 14px;}
+  .stage-num{font-family:var(--serif);font-size:14px;font-style:italic;font-weight:500;color:white;background:var(--orange);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .stage-title{font-family:var(--serif);font-size:22px;font-weight:500;}
+  .stage-sub{font-size:11px;color:var(--ink-faint);margin-left:auto;font-family:var(--mono);letter-spacing:0.04em;text-transform:uppercase;}
+
+  .qcard{background:var(--paper);border:1px solid var(--rule);border-radius:15px;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 8px rgba(26,29,46,0.04);transition:opacity .2s;}
+  .qcard-head{display:flex;align-items:center;gap:11px;padding:13px 18px;border-bottom:1px solid var(--rule-soft);background:var(--paper-warm);}
+  .qcard-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;padding:3px 8px;border-radius:5px;white-space:nowrap;}
+  .tag-persona{background:var(--orange-soft);color:var(--orange);}
+  .tag-shared{background:var(--all-soft);color:var(--all);}
+  .tag-premium{background:var(--premium-soft);color:var(--premium);}
+  .qcard-dots{display:flex;gap:4px;}
+  .pdot{width:9px;height:9px;border-radius:50%;}
+  .pd-scoutp{background:var(--scoutp);} .pd-scouta{background:var(--scouta);} .pd-wanderer{background:var(--wanderer);}
+  .pd-sprinter{background:var(--sprinter);} .pd-marathoner{background:var(--marathoner);}
+  .qcard-title{font-weight:600;font-size:15.5px;flex:1;}
+  .qcard-step{font-family:var(--mono);font-size:9.5px;color:var(--ink-faint);letter-spacing:0.05em;white-space:nowrap;}
+
+  .qcard-body{display:grid;grid-template-columns:1.15fr 1fr 1.15fr;}
+  .qcol{padding:15px 18px;border-right:1px solid var(--rule-soft);}
+  .qcol:last-child{border-right:none;}
+  .qcol-label{font-family:var(--mono);font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+  .qcol-label.l-q{color:var(--ink);} .qcol-label.l-w{color:var(--wanderer);} .qcol-label.l-o{color:var(--orange);}
+  .qcol-label .lnum{width:15px;height:15px;border-radius:50%;color:white;font-size:9px;display:inline-flex;align-items:center;justify-content:center;}
+  .l-q .lnum{background:var(--ink);} .l-w .lnum{background:var(--wanderer);} .l-o .lnum{background:var(--orange);}
+
+  .opt{font-size:12.5px;color:var(--ink);padding:7px 11px;background:var(--paper-warm);border-radius:7px;margin-bottom:6px;border:1px solid var(--rule-soft);line-height:1.35;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .opt:last-of-type{margin-bottom:0;}
+  .opt .opt-txt{flex:1;}
+  .opt b{font-weight:600;}
+  .tagpill{font-family:var(--mono);font-size:8px;letter-spacing:0.05em;padding:1px 5px;border-radius:4px;white-space:nowrap;}
+  .tp-new{color:var(--orange);background:var(--orange-soft);}
+  .tp-merge{color:var(--wanderer);background:var(--wanderer-soft);}
+  .tp-keep{color:var(--ink-faint);background:var(--paper);}
+  .tp-pilot{color:var(--premium);background:var(--premium-soft);}
+
+  .why-text{font-size:12.5px;color:var(--ink-soft);line-height:1.55;}
+  .why-text strong{color:var(--ink);font-weight:600;}
+  .isolates{margin-top:9px;font-size:10.5px;font-family:var(--mono);color:var(--wanderer);background:var(--wanderer-soft);padding:6px 9px;border-radius:6px;line-height:1.4;}
+
+  .drives-item{font-size:12px;color:var(--ink);padding-left:15px;position:relative;margin-bottom:7px;line-height:1.45;}
+  .drives-item::before{content:'→';position:absolute;left:0;color:var(--orange);font-weight:700;}
+  .drives-item .osec{font-weight:600;}
+  .fp{font-family:var(--mono);font-size:8px;letter-spacing:0.05em;padding:1px 6px;border-radius:4px;margin-left:5px;white-space:nowrap;}
+  .fp-free{background:var(--free-soft);color:var(--free);}
+  .fp-paid{background:var(--orange-soft);color:var(--orange);}
+  .fp-premium{background:var(--premium-soft);color:var(--premium);}
+
+  .qcard.dim{opacity:0.12;pointer-events:none;}
+
+  .openq{background:var(--marathoner-soft);border-left:4px solid var(--marathoner);border-radius:0 12px 12px 0;padding:13px 18px;margin-top:12px;}
+  .openq b{font-family:var(--mono);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--marathoner);display:block;margin-bottom:5px;}
+  .openq ul{list-style:none;}
+  .openq li{font-size:12.5px;padding-left:15px;position:relative;margin-bottom:5px;line-height:1.4;}
+  .openq li::before{content:'?';position:absolute;left:0;color:var(--marathoner);font-weight:700;}
+  /* ===== FORM VIEW (liquid glass) ===== */
+  #view-form{background:#131225;min-height:100vh;margin:0;padding:0;position:relative;overflow:hidden;}
+  #view-form .aurora{position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 50% 38% at 12% 18%,rgba(255,94,58,0.45)0%,transparent 70%),
+      radial-gradient(ellipse 44% 36% at 86% 12%,rgba(64,145,255,0.40)0%,transparent 70%),
+      radial-gradient(ellipse 56% 42% at 78% 82%,rgba(255,64,129,0.36)0%,transparent 70%),
+      radial-gradient(ellipse 46% 40% at 18% 84%,rgba(64,224,208,0.30)0%,transparent 70%),
+      radial-gradient(ellipse 40% 30% at 50% 48%,rgba(186,104,255,0.30)0%,transparent 70%);
+    filter:saturate(1.2);animation:drift 24s ease-in-out infinite alternate;}
+  @keyframes drift{0%{transform:scale(1);}100%{transform:scale(1.1)translate(-1.5%,2%);}}
+  .form-stage{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:40px 20px 80px;}
+  .form-glass{background:rgba(255,255,255,0.10);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);
+    border:1px solid rgba(255,255,255,0.16);border-radius:24px;box-shadow:0 8px 32px rgba(0,0,0,0.22),inset 0 1px 0 rgba(255,255,255,0.22);
+    padding:34px 30px 28px;color:rgba(255,255,255,0.96);}
+  .form-brandbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .form-brand{font-family:var(--serif);font-size:19px;font-weight:600;color:white;display:flex;align-items:center;gap:8px;}
+  .form-stepind{font-family:var(--mono);font-size:10.5px;letter-spacing:0.1em;color:rgba(255,255,255,0.5);text-transform:uppercase;}
+  .form-progress{display:flex;gap:5px;margin-bottom:22px;}
+  .form-pstep{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,0.14);transition:background .3s;}
+  .form-pstep.done{background:#ff9d4d;}
+  .form-eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:0.15em;text-transform:uppercase;color:#ffd9a8;margin-bottom:11px;}
+  .form-q{font-family:var(--serif);font-size:27px;font-weight:500;line-height:1.15;letter-spacing:-0.02em;margin-bottom:10px;color:white;}
+  .form-q em{font-style:italic;color:#ffd9a8;}
+  .form-lede{font-size:14px;color:rgba(255,255,255,0.72);margin-bottom:24px;line-height:1.55;}
+  .form-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;}
+  .form-opt{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.16);border-radius:13px;padding:15px 17px;cursor:pointer;transition:all .16s;text-align:left;width:100%;color:rgba(255,255,255,0.96);font-family:var(--sans);font-size:15px;font-weight:500;display:flex;align-items:center;gap:13px;}
+  .form-opt:hover{border-color:#ffd9a8;background:rgba(255,217,168,0.10);transform:translateY(-1px);}
+  .form-opt.sel{border-color:#ffd9a8;background:rgba(255,217,168,0.16);box-shadow:0 0 0 1px #ffd9a8;}
+  .form-opt .oemoji{font-size:20px;}
+  .form-opt .odesc{font-size:12.5px;color:rgba(255,255,255,0.6);font-weight:400;display:block;margin-top:2px;}
+  .form-actions{display:flex;justify-content:space-between;gap:12px;margin-top:22px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.14);}
+  .form-btn{padding:12px 24px;border-radius:11px;font-size:14.5px;font-weight:600;cursor:pointer;border:none;font-family:var(--sans);transition:all .16s;}
+  .form-btn-primary{background:rgba(255,255,255,0.92);color:#1c1530;}
+  .form-btn-primary:hover{transform:translateY(-1px);}
+  .form-btn-primary:disabled{background:rgba(255,255,255,0.14);color:rgba(255,255,255,0.4);cursor:not-allowed;transform:none;}
+  .form-btn-back{background:transparent;color:rgba(255,255,255,0.7);}
+  .form-note-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;background:rgba(122,79,171,0.3);color:#e0c9f5;border:1px solid rgba(122,79,171,0.5);padding:3px 9px;border-radius:5px;margin-bottom:14px;}
+  .form-welcome{text-align:center;}
+  .form-welcome .form-brand{justify-content:center;margin-bottom:22px;font-size:22px;}
+  .form-wtag{font-family:var(--serif);font-style:italic;font-size:14px;color:#ffd9a8;margin-bottom:16px;}
+  .form-wtitle{font-family:var(--serif);font-size:34px;font-weight:500;line-height:1.1;margin-bottom:16px;color:white;}
+  .form-wtitle em{font-style:italic;color:#ffd9a8;}
+  .form-wlede{font-size:15px;color:rgba(255,255,255,0.72);margin-bottom:26px;line-height:1.55;}
+  .form-wcta{background:rgba(255,255,255,0.92);color:#1c1530;padding:15px 34px;border-radius:13px;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:all .2s;}
+  .form-wcta:hover{transform:translateY(-2px);}
+  .form-input{width:100%;padding:14px 16px;border:1.5px solid rgba(255,255,255,0.16);border-radius:12px;background:rgba(255,255,255,0.06);color:white;font-size:15px;font-family:var(--sans);margin-bottom:12px;}
+  .form-input::placeholder{color:rgba(255,255,255,0.4);}
+  .form-input:focus{outline:none;border-color:#ffd9a8;}
+  select.form-input option{background:#1e1d35;color:white;}
+
+  /* ===== OUTPUT VIEW ===== */
+  #view-output{background:#131225;min-height:100vh;position:relative;overflow:hidden;}
+  #view-output .aurora{position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 50% 38% at 12% 18%,rgba(255,94,58,0.42)0%,transparent 70%),
+      radial-gradient(ellipse 44% 36% at 86% 12%,rgba(64,145,255,0.38)0%,transparent 70%),
+      radial-gradient(ellipse 56% 42% at 78% 82%,rgba(255,64,129,0.34)0%,transparent 70%);}
+  .out-stage{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:40px 20px 80px;}
+  .out-glass{background:rgba(255,255,255,0.10);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);border:1px solid rgba(255,255,255,0.16);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.22);color:rgba(255,255,255,0.96);margin-bottom:14px;}
+  .out-hero{padding:34px 30px 28px;text-align:center;}
+  .out-persona-tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#ffd9a8;background:rgba(255,217,168,0.14);border:1px solid rgba(255,217,168,0.4);padding:6px 15px;border-radius:999px;margin-bottom:16px;}
+  .out-headline{font-family:var(--serif);font-size:28px;font-weight:500;line-height:1.12;margin-bottom:8px;color:white;}
+  .out-headline em{font-style:italic;color:#ffd9a8;}
+  .out-sub{font-size:14px;color:rgba(255,255,255,0.72);}
+  .free-banner{display:flex;align-items:center;gap:9px;justify-content:center;font-family:var(--mono);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#bbf7d0;margin-bottom:16px;}
+  .free-banner span{width:8px;height:8px;border-radius:50%;background:#bbf7d0;box-shadow:0 0 8px #bbf7d0;}
+  .out-block{padding:22px 26px;}
+  .out-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;color:#ffd9a8;font-weight:600;margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+  .out-label .free-pill{font-size:8px;color:#bbf7d0;background:rgba(134,239,172,0.2);border:1px solid rgba(134,239,172,0.4);padding:2px 6px;border-radius:5px;letter-spacing:0.06em;}
+  .out-text{font-size:14.5px;line-height:1.6;color:rgba(255,255,255,0.96);}
+  .out-text strong{color:white;} .out-text em{color:#ffd9a8;font-style:italic;}
+  .out-locked{padding:28px 26px;border:1px solid rgba(255,217,168,0.3);background:linear-gradient(180deg,rgba(255,217,168,0.08),rgba(255,255,255,0.04));}
+  .out-locked-head{display:flex;align-items:center;gap:11px;margin-bottom:14px;}
+  .out-locked-title{font-family:var(--serif);font-size:21px;font-weight:500;color:white;}
+  .paywall-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#ffd9a8;background:rgba(255,217,168,0.16);border:1px solid rgba(255,217,168,0.4);padding:3px 9px;border-radius:6px;margin-left:auto;}
+  .phase{display:flex;gap:13px;margin-bottom:13px;}
+  .phase-num{font-family:var(--serif);font-size:22px;font-style:italic;font-weight:500;color:#ffd9a8;min-width:28px;}
+  .phase-t{font-weight:600;font-size:14.5px;} .phase-d{font-size:12.5px;color:rgba(255,255,255,0.7);}
+  .blur{filter:blur(5px);user-select:none;opacity:0.85;}
+  .unlock-cta{background:#ff9d4d;color:#3a2510;padding:12px 26px;border-radius:11px;font-size:14.5px;font-weight:700;border:none;cursor:pointer;margin-top:16px;width:100%;}
+  .out-hint{text-align:center;font-size:12px;color:rgba(255,255,255,0.5);font-style:italic;margin-top:8px;}
+
+  @media(max-width:920px){
+    .qcard-body{grid-template-columns:1fr;}
+    .qcol{border-right:none;border-bottom:1px solid var(--rule-soft);}
+    .qcol:last-child{border-bottom:none;}
+    .colkey{grid-template-columns:1fr;}
+    .vhead h1{font-size:28px;}
+    .topbar-inner{gap:12px;}
+  }
+  /* ===== MACHINE: comments under Why / Output ===== */
+  .qcomment{margin-top:11px;}
+  .qcomment-label{font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+  .qcomment-box{width:100%;min-height:34px;font-family:var(--sans);font-size:11.5px;line-height:1.4;color:var(--ink);background:#fffdf8;border:1px dashed var(--rule);border-radius:7px;padding:7px 9px;resize:vertical;display:none;}
+  body.editing .qcomment-box{display:block;}
+  .qcomment-saved{display:none;font-size:11.5px;line-height:1.45;color:var(--ink-soft);background:#fff9ec;border-left:3px solid #e6b800;border-radius:0 6px 6px 0;padding:7px 10px;margin-top:4px;}
+  .qcomment-saved.show{display:block;}
+  .qcomment-saved b{font-family:var(--mono);font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:#b8860b;display:block;margin-bottom:3px;}
+  .comment-marker{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:8px;letter-spacing:0.06em;color:#b8860b;background:#fff3cd;border:1px solid #e6b800;padding:2px 7px;border-radius:5px;margin-left:8px;}
+
+  /* ===== MACHINE: publish bar ===== */
+  .publishbar{position:sticky;bottom:0;z-index:40;background:rgba(251,248,241,0.95);backdrop-filter:blur(10px);border-top:1px solid var(--rule);padding:12px 24px;display:flex;align-items:center;gap:16px;justify-content:center;margin-top:20px;}
+  .publish-status{font-family:var(--mono);font-size:10.5px;letter-spacing:0.04em;color:var(--ink-faint);}
+  .publish-status.dirty{color:var(--orange);}
+  .publish-btn{font-family:var(--sans);font-size:13px;font-weight:700;padding:10px 22px;border-radius:10px;border:none;background:var(--orange);color:white;cursor:pointer;transition:all .15s;}
+  .publish-btn:hover{transform:translateY(-1px);}
+  .publish-btn:disabled{background:var(--rule);color:var(--ink-faint);cursor:not-allowed;transform:none;}
+
+  /* ===== FORM: field types ===== */
+  .field-group{margin-bottom:20px;}
+  .field-label{font-size:14.5px;font-weight:600;color:white;margin-bottom:4px;}
+  .field-sub{font-size:12.5px;color:rgba(255,255,255,0.6);margin-bottom:11px;}
+  .chip-row{display:flex;flex-wrap:wrap;gap:9px;}
+  .chip{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.16);border-radius:11px;padding:11px 16px;cursor:pointer;transition:all .15s;color:rgba(255,255,255,0.94);font-family:var(--sans);font-size:14px;font-weight:500;}
+  .chip:hover{border-color:#ffd9a8;background:rgba(255,217,168,0.10);}
+  .chip.sel{border-color:#ffd9a8;background:rgba(255,217,168,0.18);box-shadow:0 0 0 1px #ffd9a8;}
+  .num-input{width:110px;padding:12px 14px;border:1.5px solid rgba(255,255,255,0.16);border-radius:11px;background:rgba(255,255,255,0.06);color:white;font-size:16px;font-family:var(--sans);}
+  .num-input:focus{outline:none;border-color:#ffd9a8;}
+
+  /* dropdown */
+  .fdrop{width:100%;padding:13px 15px;border:1.5px solid rgba(255,255,255,0.16);border-radius:12px;background:rgba(255,255,255,0.06);color:white;font-size:15px;font-family:var(--sans);cursor:pointer;}
+  .fdrop:focus{outline:none;border-color:#ffd9a8;}
+  .fdrop option{background:#1e1d35;color:white;}
+
+  /* ===== FORM: dials (sliders) ===== */
+  .dial-wrap{margin-bottom:26px;}
+  .dial-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;}
+  .dial-q{font-size:15px;font-weight:600;color:white;}
+  .dial-val{font-family:var(--serif);font-style:italic;font-size:17px;color:#ffd9a8;}
+  .dial{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:5px;background:linear-gradient(90deg,#ff9d4d var(--pct,50%),rgba(255,255,255,0.14) var(--pct,50%));outline:none;}
+  .dial::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;background:white;box-shadow:0 2px 8px rgba(0,0,0,0.35);cursor:pointer;border:3px solid #ff9d4d;}
+  .dial::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:white;box-shadow:0 2px 8px rgba(0,0,0,0.35);cursor:pointer;border:3px solid #ff9d4d;}
+  .dial-scale{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.45);margin-top:8px;font-family:var(--mono);letter-spacing:0.03em;}
+
+  /* ===== FORM: drag-drop rank (Trifecta) ===== */
+  .rank-list{display:flex;flex-direction:column;gap:10px;}
+  .rank-item{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.16);border-radius:13px;padding:15px 17px;cursor:grab;transition:all .15s;color:white;}
+  .rank-item:hover{border-color:rgba(255,217,168,0.5);}
+  .rank-item.dragging{opacity:0.4;border-style:dashed;cursor:grabbing;}
+  .rank-item.over{border-color:#ffd9a8;background:rgba(255,217,168,0.12);}
+  .rank-num{font-family:var(--serif);font-style:italic;font-size:22px;font-weight:600;color:#ffd9a8;min-width:26px;}
+  .rank-name{flex:1;font-size:15px;font-weight:500;}
+  .rank-name .rank-desc{display:block;font-size:12px;color:rgba(255,255,255,0.6);font-weight:400;margin-top:2px;}
+  .rank-grip{color:rgba(255,255,255,0.4);font-size:18px;letter-spacing:-2px;}
+
+  /* file upload */
+  .file-drop{border:2px dashed rgba(255,255,255,0.24);border-radius:14px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .15s;color:rgba(255,255,255,0.7);}
+  .file-drop:hover{border-color:#ffd9a8;background:rgba(255,217,168,0.06);}
+  .file-drop .fd-icon{font-size:28px;margin-bottom:8px;}
+  .file-drop .fd-main{font-size:14.5px;color:white;font-weight:500;margin-bottom:3px;}
+  .file-drop .fd-sub{font-size:12px;}
+  .file-chosen{color:#bbf7d0;font-size:13px;margin-top:10px;}
+
+  /* live output nudge in form */
+  .live-nudge{position:fixed;bottom:20px;right:20px;z-index:60;background:rgba(19,18,37,0.9);backdrop-filter:blur(10px);border:1px solid rgba(255,217,168,0.4);border-radius:12px;padding:12px 16px;color:white;font-size:12.5px;max-width:230px;box-shadow:0 8px 28px rgba(0,0,0,0.4);cursor:pointer;display:none;}
+  #view-form.active ~ .live-nudge{display:block;}
+  .live-nudge b{color:#ffd9a8;}
+
+  /* ===== OFFERINGS VIEW ===== */
+  .offer-howto{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;}
+  .offer-howto-step{font-size:12.5px;color:var(--ink-soft);background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:9px 14px;}
+  .offer-howto-step b{display:inline-flex;width:17px;height:17px;border-radius:50%;background:var(--orange);color:white;font-size:10px;align-items:center;justify-content:center;margin-right:6px;font-family:var(--mono);}
+
+  .offer-cat{margin-bottom:16px;}
+  .offer-cat-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin-bottom:9px;}
+  .offer-palette{display:flex;flex-wrap:wrap;gap:9px;}
+  .offer-card{position:relative;border-radius:11px;padding:11px 14px 11px 15px;cursor:grab;transition:all .13s;border:1.5px solid;min-width:150px;max-width:230px;user-select:none;}
+  .offer-card:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(26,29,46,0.10);}
+  .offer-card.dragging{opacity:0.4;cursor:grabbing;}
+  .offer-card .oc-name{font-weight:600;font-size:13px;line-height:1.25;margin-bottom:3px;}
+  .offer-card .oc-desc{font-size:10.5px;line-height:1.35;opacity:0.8;}
+  .offer-card .oc-tier{position:absolute;top:9px;right:10px;font-family:var(--mono);font-size:7.5px;letter-spacing:0.06em;text-transform:uppercase;font-weight:700;padding:1px 5px;border-radius:4px;}
+  /* tier palettes: 0 basic(green) 1 paid(orange) 2 premium(purple) */
+  .tier-0{background:var(--free-soft);border-color:var(--free);color:#1c4a37;}
+  .tier-0 .oc-tier{background:var(--free);color:white;}
+  .tier-1{background:var(--orange-soft);border-color:var(--orange);color:#7a2c08;}
+  .tier-1 .oc-tier{background:var(--orange);color:white;}
+  .tier-2{background:var(--premium-soft);border-color:var(--premium);color:#4a2a68;}
+  .tier-2 .oc-tier{background:var(--premium);color:white;}
+  .oc-cyclehint{position:absolute;bottom:8px;right:10px;font-size:9px;opacity:0;transition:opacity .13s;}
+  .offer-card:hover .oc-cyclehint{opacity:0.5;}
+
+  .offer-sections-head{display:flex;align-items:center;justify-content:space-between;margin:30px 0 14px;padding-top:22px;border-top:2px solid var(--rule);}
+  .offer-sections-head span{font-family:var(--serif);font-size:20px;font-weight:500;}
+  .offer-sections{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .offer-section{background:var(--paper);border:1.5px solid var(--rule);border-radius:14px;padding:16px 18px;min-height:96px;transition:all .13s;}
+  .offer-section.dragover{border-color:var(--orange);border-style:dashed;background:var(--orange-soft);}
+  .offer-section-head{display:flex;align-items:center;gap:9px;margin-bottom:11px;}
+  .offer-section-name{font-weight:700;font-size:14.5px;}
+  .offer-section-fp{font-family:var(--mono);font-size:8px;letter-spacing:0.06em;padding:2px 7px;border-radius:5px;}
+  .offer-section-count{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--ink-faint);}
+  .offer-drops{display:flex;flex-wrap:wrap;gap:7px;min-height:34px;}
+  .offer-drops:empty::after{content:'Drop offerings here';font-size:11.5px;color:var(--ink-faint);font-style:italic;padding:8px 4px;}
+  .drop-chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:6px 10px;border-radius:8px;border:1.5px solid;}
+  .drop-chip .dc-x{cursor:pointer;font-weight:700;opacity:0.6;}
+  .drop-chip .dc-x:hover{opacity:1;}
+  .offer-empty-note{text-align:center;font-size:12px;color:var(--ink-faint);font-style:italic;margin-top:8px;}
+
+  /* untiered offering — neutral until you set a tier */
+  .tier-none{background:#f0ede5;border-color:#c9c2b2;color:#6a6558;border-style:dashed;}
+  .tier-none .oc-tier{background:#8a8fa8;color:white;}
+  .drop-chip.tier-none{background:#f0ede5;border-color:#c9c2b2;color:#6a6558;}
+
+  /* ===== OFFERING CARD: info panel + comments ===== */
+  .offer-card{padding-bottom:9px;}
+  .oc-actions{display:flex;align-items:center;gap:10px;margin-top:9px;padding-top:8px;border-top:1px solid rgba(0,0,0,0.06);}
+  .oc-info,.oc-comment-btn{font-family:var(--mono);font-size:9px;letter-spacing:0.04em;cursor:pointer;padding:2px 6px;border-radius:5px;transition:all .12s;}
+  .oc-info{color:var(--wanderer);background:rgba(30,77,140,0.08);}
+  .oc-info:hover{background:rgba(30,77,140,0.16);}
+  .oc-comment-btn{color:var(--ink-faint);background:rgba(0,0,0,0.05);margin-left:auto;}
+  .oc-comment-btn:hover{color:var(--orange);}
+  .oc-comment-btn.has{color:#b8860b;background:#fff3cd;}
+  .oc-info-panel,.oc-comment-panel{display:none;margin-top:9px;}
+  .oc-info-panel.open,.oc-comment-panel.open{display:block;animation:fade .2s ease;}
+  .oc-info-draft{font-family:var(--mono);font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:var(--orange);background:var(--orange-soft);padding:2px 6px;border-radius:4px;display:inline-block;margin-bottom:7px;}
+  .oc-info-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:3px 0;border-bottom:1px dotted rgba(0,0,0,0.08);}
+  .oc-info-k{font-size:11px;color:var(--ink-soft);}
+  .oc-info-v{font-family:var(--mono);font-size:9.5px;font-weight:600;padding:1px 7px;border-radius:5px;}
+  .eff-low{background:var(--free-soft);color:#1c4a37;}
+  .eff-med{background:#fff3cd;color:#8a6d00;}
+  .eff-high{background:var(--marathoner-soft);color:#7a1a1a;}
+  .oc-info-v:not(.eff-low):not(.eff-med):not(.eff-high){background:rgba(0,0,0,0.05);color:var(--ink-soft);font-size:9px;}
+  .oc-info-note{font-size:10.5px;line-height:1.4;color:var(--ink-soft);margin-top:8px;font-style:italic;}
+  .oc-info-empty{font-size:10.5px;color:var(--ink-faint);font-style:italic;}
+  .oc-comment-box{width:100%;min-height:56px;font-family:var(--sans);font-size:11.5px;line-height:1.4;color:var(--ink);background:#fffdf8;border:1px solid var(--rule);border-radius:8px;padding:8px 10px;resize:vertical;}
+  .oc-comment-box:focus{outline:none;border-color:var(--orange);}
+
+  /* ===== BUNDLE group on offerings ===== */
+  .bundle-group{margin-bottom:22px;padding:16px;border:2px solid var(--premium);border-radius:16px;background:linear-gradient(180deg,var(--premium-soft),transparent);}
+  .bundle-header{font-family:var(--serif);font-size:19px;font-weight:600;color:var(--premium);display:flex;align-items:center;gap:9px;margin-bottom:12px;}
+  .bundle-emoji{font-size:20px;}
+  .bundle-tag{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;background:var(--premium);color:white;padding:2px 8px;border-radius:5px;margin-left:6px;}
+  .bundle-summary-card{background:white;border:1.5px solid var(--premium);border-radius:12px;padding:14px 16px;margin-bottom:14px;cursor:pointer;transition:all .13s;}
+  .bundle-summary-card:hover{box-shadow:0 4px 14px rgba(122,79,171,0.18);}
+  .bundle-sum-name{font-weight:700;font-size:14.5px;margin:6px 0 4px;}
+  .bundle-sum-desc{font-size:12px;color:var(--ink-soft);line-height:1.4;margin-bottom:9px;}
+  .bundle-sum-includes{display:flex;flex-wrap:wrap;gap:5px;}
+  .bundle-pill{font-size:10px;font-weight:600;background:var(--premium-soft);color:#4a2a68;padding:3px 8px;border-radius:6px;}
+  .phase2-tag{font-family:var(--mono);font-size:7.5px;letter-spacing:0.06em;background:var(--premium);color:white;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;}
+
+  /* ===== CONTENT STUDIO ===== */
+  .cs-legend{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--rule);}
+  .cs-legend-item{font-size:12.5px;color:var(--ink-soft);display:flex;align-items:center;gap:7px;}
+  .cs-use-badge{font-family:var(--mono);font-size:9px;letter-spacing:0.04em;padding:3px 8px;border-radius:5px;cursor:pointer;font-weight:600;white-space:nowrap;}
+  .use-tip{background:var(--orange-soft);color:var(--orange);}
+  .use-content{background:var(--teal-soft,#e0f2f5);color:var(--teal);}
+  .cs-bucket{margin-bottom:22px;border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--paper);}
+  .cs-bucket-head{display:flex;align-items:center;gap:11px;padding:14px 18px;background:var(--paper-warm);border-bottom:1px solid var(--rule-soft);}
+  .cs-emoji{font-size:20px;}
+  .cs-bucket-name{font-family:var(--serif);font-size:19px;font-weight:600;}
+  .cs-bucket-meta{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--ink-faint);letter-spacing:0.04em;}
+  .cs-tips{padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+  .cs-tip{background:white;border:1px solid var(--rule-soft);border-radius:10px;padding:12px 14px;}
+  .cs-tip-top{display:flex;align-items:center;gap:9px;margin-bottom:7px;flex-wrap:wrap;}
+  .cs-attach{font-family:var(--mono);font-size:9.5px;color:var(--wanderer);background:var(--wanderer-soft);padding:2px 7px;border-radius:5px;}
+  .cs-attach-none{color:var(--ink-faint);background:var(--paper-warm);}
+  .cs-tip-text{font-size:12.5px;line-height:1.45;color:var(--ink);}
+  @media(max-width:820px){ .cs-tips{grid-template-columns:1fr;} }
+
+
+  /* ================= UI OVERHAUL (last-wins overrides) ================= */
+  /* ---- collapsible groups (offerings categories + bundles) ---- */
+  .grp{border:1px solid var(--rule);border-radius:14px;margin-bottom:12px;overflow:hidden;background:var(--paper);}
+  .grp-bundle{border:2px solid var(--premium);background:linear-gradient(180deg,var(--premium-soft),transparent);}
+  .grp-head{display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer;user-select:none;transition:background .12s;}
+  .grp-head:hover{background:rgba(0,0,0,0.03);}
+  .grp-arrow{font-size:12px;color:var(--ink-faint);transition:transform .18s;display:inline-block;}
+  .grp.open .grp-arrow{transform:rotate(90deg);}
+  .grp-emoji{font-size:18px;}
+  .grp-title{font-family:var(--serif);font-size:18px;font-weight:600;}
+  .grp-bundle .grp-title{color:var(--premium);}
+  .grp-badge{font-family:var(--mono);font-size:8.5px;letter-spacing:0.08em;background:var(--premium);color:white;padding:2px 7px;border-radius:5px;}
+  .grp-count{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--ink-faint);letter-spacing:0.04em;}
+  .grp-tier{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.05em;padding:3px 9px;border-radius:6px;}
+  .grp-desc{font-size:12.5px;color:var(--ink-soft);line-height:1.45;padding:0 16px 12px;display:none;}
+  .grp.open .grp-desc{display:block;}
+  .grp-body{display:none;padding:0 16px 16px;}
+  .grp.open .grp-body{display:block;animation:fade .2s ease;}
+
+  /* ---- consistent fixed-size offer cards ---- */
+  .offer-palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px;}
+  .offer-card{position:relative;border-radius:12px;padding:12px 13px 10px;cursor:grab;transition:box-shadow .13s,transform .13s;border:1.5px solid;user-select:none;min-width:0;max-width:none;display:flex;flex-direction:column;min-height:150px;}
+  .offer-card:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(26,29,46,0.10);}
+  .offer-card.dragging{opacity:0.4;cursor:grabbing;}
+  .oc-tierbar{display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:9px;min-height:18px;}
+  .oc-tier{position:static;font-family:var(--mono);font-size:8.5px;letter-spacing:0.05em;text-transform:uppercase;font-weight:700;padding:3px 9px;border-radius:5px;cursor:pointer;}
+  .phase2-tag{font-family:var(--mono);font-size:7.5px;letter-spacing:0.04em;background:var(--premium);color:white;padding:2px 5px;border-radius:4px;}
+  .oc-name{font-weight:600;font-size:13px;line-height:1.25;text-align:center;cursor:pointer;margin-bottom:6px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:33px;}
+  .oc-name:hover{color:var(--orange);}
+  .oc-desc{font-size:11px;line-height:1.38;opacity:0.85;text-align:center;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;transition:none;}
+  .oc-desc.expanded{-webkit-line-clamp:unset;overflow:visible;}
+  .oc-seemore{font-family:var(--mono);font-size:9px;color:var(--wanderer);cursor:pointer;text-align:center;margin-top:3px;display:block;}
+  .oc-seemore:hover{text-decoration:underline;}
+  .oc-actions{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:auto;padding-top:9px;border-top:1px solid rgba(0,0,0,0.06);}
+  .oc-icon{font-size:14px;cursor:pointer;color:var(--ink-faint);transition:color .12s;line-height:1;}
+  .oc-icon:hover{color:var(--orange);}
+  .oc-comment-btn.has{color:#b8860b;}
+  .oc-info-panel,.oc-comment-panel{display:none;margin-top:9px;text-align:left;}
+  .oc-info-panel.open,.oc-comment-panel.open{display:block;animation:fade .2s ease;}
+
+  /* bundle summary card cleanup */
+  .bundle-summary-card{background:white;border:1.5px solid var(--premium);border-radius:12px;padding:13px 15px;margin-bottom:14px;cursor:pointer;}
+  .bundle-summary-card:hover{box-shadow:0 4px 14px rgba(122,79,171,0.18);}
+  .bundle-sum-name{font-weight:700;font-size:14px;margin:7px 0 8px;}
+  .bundle-sum-includes{display:flex;flex-wrap:wrap;gap:5px;}
+  .bundle-pill{font-size:10px;font-weight:600;background:var(--premium-soft);color:#4a2a68;padding:3px 8px;border-radius:6px;}
+
+  /* ---- collapsible Machine stages ---- */
+  .mstage{border:1px solid var(--rule);border-radius:14px;margin-bottom:12px;overflow:hidden;background:var(--paper);}
+  .mstage-head{display:flex;align-items:center;gap:11px;padding:14px 16px;cursor:pointer;user-select:none;transition:background .12s;}
+  .mstage-head:hover{background:rgba(0,0,0,0.03);}
+  .mstage-head .stage-num{margin:0;}
+  .mstage-head .stage-sub{margin-left:auto;}
+  .mstage-body{display:none;padding:4px 16px 16px;}
+  .mstage.open .mstage-body{display:block;animation:fade .2s ease;}
+  .mstage .grp-arrow{transition:transform .18s;}
+  .mstage.open .grp-arrow{transform:rotate(90deg);}
+
+
+  /* ---- assignment status line on offer cards ---- */
+  .oc-assign{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8.5px;letter-spacing:0.02em;line-height:1.35;margin-top:8px;padding:5px 7px;border-radius:6px;text-align:left;}
+  .oc-assign.yes{color:#1c4a37;background:var(--free-soft);}
+  .oc-assign.none{color:var(--ink-faint);background:rgba(0,0,0,0.04);}
+  .assign-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .oc-assign.yes .assign-dot{background:var(--free);box-shadow:0 0 5px var(--free);}
+  .oc-assign.none .assign-dot{background:var(--ink-faint);opacity:0.5;}
+
+  /* ---- hover tooltip on drop-chips (output sections) ---- */
+  .drop-chip{position:relative;}
+  .dc-tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:80;
+    width:230px;background:var(--ink);color:white;font-family:var(--sans);font-size:11.5px;font-weight:400;line-height:1.4;letter-spacing:0;
+    padding:9px 11px;border-radius:9px;box-shadow:0 6px 20px rgba(0,0,0,0.28);
+    opacity:0;visibility:hidden;transition:opacity .14s,visibility .14s;pointer-events:none;text-transform:none;}
+  .dc-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ink);}
+  .drop-chip:hover .dc-tip{opacity:1;visibility:visible;}
+
+</style>
+</head>
+<body>
+<!-- ===== TOP BAR ===== -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="brand-dot"></span>[The Platform]</div>
+    <div class="tabs">
+      <button class="tab active" data-view="machine" onclick="switchView('machine',this)"><span class="tnum">01</span> Machine</button>
+      <button class="tab" data-view="form" onclick="switchView('form',this)"><span class="tnum">02</span> Form</button>
+      <button class="tab" data-view="output" onclick="switchView('output',this)"><span class="tnum">03</span> Output</button>
+      <button class="tab" data-view="offerings" onclick="switchView('offerings',this)"><span class="tnum">04</span> Offerings</button>
+      <button class="tab" data-view="content" onclick="switchView('content',this)"><span class="tnum">05</span> Content Studio</button>
+    </div>
+    <div class="topbar-right">
+      <span class="save-note" id="saveNote"></span>
+      <button class="edit-toggle" id="editToggle" onclick="toggleEdit()">✎ Edit content</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MACHINE VIEW ===== -->
+<div class="view active" id="view-machine">
+  <div class="container">
+    <div class="vhead">
+      <div class="pre">Master File · Question → Why → Output</div>
+      <h1>The Intake <em>Machine</em></h1>
+      <p class="sub">One data model, three views. Every question shows why we ask it and the output it drives. Edit here — it updates the Form and Output too.</p>
+    </div>
+
+    <div class="editbanner">
+      <b>Edit mode on.</b> Click any question title, option, "why," or output line to edit it. Add or delete options with the buttons. Changes flow to the Form and Output tabs instantly. Use "Export data" (bottom) to save your version.
+    </div>
+
+    <div class="colkey">
+      <div class="colkey-item"><div class="colkey-badge ck-q">① The Question</div><div class="colkey-desc">What we ask and the options offered</div></div>
+      <div class="colkey-item"><div class="colkey-badge ck-w">② The Why</div><div class="colkey-desc">Why we ask, and what it isolates</div></div>
+      <div class="colkey-item"><div class="colkey-badge ck-o">③ The Output</div><div class="colkey-desc">The freebie / section each answer drives</div></div>
+    </div>
+
+    <div class="filter-label">Filter by persona</div>
+    <div class="filters" id="filters"></div>
+    <div class="filter-hint">Shared questions stay visible for every persona — they're what everyone answers.</div>
+
+    <div id="machineBody"></div>
+
+    <div class="openq" style="margin-top:28px;">
+      <b>Decisions still needed to finish the questionnaire</b>
+      <ul>
+        <li>Which intake approach (self-select / assign-later / hybrid) — build 3, test, decide in ~1 month</li>
+        <li>Marathoner cutoff: 3+ or 6+ months (open since V8)</li>
+        <li>Final wording + copy-edit pass on all question titles (Michelle)</li>
+        <li>How many of the new "common basics" to actually include (Michelle's Jul 23 note — keep it short)</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center;margin-top:28px;">
+      <button class="edit-toggle" onclick="exportData()" style="display:inline-flex;">⬇ Export data (save your version)</button>
+    </div>
+  </div>
+  <div class="publishbar">
+    <span class="publish-status" id="pubStatus">✓ Published — Form is in sync</span>
+    <button class="publish-btn" id="pubBtn" onclick="publish()" disabled>Save &amp; Publish to Form</button>
+  </div>
+</div>
+
+<!-- ===== FORM VIEW ===== -->
+<div class="view" id="view-form">
+  <div class="aurora"></div>
+  <div class="form-stage" id="formStage"></div>
+</div>
+
+<!-- ===== OUTPUT VIEW ===== -->
+<div class="view" id="view-output">
+  <div class="aurora"></div>
+  <div class="out-stage" id="outStage"></div>
+</div>
+
+<!-- ===== OFFERINGS VIEW ===== -->
+<div class="view" id="view-offerings">
+  <div class="container">
+    <div class="vhead">
+      <div class="pre">The Value Layer · What we actually deliver</div>
+      <h1>The <em>Offerings</em> Map</h1>
+      <p class="sub">Every product from the business case, up top. Click a card to set its tier. Drag it onto an output section below to deliver it there. This is where answers become value.</p>
+    </div>
+    <div class="offer-howto" id="offerHowto">
+      <div class="offer-howto-step"><b>1</b> Click a card to cycle its tier — <span style="color:var(--free)">Basic</span> → <span style="color:var(--orange)">Paid</span> → <span style="color:var(--premium)">Premium</span></div>
+      <div class="offer-howto-step"><b>2</b> Drag a card down onto an output section to assign it there (one card can go to several)</div>
+      <div class="offer-howto-step"><b>3</b> The suggested map is a starting point — rearrange freely, then Export</div>
+    </div>
+    <div id="offerPalette"></div>
+    <div class="offer-sections-head">
+      <span>The output sections — drop offerings here</span>
+      <button class="edit-toggle" onclick="exportOfferings()" style="display:inline-flex;">⬇ Export offerings map</button>
+    </div>
+    <div id="offerSections"></div>
+  </div>
+</div>
+
+<!-- ===== CONTENT STUDIO VIEW ===== -->
+<div class="view" id="view-content">
+  <div class="container">
+    <div class="vhead">
+      <div class="pre">The Tip Layer · What we teach, and where it lives</div>
+      <h1>Content <em>Studio</em></h1>
+      <p class="sub">Every tip mined from the videos, grouped by bucket. Each links to the tool it belongs under. Tag each as an in-product tip (shows inside a tool) or a content piece to publish — so you can decide what ships in the final design.</p>
+    </div>
+    <div class="cs-legend">
+      <span class="cs-legend-item"><span class="cs-use-badge use-tip">in-product tip</span> shows inside its tool (e.g. under the generator)</span>
+      <span class="cs-legend-item"><span class="cs-use-badge use-content">content piece</span> published guidance / library</span>
+      <span class="cs-legend-item" style="margin-left:auto;"><button class="edit-toggle" onclick="exportContent()" style="display:inline-flex;">⬇ Export content plan</button></span>
+    </div>
+    <div id="contentBody"></div>
+  </div>
+</div>
+<script>
+/* =========================================================================
+   SINGLE SOURCE OF TRUTH  (v2 — field types, dials, ranking, comments)
+   Machine map, Form, and Output all render from this one object.
+   Edit in Machine → Save & Publish → Form updates. Answers persist across tabs.
+   ========================================================================= */
+const DATA = {
+  personas: [
+    {id:"scoutp", name:"Scout · Passive", short:"Scout-P", emoji:"🧭", color:"scoutp", state:"Employed, exploring passively — time-constrained"},
+    {id:"scouta", name:"Scout · Active", short:"Scout-A", emoji:"🧭", color:"scouta", state:"Employed, but actively/urgently looking"},
+    {id:"wanderer", name:"Wanderer", short:"Wanderer", emoji:"🗺️", color:"wanderer", state:"Recently laid off, open to a new direction"},
+    {id:"sprinter", name:"Sprinter", short:"Sprinter", emoji:"⚡", color:"sprinter", state:"Recently laid off, needs a job fast"},
+    {id:"marathoner", name:"Marathoner", short:"Marathoner", emoji:"🏃", color:"marathoner", state:"Searching 3+ months, needs a reset"}
+  ],
+
+  /* comments[questionId] = {why:"...", output:"..."}  — saved, exported, shown on card */
+  comments: {},
+
+  fork: {
+    id:"fork", stage:1, tag:"The Fork", tagClass:"tag-persona", step:"Question 1", fieldType:"single",
+    title:"Which sounds most like you right now?",
+    lede:"This shapes everything that follows — your questions and your plan are built on your answer.",
+    why:"One tap everyone can answer honestly, even in shock. It's the strongest signal because <strong>employment status + urgency</strong> reshape the output more than anything else.",
+    isolates:"employed vs. laid off, and how urgent",
+    options:[
+      {label:"I'm still employed, exploring passively", emoji:"🧭", desc:"Time-constrained, peeking at options", routesTo:"scoutp"},
+      {label:"I'm employed, but actively looking", emoji:"🧭", desc:"The search is urgent", tag:"NEW SPLIT", tagClass:"tp-new", routesTo:"scouta"},
+      {label:"Just laid off, open to a new direction", emoji:"🗺️", desc:"Figuring out what's next", routesTo:"wanderer"},
+      {label:"Just laid off, need a job fast", emoji:"⚡", desc:"The clock is ticking", routesTo:"sprinter"},
+      {label:"Searching 3+ months", emoji:"🏃", desc:"Ready for a fresh approach", routesTo:"marathoner"}
+    ],
+    drives:[
+      {text:"<span class='osec'>Everything.</span> Sets the persona → headline, plan, tone, toolkit.", fp:"FREE", fpClass:"fp-free"},
+      {text:"Determines which two branch questions open next."}
+    ]
+  },
+
+  branches: [
+    {id:"scout_q1", stage:2, personas:["scoutp","scouta"], tag:"Scout only", tagClass:"tag-persona", step:"Branch Q1", fieldType:"single",
+     title:"Why are you job searching?",
+     why:"A Scout's <strong>reason</strong> for looking sets everything downstream — growth-seekers get stretch roles, pay-seekers get comp-calibrated targets. 'Bored' nests under growth.",
+     isolates:"the motivation behind the search",
+     options:[
+       {label:"More growth", tag:"KEEP", tagClass:"tp-keep"},
+       {label:"Bored / stagnated — no or limited career trajectory", tag:"NEW", tagClass:"tp-new"},
+       {label:"Ready for a change — too long in the same role/company", tag:"NEW", tagClass:"tp-new"},
+       {label:"Better pay", tag:"KEEP", tagClass:"tp-keep"},
+       {label:"Better environment — culture / colleagues / management", tag:"NEW SUB-COPY", tagClass:"tp-new"},
+       {label:"Other", tag:"PILOT", tagClass:"tp-pilot", open:true}
+     ],
+     drives:[
+       {text:"<span class='osec'>Where You Are</span> — names their reason in the read.", fp:"FREE", fpClass:"fp-free"},
+       {text:"Growth/bored → stretch roles. Pay → comp targets. Environment → culture filter."}
+     ]},
+    {id:"scout_q2", stage:2, personas:["scoutp","scouta"], tag:"Scout only", tagClass:"tag-persona", step:"Branch Q2 · routes Passive vs Active", fieldType:"single",
+     title:"How actively are you looking?",
+     why:"This <strong>routes Scout-Passive vs. Scout-Active</strong>, and sets the plan's pace — 'haven't started' needs basics; 'urgently' needs a Sprinter-like sequence with a paycheck still coming in.",
+     isolates:"passive vs. active — the reason we split the Scout",
+     options:[
+       {label:"Haven't started — first time thinking about my search", tag:"NEW", tagClass:"tp-new", routesTo:"scoutp"},
+       {label:"Passively / casually", tag:"MERGED", tagClass:"tp-merge", routesTo:"scoutp"},
+       {label:"Building momentum", tag:"KEEP", tagClass:"tp-keep", routesTo:"scouta"},
+       {label:"Urgently — I'd like a job ASAP", tag:"NEW", tagClass:"tp-new", routesTo:"scouta"},
+       {label:"Other", tag:"PILOT", tagClass:"tp-pilot", open:true}
+     ],
+     drives:[
+       {text:"<span class='osec'>Persona routing</span> → Passive or Active Scout.", fp:"FREE", fpClass:"fp-free"},
+       {text:"<span class='osec'>Your Plan</span> pace + <span class='osec'>First Move</span> intensity.", fp:"PLAN=PAID", fpClass:"fp-paid"}
+     ]},
+    {id:"wanderer_q1", stage:2, personas:["wanderer"], tag:"Wanderer only", tagClass:"tag-persona", step:"Branch Q1", fieldType:"single",
+     title:"How open are you to something new?",
+     why:"The Wanderer's defining trait is <strong>openness</strong>. How wide they'll cast decides how much the output focuses on translating skills vs. sharpening a known path.",
+     isolates:"how far the net should be cast",
+     options:[{label:"Stay in my lane — same kind of role"},{label:"Somewhat open — a related field could work"},{label:"Wide open — ready to reimagine what I do"}],
+     drives:[{text:"<span class='osec'>Where You Are</span> + <span class='osec'>Target Direction</span> — how many paths to surface.", fp:"FREE", fpClass:"fp-free"}]},
+    {id:"wanderer_q2", stage:2, personas:["wanderer"], tag:"Wanderer only", tagClass:"tag-persona", step:"Branch Q2", fieldType:"single",
+     title:"Your last role — how did it feel?",
+     why:"What to <strong>carry forward vs. leave behind</strong>. Loved it → 'more of that'; glad it's over → a clean-pivot framing.",
+     isolates:"keep vs. leave, for the positioning story",
+     options:[{label:"Loved most of it"},{label:"Mixed"},{label:"Ready to move on"}],
+     drives:[{text:"<span class='osec'>How You're Positioned</span> — the forward story.", fp:"FREE", fpClass:"fp-free"}]},
+    {id:"sprinter_q1", stage:2, personas:["sprinter"], tag:"Sprinter only", tagClass:"tag-persona", step:"Branch Q1", fieldType:"single",
+     title:"What's your runway?",
+     why:"Runway sets <strong>how aggressive the plan must be</strong>. Weeks means speed over everything; a cushion allows some selectivity. No judgment.",
+     isolates:"financial urgency → plan intensity",
+     options:[{label:"Tight — weeks"},{label:"A few months"},{label:"A few months or more"}],
+     drives:[{text:"<span class='osec'>Where You Are</span> tone + <span class='osec'>Your Plan</span> aggressiveness.", fp:"FREE READ", fpClass:"fp-free"}]},
+    {id:"sprinter_q2", stage:2, personas:["sprinter"], tag:"Sprinter only", tagClass:"tag-persona", step:"Branch Q2", fieldType:"single",
+     title:"What have you already tried?",
+     why:"So we don't tell them to do what they're already doing. Applying heavily with no response is a <strong>positioning fix</strong>, not a volume problem.",
+     isolates:"what's already been tried → what to change",
+     options:[{label:"Just getting started"},{label:"Applying a lot"},{label:"Networking"}],
+     drives:[{text:"<span class='osec'>How You're Positioned</span> — pinpoints the stretch.", fp:"FREE", fpClass:"fp-free"}]},
+    {id:"marathoner_q1", stage:2, personas:["marathoner"], tag:"Marathoner only", tagClass:"tag-persona", step:"Branch Q1", fieldType:"single",
+     title:"Roughly how much have you done?",
+     why:"Volume tells us whether it's a <strong>positioning problem or a targeting problem</strong>. High volume + no results almost always means positioning, not effort.",
+     isolates:"strategy problem vs. positioning problem",
+     options:[{label:"100+ applications"},{label:"A steady amount"},{label:"Fewer, targeted"}],
+     drives:[{text:"<span class='osec'>Where You Are</span> — the honest diagnosis.", fp:"FREE", fpClass:"fp-free"}]},
+    {id:"marathoner_q2", stage:2, personas:["marathoner"], tag:"Marathoner only", tagClass:"tag-persona", step:"Branch Q2", fieldType:"single",
+     title:"Where do you feel stuck?",
+     why:"Naming the gap is how we fix it. Each answer points at a different lever — keyword/filter fix, interview closing, or gentlest tone + confidence rebuild.",
+     isolates:"which funnel stage is leaking",
+     options:[{label:"Getting seen — apps disappear"},{label:"Converting interviews — get them, don't close"},{label:"My confidence — the search wore me down"}],
+     drives:[{text:"<span class='osec'>How You're Positioned</span> stretch + <span class='osec'>tone</span>.", fp:"FREE", fpClass:"fp-free"}]}
+  ],
+
+  shared: [
+    {id:"basics", stage:3, tag:"Shared", tagClass:"tag-shared", step:"from Michelle's Jul 23 note", fieldType:"composite",
+     title:"A few common basics",
+     why:"Michelle flagged (Jul 23) that competitor intakes gather these before branching. They sharpen targeting without being persona-specific. <strong>Keep it short.</strong>",
+     isolates:"employment shape, geography, seniority signals",
+     fields:[
+       {key:"roletype", label:"What role type are you after?", input:"chips", choices:["Full-time","Part-time","Contract","Temp"]},
+       {key:"location", label:"Where are you based?", sub:"ZIP or city — we use it to read your local market", input:"text", placeholder:"e.g. 98101 or Seattle, WA"},
+       {key:"manage", label:"How many people do you manage?", sub:"0 is a perfectly good answer", input:"number", placeholder:"0"},
+       {key:"projsize", label:"Largest project or team you've led", sub:"Team size, budget, or scope — your words", input:"text", placeholder:"e.g. led a team of 8, $2M budget"}
+     ],
+     options:[
+       {label:"Role type — full-time / part-time / contract / temp", tag:"NEW", tagClass:"tp-new"},
+       {label:"Location — where you're based (zip)", tag:"NEW", tagClass:"tp-new"},
+       {label:"Do you want to manage people? → number field", tag:"NEW", tagClass:"tp-new"},
+       {label:"Project / team size → open field", tag:"NEW", tagClass:"tp-new"}
+     ],
+     drives:[
+       {text:"<span class='osec'>Target Direction</span> — role type + location filter targets.", fp:"PAID DEPTH", fpClass:"fp-paid"},
+       {text:"<span class='osec'>How You're Positioned</span> — management scope.", fp:"FREE", fpClass:"fp-free"}
+     ]},
+    {id:"experience", stage:3, tag:"Shared", tagClass:"tag-shared", step:"Step 5", fieldType:"composite",
+     title:"Experience, industry & role",
+     why:"The <strong>highest-leverage shared question</strong> — feeds three output places. Role specificity matters: 'Delivery Manager' could be 500 jobs, so the write-in is essential.",
+     isolates:"seniority, specialist vs. agnostic tools, the role/market gap",
+     fields:[
+       {key:"years", label:"Years of experience", input:"chips", choices:["1–5","5–10","10–15","15+"]},
+       {key:"industry", label:"Industry", input:"select", choices:["Technology / Software","Consumer Goods (CPG)","Retail","Finance","Healthcare","Manufacturing","Media / Entertainment","Education","Other"], otherOpens:"Other"},
+       {key:"role", label:"Current or most recent role title", sub:"Be specific — it sharpens your targeting", input:"text", placeholder:"e.g. Senior Product Manager"}
+     ],
+     options:[
+       {label:"Years of experience — brackets (1–5 / 5–10 / 10–15 / 15+)"},
+       {label:"Industry — dropdown + write-in for 'Other'", tag:"FIX", tagClass:"tp-new"},
+       {label:"Current/last role title — open field", tag:"FIX", tagClass:"tp-new"}
+     ],
+     drives:[
+       {text:"<span class='osec'>Where You Are</span> — experience + industry woven in.", fp:"FREE", fpClass:"fp-free"},
+       {text:"<span class='osec'>How You're Positioned</span> — the role/market read.", fp:"FREE", fpClass:"fp-free"},
+       {text:"<span class='osec'>Toolkit</span> — specialist vs. agnostic.", fp:"MIXED", fpClass:"fp-paid"}
+     ]},
+    {id:"direction", stage:3, tag:"Shared", tagClass:"tag-shared", step:"Step 6 · after a 'now, your future' signpost", fieldType:"single",
+     title:"Direction — where you want to go",
+     why:"Direction shapes the whole positioning frame. The <strong>'real pivot' split</strong> matters: career switch we serve fully; a business idea we only capture (light resources, no package yet).",
+     isolates:"stay / adjacent / switch / entrepreneur / open",
+     options:[
+       {label:"Stay in my field"},
+       {label:"An adjacent move"},
+       {label:"A real pivot — switch industry / function", tag:"SPLIT", tagClass:"tp-new"},
+       {label:"A real pivot — pursue a business idea", tag:"CAPTURE ONLY", tagClass:"tp-merge"},
+       {label:"I'm open"}
+     ],
+     drives:[
+       {text:"<span class='osec'>How You're Positioned</span> + <span class='osec'>First Move</span> (pivot note).", fp:"FREE", fpClass:"fp-free"},
+       {text:"Business idea → light resources + 'we don't do this deeply yet.'", fp:"FREE", fpClass:"fp-free"}
+     ]},
+    {id:"trifecta", stage:3, tag:"Shared", tagClass:"tag-shared", step:"Step 7", fieldType:"rank",
+     title:"What matters most right now?",
+     lede:"Drag to rank these — your #1 shapes what we point you toward first.",
+     why:"A lightweight read on priorities via ranking. Flagged as maybe <strong>too simple</strong> — the deeper version is the premium Non-Negotiables question.",
+     isolates:"priority order (free, lightweight)",
+     rankItems:[
+       {key:"learn", name:"Learn", desc:"Growth, new skills, a bigger challenge"},
+       {key:"earn", name:"Earn", desc:"Compensation, title, financial upside"},
+       {key:"stability", name:"Stability", desc:"Security, balance, a steady footing"}
+     ],
+     options:[{label:"Rank: Learn / Earn / Stability (drag to order)"}],
+     drives:[{text:"<span class='osec'>Strongest Asset</span> — the #1 + #2 ranked values combine.", fp:"FREE", fpClass:"fp-free"}]},
+    {id:"dials", stage:3, tag:"Shared", tagClass:"tag-shared", step:"Step 8", fieldType:"dials",
+     title:"Two quick dials",
+     why:"Confidence sets the <strong>tone</strong> (gentle vs. direct); hours set the <strong>pace</strong> of the plan. Both feed the output directly.",
+     isolates:"emotional tone + realistic pace",
+     dials:[
+       {key:"confidence", q:"How are you feeling in your search?", min:0, max:100, def:50, lowLabel:"Overwhelmed", highLabel:"Confident",
+        bands:[{max:33,label:"Overwhelmed"},{max:66,label:"Finding my footing"},{max:100,label:"Confident"}]},
+       {key:"hours", q:"How many hours a week can you invest?", min:1, max:40, def:10, lowLabel:"1 hr", highLabel:"40+ hrs", unit:"hrs/wk",
+        bands:[{max:5,label:"Light"},{max:15,label:"Steady"},{max:40,label:"Intense"}]}
+     ],
+     options:[{label:"Confidence dial → tone"},{label:"Hours dial → pace"}],
+     drives:[
+       {text:"<span class='osec'>Headline</span> + <span class='osec'>First Move</span> tone (confidence dial).", fp:"FREE", fpClass:"fp-free"},
+       {text:"<span class='osec'>Your Plan</span> pace note (hours dial).", fp:"PLAN=PAID", fpClass:"fp-paid"}
+     ]},
+    {id:"cv", stage:3, tag:"Shared", tagClass:"tag-shared", step:"Step 9 · last, optional", fieldType:"file",
+     title:"Drop your CV",
+     lede:"Optional — but it makes your read far sharper. PDF or DOCX.",
+     why:"Optional, and <strong>last</strong> — it interrupts flow, so it never blocks completion. With it, the paid read extracts real selling points.",
+     isolates:"real evidence for deep personalization",
+     options:[{label:"Upload PDF/DOCX — or skip", open:true}],
+     drives:[{text:"<span class='osec'>Strongest Assets</span> depth — real selling points.", fp:"PAID DEPTH", fpClass:"fp-paid"}]}
+  ],
+
+  premium: [
+    {id:"activities", stage:4, tag:"Premium", tagClass:"tag-premium", step:"Premium Q2.1", fieldType:"single",
+     title:"What are you doing, and how often?",
+     why:"Held for premium on purpose: giving these away free would <strong>reveal the output's structure</strong>. And we assess better once they've used the free tools.",
+     isolates:"activity mix + intensity → 'stop doing that' advice",
+     options:[{label:"What are you doing? — resumes / LinkedIn / STAR work"},{label:"How frequently? — per week, each activity"}],
+     drives:[{text:"<span class='osec'>First Move (paid)</span> — e.g. 'stop submitting 100 resumes; do this.'", fp:"PREMIUM", fpClass:"fp-premium"}]},
+    {id:"nonneg", stage:4, tag:"Premium", tagClass:"tag-premium", step:"Premium Q4.1 · deeper Trifecta", fieldType:"single",
+     title:"What are your non-negotiables?",
+     why:"The richer evolution of the Trifecta. Each must map to an output consequence — 'remote' → companies that offer remote. If it doesn't change advice, it's cut.",
+     isolates:"specific constraints → specific target advice",
+     options:[{label:"I need to make more money"},{label:"I need more hours flexibility"},{label:"I need remote work"},{label:"I need a fast-paced environment"},{label:"A place I can be myself / creative / make an impact"}],
+     drives:[{text:"<span class='osec'>Target Direction (paid)</span> — constraint-matched companies/roles.", fp:"PREMIUM", fpClass:"fp-premium"}]}
+  ],
+
+  outputs: [
+    {name:"Headline", fed:"persona + confidence band", fp:"FREE"},
+    {name:"Where You Are", fed:"persona + experience + industry + branch Q1. The factual assessment.", fp:"FREE"},
+    {name:"Where to Start", fed:"just-laid-off framing. Interviewing is a muscle you build — first reps, not the whole plan.", fp:"FREE"},
+    {name:"How You're Positioned", fed:"direction + role + branch Q2. The real talk — market vs. self-perception.", fp:"FREE"},
+    {name:"What You'll Do About It", fed:"the third beat Michelle asked for — bridges assessment to action.", fp:"FREE"},
+    {name:"Strongest Asset", fed:"Trifecta #1+#2. One named free; rest paid.", fp:"FREE"},
+    {name:"First Move Today", fed:"persona + confidence + direction. One real free win.", fp:"FREE"},
+    {name:"Your Plan (4 phases)", fed:"persona + hours. Shown locked; the conversion moment.", fp:"PAID"},
+    {name:"Toolkit", fed:"industry + persona. First 2 free, sequence paid.", fp:"MIXED"}
+  ],
+
+  /* ===== OFFERINGS INVENTORY — mined from the V11 business cases + framework docs =====
+     tier: 0=Basic(free) 1=Paid 2=Premium  (click a card to cycle) */
+  offerings: [
+    {id:"pyramid", name:"Career Pyramid", cat:"Frameworks", tier:1, desc:"Targeting model — maps dream jobs vs. reality, ranked by sacrifice + non-negotiables"},
+    {id:"trifecta", name:"Trifecta Filter", cat:"Frameworks", tier:0, desc:"Learn / Earn / Stability — the 2-of-3 non-negotiables test"},
+    {id:"star", name:"STAR Story System", cat:"Frameworks", tier:1, desc:"Situation·Task·Action·Result·Learnings — build 3–5 quantified stories"},
+    {id:"nonneg", name:"Non-Negotiables Map", cat:"Frameworks", tier:2, desc:"Deeper Trifecta — money floor, remote, pace, culture → target-matched"},
+    {id:"resume_ai", name:"AI Resume Prompt", cat:"Resume & Profile", tier:0, desc:"Guided AI prompt to rewrite/tailor your resume to a target role"},
+    {id:"resume_review", name:"Resume ATS Check", cat:"Resume & Profile", tier:1, desc:"Keyword + ATS-readiness scan against the roles you're targeting"},
+    {id:"li_optimizer", name:"LinkedIn Header Optimizer", cat:"Resume & Profile", tier:0, desc:"Headline + keyword density so recruiters find you"},
+    {id:"li_profile", name:"LinkedIn Profile Module", cat:"Resume & Profile", tier:1, desc:"Full profile optimization — About, activity signals, keyword map"},
+    {id:"elevator", name:"Elevator Pitch Template", cat:"Resume & Profile", tier:0, desc:"A tight, repeatable intro for networking + interviews"},
+    {id:"mock_ai", name:"Mock Interview AI", cat:"Interview Prep", tier:1, desc:"AI practice with feedback on your answers"},
+    {id:"company_prep", name:"Company-Specific Prep", cat:"Interview Prep", tier:2, desc:"Tailored prep (e.g. bar-raiser, case) for a named company"},
+    {id:"stories_bank", name:"Stories Bank", cat:"Interview Prep", tier:1, desc:"Your finished STAR stories, organized to bring to every interview"},
+    {id:"job_tracker", name:"Job Tracking Dashboard", cat:"Targeting & Networking", tier:1, desc:"Track applications, stages, and follow-ups in one place"},
+    {id:"target_list", name:"Target Company List", cat:"Targeting & Networking", tier:1, desc:"Highest-fit companies from your Pyramid + non-negotiables"},
+    {id:"referrals", name:"Insider Network Referrals", cat:"Targeting & Networking", tier:2, desc:"Warm intros through our vetted network"},
+    {id:"outreach", name:"Networking Outreach Scripts", cat:"Targeting & Networking", tier:0, desc:"Templates to reach a human at each target company"},
+    {id:"video_guides", name:"Step-by-Step Video Guides", cat:"Guidance & Human", tier:1, desc:"Short guides walking each tool + step"},
+    {id:"live_intake", name:"Live Intake with a Founder", cat:"Guidance & Human", tier:2, desc:"A real session to set your strategy"},
+    {id:"coach", name:"Vetted Coach Match", cat:"Guidance & Human", tier:2, desc:"Matched to one of our external providers"},
+    {id:"checkins", name:"Avatar Check-ins", cat:"Guidance & Human", tier:2, desc:"Personalized nudges to keep momentum"},
+    {id:"community", name:"Community Access", cat:"Guidance & Human", tier:1, desc:"A room of people running the same play"},
+    {id:"biz_resources", name:"Business-Idea Starter Kit", cat:"Entrepreneur", tier:0, desc:"Light resources for the 'pursue a business idea' path (capture-only in pilot)"},
+
+    /* ===== ADDED from full sweep of all 11 transcripts (untiered = tier null; set your own) ===== */
+    // Community & human layer
+    {id:"whatsapp", name:"WhatsApp Group Access", cat:"Guidance & Human", tier:null, desc:"Members-only WhatsApp group for real-time support and peer accountability"},
+    {id:"monthly_zoom", name:"Monthly Group Zoom", cat:"Guidance & Human", tier:null, desc:"Once-a-month live group call with the founders — Q&A, hot seats, momentum"},
+    {id:"paid_community", name:"Paid Community (School model)", cat:"Guidance & Human", tier:null, desc:"Ongoing paid community: exclusive content, PDFs, videos, peer access"},
+    {id:"avatar_content", name:"AI Avatar Content Library", cat:"Guidance & Human", tier:null, desc:"Avatar-delivered guidance content (marketing/education, clearly content)"},
+    // Find & Seek pillar
+    {id:"title_translation", name:"Role-Title Translation", cat:"Find & Seek", tier:null, desc:"Translate your current title into the market titles that actually get matched"},
+    {id:"fit_score", name:"Fit Score vs. Targets", cat:"Find & Seek", tier:null, desc:"How you score against your target companies and open roles"},
+    {id:"board_guide", name:"Job Board Strategy Guide", cat:"Find & Seek", tier:null, desc:"Where to look — mainstream, niche, and visa-only boards; alerts setup"},
+    {id:"search_strategy", name:"Volume vs. Quality Playbook", cat:"Find & Seek", tier:null, desc:"Pick and run the right search strategy — apply-wide vs. tailor-deep"},
+    // Apply & Tailor pillar
+    {id:"ats_template", name:"ATS Resume Template", cat:"Resume & Profile", tier:null, desc:"Free ATS-friendly template (also the lead magnet)"},
+    {id:"canva_ats", name:"Canva-to-ATS Fix", cat:"Resume & Profile", tier:null, desc:"Convert pretty-but-unreadable resumes into machine-readable ones"},
+    {id:"cover_letter", name:"Cover Letter Tool", cat:"Resume & Profile", tier:null, desc:"AI-assisted, role-tailored cover letters"},
+    {id:"jd_match", name:"JD Keyword Matcher", cat:"Resume & Profile", tier:null, desc:"Match your resume language to the exact target job description"},
+    // Assessment / report
+    {id:"career_report", name:"One-Page Career Report", cat:"Assessment", tier:null, desc:"The core MVP deliverable — honest, one-page read of where you stand"},
+    {id:"salary_check", name:"Salary Reality Check", cat:"Assessment", tier:null, desc:"Your expectations vs. real market pay for your target roles/companies"},
+    {id:"gap_analysis", name:"Gap Analysis", cat:"Assessment", tier:null, desc:"What needs to change to be competitive for the roles you want"},
+    {id:"roadmap", name:"Path-to-Success Roadmap", cat:"Assessment", tier:null, desc:"Prioritized next steps — the sequenced plan"},
+    // Interview
+    {id:"salary_negotiation", name:"Salary Negotiation Guide", cat:"Interview Prep", tier:null, desc:"How to negotiate the offer — scripts and benchmarks"},
+    {id:"company_research", name:"Company Research Kit", cat:"Interview Prep", tier:null, desc:"Prep the company: culture, process, what they actually test for"},
+    // Model / bundling
+    {id:"ai_bundle", name:"AI Tool Bundle", cat:"Guidance & Human", tier:null, desc:"Right-tool-right-task: ChatGPT/Claude/Perplexity access bundled so users don't have to choose"},
+    {id:"referral_reward", name:"Referral Reward Program", cat:"Targeting & Networking", tier:null, desc:"Land a job → get rewarded for referring others"},
+
+    /* ===== ADDED per Bruno (Aug) — two new offerings ===== */
+    {id:"interview_muscle", name:"Interview Performance Agent", cat:"Interview Prep", tier:null,
+     desc:"Record your real interview (phone + speaker), upload transcript + resume + JD; an agent scores how you performed — what was weak, strong, and to improve, tied to your experience. Interviewing is a muscle you build."},
+    {id:"jd_match_rate", name:"Resume ↔ JD Match Rate", cat:"Resume & Profile", tier:null,
+     desc:"Paste your resume + a job description → get a match % (aim 75–80%), a hard-skill / soft-skill / searchability breakdown, and the exact missing keywords to add. (Jobscan-style.)"},
+
+    /* ===== ADDED from video batch 1 — new interactive tools (untiered) ===== */
+    // Interview Mastery bundle
+    {id:"stories4", name:"4 Core Stories Builder", cat:"Interview Prep", tier:null, bundle:"interview_mastery",
+     desc:"Guided build of the four stories every interview needs: most successful project, biggest lesson, toughest stakeholder, passion project. Answers almost any behavioral question."},
+    {id:"q_predictor", name:"Behavioral Question Predictor", cat:"Interview Prep", tier:null, bundle:"interview_mastery",
+     desc:"From the job description, predict the behavioral questions you'll likely get — and map your stories to each one."},
+    {id:"interviewer_brief", name:"Interviewer Research Brief", cat:"Interview Prep", tier:null, bundle:"interview_mastery",
+     desc:"Enter who's interviewing you + the company → a pre-interview brief so you never walk in cold."},
+    // Resume tools
+    {id:"bullet_rewriter", name:"Resume Bullet Rewriter", cat:"Resume & Profile", tier:null,
+     desc:"Paste a resume bullet → get it rewritten as action-verb + specific detail + measurable result. The most-repeated tip across all the videos."},
+    {id:"leadership_bullets", name:"Leadership Bullet Builder", cat:"Resume & Profile", tier:null,
+     desc:"For managers: turn 'managed a team' into 'good boss behaviors' — how you grew and developed people. (May be a mode of the Bullet Rewriter.)"},
+    // Targeting / strategy tools
+    {id:"role_narrower", name:"10-Variables Role Narrower", cat:"Find & Seek", tier:null,
+     desc:"Jerry Lee's 10 variables (brand, culture, function, growth, industry, location, perks, size, comp, WLB) → apply 2–3, loosen as you go. Fixes 'I don't know what to target.'"},
+    {id:"roadmap_12wk", name:"12-Week Search Roadmap", cat:"Guidance & Human", tier:null,
+     desc:"The month-by-month plan: month 1 foundation, month 2 apply to 100 + track, then interview & prep. Embodies 'now I have a plan.'"},
+    {id:"interview_rate_dx", name:"Interview-Rate Diagnostic", cat:"Assessment", tier:null,
+     desc:"Apply to 100, wait 2 weeks: 0–1 interviews = fix resume/targeting; 2–5 = good zone; 5+ = stop tweaking, keep going. An honest, data-driven read."},
+    // LinkedIn tools
+    {id:"li_summary_gen", name:"LinkedIn Summary Generator", cat:"Resume & Profile", tier:null,
+     desc:"JD keywords → a 3-paragraph LinkedIn summary + 10 headline options, built from your CV."},
+    {id:"recruiter_view", name:"Recruiter-View Optimizer", cat:"Resume & Profile", tier:null,
+     desc:"Checklist tool: open-to-work / recruiters-only settings, SEO headline formula, keyword placement so recruiters actually find you."},
+    // Salary tools
+    {id:"nego_script_gen", name:"Negotiation Script Generator", cat:"Interview Prep", tier:null,
+     desc:"Enter the offer + your situation (competing offers or not) → a tailored, word-for-word negotiation script."},
+    // Networking
+    {id:"hm_outreach", name:"Hiring-Manager Outreach Generator", cat:"Targeting & Networking", tier:null,
+     desc:"'Actively hiring' search → a personalized connection note to the hiring manager (not the recruiter)."},
+    // Application
+    {id:"email_system", name:"Job Search Email System", cat:"Targeting & Networking", tier:null,
+     desc:"Set up a dedicated search inbox + interview/rejection labels + drag-to-track. Light onboarding tool (overlaps Job Tracking Dashboard)."},
+    // Post-offer (Phase 2)
+    {id:"plan_30_60_90", name:"30-60-90 Day Plan Builder", cat:"Post-Offer [Phase 2]", tier:null, phase2:true,
+     desc:"First-90-days plan: intake → understanding → application. PHASE 2 — post-offer scope, parked for now."}
+  ],
+
+  /* assignments[outputSectionName] = [offeringId,...] — SUGGESTED starting map, editable */
+  /* ===== OFFERING INFO — DRAFT effort/complexity/cost estimates (Claude's rough first pass) =====
+     Shown in the ⓘ panel on each card. effort scales: Low / Med / High.
+     These are STARTING DRAFTS for the Bruno+Michelle discussion, not final. */
+  offeringInfo: {
+    pyramid:{tech:"Low", content:"High", portal:"Med", complexity:"Med", cost:"None (static framework + light AI)", note:"Your IP. Effort is in the content/coaching logic, not the build."},
+    trifecta:{tech:"Low", content:"Low", portal:"Low", complexity:"Low", cost:"None", note:"Simple ranking → text. Cheapest thing to ship."},
+    star:{tech:"Med", content:"High", portal:"Med", complexity:"Med", cost:"Low (AI to structure/tighten stories)", note:"AI helps quantify; template does the rest."},
+    nonneg:{tech:"Low", content:"Med", portal:"Low", complexity:"Med", cost:"Low", note:"Each option must map to an output consequence — that's the content work."},
+    resume_ai:{tech:"Low", content:"Med", portal:"Low", complexity:"Low", cost:"Med (per-generation AI tokens)", note:"A good prompt + their resume text. Token cost scales with usage."},
+    resume_review:{tech:"Med", content:"Med", portal:"Med", complexity:"Med", cost:"Low–Med", note:"Parseability checks are rules-based; keyword read is light AI."},
+    li_optimizer:{tech:"Low", content:"Med", portal:"Low", complexity:"Low", cost:"Low", note:"Headline + keyword suggestions from role."},
+    li_profile:{tech:"Med", content:"High", portal:"Med", complexity:"Med", cost:"Low", note:"Full-profile module = more content than build."},
+    elevator:{tech:"Low", content:"Low", portal:"Low", complexity:"Low", cost:"Low", note:"Template + light AI. Easy win."},
+    mock_ai:{tech:"High", content:"High", portal:"High", complexity:"High", cost:"High (conversational AI, possibly voice)", note:"Real-time back-and-forth is the expensive path. Consider async first."},
+    company_prep:{tech:"Med", content:"High", portal:"Med", complexity:"High", cost:"Med (research + AI)", note:"Insider knowledge (bar-raiser etc.) is the moat — and the hard part to source."},
+    stories_bank:{tech:"Low", content:"Med", portal:"Med", complexity:"Low", cost:"Low", note:"Output artifact from the STAR work."},
+    job_tracker:{tech:"High", content:"Low", portal:"High", complexity:"High", cost:"Low", note:"A real app feature — CRUD, state, accounts. Biggest pure-build item."},
+    target_list:{tech:"Med", content:"Med", portal:"Med", complexity:"Med", cost:"Med (job data / scraping)", note:"Depends on where the company/role data comes from."},
+    referrals:{tech:"Low", content:"Low", portal:"Med", complexity:"High", cost:"None (human)", note:"Complexity is operational/trust, not technical. Human layer."},
+    outreach:{tech:"Low", content:"Med", portal:"Low", complexity:"Low", cost:"Low", note:"Templates + light AI personalization."},
+    video_guides:{tech:"Low", content:"High", portal:"Med", complexity:"Med", cost:"None (production time)", note:"Cost is your time to produce, not tokens."},
+    live_intake:{tech:"Low", content:"Low", portal:"Med", complexity:"High", cost:"None (founder hours)", note:"Sells hours — the thing you wanted to avoid at scale. Premium anchor only."},
+    coach:{tech:"Low", content:"Low", portal:"Med", complexity:"High", cost:"Rev-share w/ coach", note:"Ops-heavy: vetting, matching, quality control."},
+    checkins:{tech:"Med", content:"Med", portal:"Med", complexity:"Med", cost:"Low–Med", note:"Avatar/nudges. Trust risk flagged earlier — keep light."},
+    community:{tech:"Med", content:"Low", portal:"Med", complexity:"Med", cost:"Low (platform fee)", note:"Could ride on an existing platform (School/Circle) to cut build."},
+    biz_resources:{tech:"Low", content:"Low", portal:"Low", complexity:"Low", cost:"None", note:"Capture-only in pilot — link out to resources."},
+    whatsapp:{tech:"Low", content:"Low", portal:"Low", complexity:"Low", cost:"None", note:"Just a group + moderation time. Trivial to start."},
+    monthly_zoom:{tech:"Low", content:"Low", portal:"Low", complexity:"Med", cost:"None (founder hours)", note:"Recurring founder time — cheap to run, doesn't scale infinitely."},
+    paid_community:{tech:"Med", content:"Med", portal:"Med", complexity:"Med", cost:"Platform fee", note:"School.com-style. Platform does most of the build."},
+    avatar_content:{tech:"High", content:"High", portal:"Low", complexity:"High", cost:"Med (avatar tooling)", note:"Marketing use only per earlier caution. Not core UX."},
+    title_translation:{tech:"Low", content:"Med", portal:"Low", complexity:"Med", cost:"Low (AI + role data)", note:"High-value, low-awareness. 'Delivery Manager = 500 jobs' problem."},
+    fit_score:{tech:"Med", content:"Med", portal:"Med", complexity:"High", cost:"Med (market data)", note:"Only as good as the market data behind it. Data sourcing is the risk."},
+    board_guide:{tech:"Low", content:"Med", portal:"Low", complexity:"Low", cost:"None", note:"Curated guide — niche/visa boards. Content, not build."},
+    search_strategy:{tech:"Low", content:"Med", portal:"Low", complexity:"Low", cost:"Low", note:"Volume-vs-quality playbook driven by their answers."},
+    ats_template:{tech:"Low", content:"Low", portal:"Low", complexity:"Low", cost:"None", note:"The lead magnet. A file. Zero marginal cost."},
+    canva_ats:{tech:"Low", content:"Low", portal:"Low", complexity:"Low", cost:"Low", note:"Big quick win — most don't know Canva resumes don't parse."},
+    cover_letter:{tech:"Low", content:"Low", portal:"Low", complexity:"Low", cost:"Med (per-gen tokens)", note:"AI-assisted, role-tailored. Token cost scales."},
+    jd_match:{tech:"Med", content:"Med", portal:"Med", complexity:"Med", cost:"Low–Med", note:"Overlaps with the new Match-Rate offering — decide if they merge."},
+    career_report:{tech:"Med", content:"High", portal:"Med", complexity:"High", cost:"Med (AI generation)", note:"The core MVP deliverable. Where most of the output logic lives."},
+    salary_check:{tech:"Med", content:"Med", portal:"Med", complexity:"High", cost:"Med (salary data)", note:"Needs a real salary data source to be credible."},
+    gap_analysis:{tech:"Low", content:"High", portal:"Low", complexity:"Med", cost:"Low", note:"Derives from experience + target. Content-heavy."},
+    roadmap:{tech:"Low", content:"High", portal:"Low", complexity:"Med", cost:"Low", note:"The prioritized plan. The 'now I have a plan' payoff."},
+    salary_negotiation:{tech:"Low", content:"Med", portal:"Low", complexity:"Low", cost:"Low", note:"Scripts + benchmarks. Guide-style."},
+    company_research:{tech:"Low", content:"Med", portal:"Low", complexity:"Med", cost:"Med (research/AI)", note:"Per-company; could use Perplexity-style research."},
+    ai_bundle:{tech:"High", content:"Low", portal:"High", complexity:"High", cost:"High (enterprise tokens across vendors)", note:"Business-model item — token arbitrage across OpenAI/Claude/Perplexity. Real infra."},
+    referral_reward:{tech:"Med", content:"Low", portal:"Med", complexity:"Med", cost:"Reward payouts", note:"Growth mechanism, not a feature. Needs tracking + payout logic."},
+    interview_muscle:{tech:"High", content:"High", portal:"High", complexity:"High", cost:"High (long-transcript AI analysis)", note:"DRAFT: needs a defined scoring rubric (we design the agent together). Inputs: transcript + resume + JD. Analysis of long transcripts = higher token cost. Paid/Premium. Frame around 'interviewing is a muscle.'"},
+    jd_match_rate:{tech:"Med", content:"Med", portal:"Med", complexity:"Med", cost:"Low–Med (AI per scan)", note:"DRAFT: Jobscan-style. Parse resume + JD → match %, hard/soft/searchability breakdown, missing keywords. Paid. Possibly merges with 'JD Keyword Matcher'."},
+    stories4:{tech:"Med", content:"High", portal:"Med", complexity:"Med", cost:"Low (light AI prompts)", note:"DRAFT: Guided form + AI polish. Your STAR IP as a tool. Part of Interview Mastery bundle."},
+    q_predictor:{tech:"Med", content:"Med", portal:"Med", complexity:"Med", cost:"Med (AI per JD)", note:"DRAFT: Parse JD → predicted questions + story mapping. Bundle item."},
+    interviewer_brief:{tech:"Med", content:"Low", portal:"Med", complexity:"Med", cost:"Med (research/AI)", note:"DRAFT: Person + company research. Could use Perplexity-style search. Bundle item."},
+    bullet_rewriter:{tech:"Low", content:"Med", portal:"Low", complexity:"Low", cost:"Med (per-generation tokens)", note:"DRAFT: The highest-frequency tip. Cheap, universal, instant 'aha'. Content tip attaches below it."},
+    leadership_bullets:{tech:"Low", content:"Med", portal:"Low", complexity:"Low", cost:"Low–Med", note:"DRAFT: Likely a MODE of the Bullet Rewriter, not a separate build."},
+    role_narrower:{tech:"Low", content:"Med", portal:"Med", complexity:"Med", cost:"Low", note:"DRAFT: 10-variable selector → narrowed target profile. You flagged this as central."},
+    roadmap_12wk:{tech:"Med", content:"High", portal:"Med", complexity:"Med", cost:"Low", note:"DRAFT: Could become the spine of the paid plan. High content, moderate build."},
+    interview_rate_dx:{tech:"Low", content:"Med", portal:"Med", complexity:"Low", cost:"Low", note:"DRAFT: Simple diagnostic logic on tracked numbers. Honest + differentiated."},
+    li_summary_gen:{tech:"Low", content:"Low", portal:"Low", complexity:"Low", cost:"Med (per-gen tokens)", note:"DRAFT: JD keywords → summary + headlines. Extends LinkedIn Profile Module."},
+    recruiter_view:{tech:"Low", content:"Med", portal:"Low", complexity:"Low", cost:"None", note:"DRAFT: Checklist tool. Very cheap. Extends LinkedIn Header Optimizer."},
+    nego_script_gen:{tech:"Low", content:"Med", portal:"Low", complexity:"Low", cost:"Low–Med", note:"DRAFT: Situation → script. Content-heavy, light build. Pairs with Salary Reality Check."},
+    hm_outreach:{tech:"Low", content:"Med", portal:"Low", complexity:"Low", cost:"Low–Med", note:"DRAFT: Extends Networking Outreach Scripts toward hiring managers specifically."},
+    email_system:{tech:"Med", content:"Low", portal:"Med", complexity:"Low", cost:"None", note:"DRAFT: Setup guide + light tracking. Overlaps Job Tracking Dashboard — decide if merge."},
+    plan_30_60_90:{tech:"Med", content:"High", portal:"Med", complexity:"Med", cost:"Low", note:"DRAFT: PHASE 2. Post-offer retention hook, parked per your call."}
+  },
+
+  /* per-offering comments for Michelle discussions */
+  /* ===== CATEGORY META — descriptions for the bundle-style group headers ===== */
+  categoryMeta: {
+    "Frameworks":{emoji:"🧭", desc:"The proprietary IP — the models and filters that make the read feel expert, not generic."},
+    "Resume & Profile":{emoji:"📄", desc:"Everything that makes the person legible to recruiters and machines — resume, LinkedIn, keywords."},
+    "Interview Prep":{emoji:"🎤", desc:"Turning interviewing into a trainable muscle — stories, prediction, research, practice, scoring."},
+    "Targeting & Networking":{emoji:"🎯", desc:"Who to go after and how to reach a human — target lists, outreach, referrals."},
+    "Guidance & Human":{emoji:"🤝", desc:"The human layer and the plan — community, coaching, roadmaps, check-ins."},
+    "Entrepreneur":{emoji:"🚀", desc:"The 'work for myself' path — capture-only in the pilot, light resources for now."},
+    "Find & Seek":{emoji:"🔍", desc:"Finding the right roles — title translation, fit scoring, the hidden job market."},
+    "Assessment":{emoji:"📊", desc:"The honest read — the report, the diagnostics, the gaps, the sequenced plan."},
+    "Post-Offer [Phase 2]":{emoji:"📈", desc:"After the offer — negotiation, first 90 days, managing up. Parked for Phase 2."}
+  },
+
+  offerComments: {},
+
+  /* ===== BUNDLES — grouped offerings sold as one module ===== */
+  bundles: [
+    {id:"interview_mastery", name:"Interview Mastery", emoji:"🎤", tier:null,
+     desc:"The complete interview module — build your stories, predict the questions, research your interviewer, practice, and get scored. Owns the interview-prep vertical.",
+     includes:["stories4","q_predictor","interviewer_brief","interview_muscle","mock_ai"]}
+  ],
+
+  /* ===== CONTENT STUDIO — tips grouped by bucket, each linked to the tool it attaches to =====
+     use: "in-product tip" (shows inside a tool) OR "content piece" (publish). attachesTo = offering id or null. */
+  contentBuckets: [
+    {id:"interview", name:"Interview Answers & Questions", emoji:"🎤", tips:[
+      {t:"The 4 core stories: most successful, biggest lesson, toughest stakeholder, passion project.", attachesTo:"stories4", use:"in-product tip"},
+      {t:"STAR method: Situation · Task · Action · Result — the result is always how you were the hero.", attachesTo:"stories4", use:"in-product tip"},
+      {t:"PSCI format: Problem · Solution · your Contribution · Impact.", attachesTo:"stories4", use:"in-product tip"},
+      {t:"'Why should we hire you?' → ME formula (Motivation + Evidence) or WASP (Work, Abilities, Skills, Personality).", attachesTo:"q_predictor", use:"in-product tip"},
+      {t:"'Why do you want to work here?' → reframe to what YOU can do for THEM, not the reverse.", attachesTo:"q_predictor", use:"in-product tip"},
+      {t:"The Questions-to-Ask bank (~20): '90-day success?', 'one problem this role solves?', 'develop & promote example?'.", attachesTo:"interviewer_brief", use:"content piece"},
+      {t:"Always ask who's interviewing you, then research them. Glassdoor app + Google '[company] interview questions filetype:pdf'.", attachesTo:"interviewer_brief", use:"in-product tip"},
+      {t:"Resume-gap answer: name it honestly, reframe as intentional, show you stayed sharp.", attachesTo:"interview_muscle", use:"content piece"}
+    ]},
+    {id:"salary", name:"Salary & Negotiation", emoji:"💰", tips:[
+      {t:"Never give your number first — you lose ~50% of leverage.", attachesTo:"nego_script_gen", use:"in-product tip"},
+      {t:"Never accept over the phone — be grateful, ask for it in writing (salary, PTO, start, benefits).", attachesTo:"nego_script_gen", use:"in-product tip"},
+      {t:"Counter beyond base: sign-on bonus, extra PTO, a WFH day, travel stipend.", attachesTo:"nego_script_gen", use:"in-product tip"},
+      {t:"On an $80–120k posting, companies usually budget lower-middle. Ask what separates an 80 from a 120 candidate.", attachesTo:"salary_check", use:"content piece"},
+      {t:"'Negotiate to test the employer' — how they handle it previews how they'll treat you.", attachesTo:"salary_check", use:"content piece"},
+      {t:"Cite: not negotiating can cost ~$750k over a career (CNBC); ~2/3 who ask get more (Forbes).", attachesTo:"salary_check", use:"content piece"}
+    ]},
+    {id:"resume", name:"Resume", emoji:"📄", tips:[
+      {t:"Every bullet = action verb + specific detail + measurable result. Your resume is what you did, how, and the outcome — not a task list.", attachesTo:"bullet_rewriter", use:"in-product tip"},
+      {t:"Don't let AI write the whole resume ('hot garbage') — use it for bullets, then read, edit, humanize.", attachesTo:"bullet_rewriter", use:"in-product tip"},
+      {t:"Managers: show 'good boss behaviors' — how you grew and developed people, not just 'supervised'.", attachesTo:"leadership_bullets", use:"in-product tip"},
+      {t:"Open with professional branding: two titles + a summary, not an objective or education.", attachesTo:"resume_ai", use:"content piece"},
+      {t:"Director/senior secret word: 'ownership' — signals accountability.", attachesTo:"resume_ai", use:"content piece"},
+      {t:"Recruiters spend ~6 seconds on a resume — structure for the skim.", attachesTo:"resume_review", use:"content piece"}
+    ]},
+    {id:"linkedin", name:"LinkedIn & Being Found", emoji:"🔗", tips:[
+      {t:"Recruiters filter by: spotlight (open-to-work), headline, location, skills, current company. Optimize all five.", attachesTo:"recruiter_view", use:"in-product tip"},
+      {t:"Turn on 'open to work → recruiters only' + an SEO headline formula to surface on page one.", attachesTo:"recruiter_view", use:"in-product tip"},
+      {t:"Reach hiring managers, not recruiters — use Connect + a custom note, not paid InMail.", attachesTo:"hm_outreach", use:"in-product tip"},
+      {t:"LinkedIn 'actively hiring' search surfaces the managers doing the hiring.", attachesTo:"hm_outreach", use:"content piece"}
+    ]},
+    {id:"strategy", name:"Search Strategy & Targeting", emoji:"🎯", tips:[
+      {t:"Two lists: 10 target companies (network + apply) and 100+ everything-else (apply if the title matches).", attachesTo:"role_narrower", use:"in-product tip"},
+      {t:"Every extra constraint (remote + 6-figures + tech…) exponentially shrinks your options. Apply 2–3, loosen as you go.", attachesTo:"role_narrower", use:"in-product tip"},
+      {t:"Application tiers: interns/returners > manager's network > referrals > cold apply. Cold apply is the bottom — move up via networking.", attachesTo:"interview_rate_dx", use:"content piece"},
+      {t:"Hidden job market: Google the role on a job site → Tools → Past week for fresh posts LinkedIn won't surface.", attachesTo:"roadmap_12wk", use:"content piece"},
+      {t:"Average search ≈ 5 months (~20 weeks). Set the expectation up front.", attachesTo:"roadmap_12wk", use:"in-product tip"}
+    ]},
+    {id:"emails", name:"Emails & Templates", emoji:"✉️", tips:[
+      {t:"Timeline-leverage email: signal you're in-process elsewhere and they're your priority.", attachesTo:"hm_outreach", use:"content piece"},
+      {t:"Thank-you after every interview — skipping it can cost the offer.", attachesTo:null, use:"content piece"},
+      {t:"Post-rejection reconnect: appreciation + confidence in their choice + an open door.", attachesTo:null, use:"content piece"},
+      {t:"Cover-letter closer (word-for-word): 'Thank you for reading my application, and I look forward to further communication.'", attachesTo:"cover_letter", use:"in-product tip"},
+      {t:"Graceful resignation: mixed emotions + gratitude + last day + offer to set the team up. Do it verbally first.", attachesTo:null, use:"content piece"}
+    ]},
+    {id:"postoffer", name:"Post-Offer & On-the-Job  [Phase 2]", emoji:"🚀", tips:[
+      {t:"30-60-90: intake → understanding → application. Most companies won't give you a plan — make your own.", attachesTo:"plan_30_60_90", use:"in-product tip"},
+      {t:"Manage up: weekly 1:1 (mutual) + a weekly email (accomplished / next / stuck-on).", attachesTo:"plan_30_60_90", use:"content piece"},
+      {t:"'Remember your employee number' — boundaries before you put your life on hold for a company.", attachesTo:null, use:"content piece"}
+    ]}
+  ],
+
+  /* assignments[outputSectionName] = [offeringId,...] — SUGGESTED starting map, editable */
+  assignments: {
+    "Headline":[],
+    "Where You Are":["trifecta"],
+    "Where to Start":["interview_muscle","video_guides"],
+    "How You're Positioned":["pyramid","li_optimizer"],
+    "What You'll Do About It":["resume_ai","outreach","jd_match_rate"],
+    "Strongest Asset":["star","stories_bank"],
+    "First Move Today":["resume_ai","elevator"],
+    "Your Plan (4 phases)":["target_list","job_tracker","mock_ai","video_guides"],
+    "Toolkit":["resume_review","li_profile","company_prep","referrals","coach","community","live_intake","checkins","nonneg","biz_resources"]
+  }
+};
+
+/* PUBLISHED copy — the Form renders from this. Machine edits go live only on Publish. */
+let PUBLISHED = JSON.parse(JSON.stringify(DATA));
+/* Persisted answers — survive tab switches until reset */
+let formAnswers = {fork:null};
+let formSubmitted = false;
+</script>
+<script>
+/* =========================================================================
+   RENDER ENGINE v2 — Machine (with comments + publish), Form (field types),
+   Output (live from answers). Answers persist across tabs.
+   ========================================================================= */
+let editing = false;
+let currentFilter = 'all';
+let dirty = false;               // unsaved machine edits pending publish
+const allQuestions = (src=DATA) => [src.fork, ...src.branches, ...src.shared, ...src.premium];
+
+/* =================== MACHINE VIEW =================== */
+function renderFilters(){
+  const wrap = document.getElementById('filters');
+  let html = `<button class="fbtn active b-all" data-p="all" onclick="filt('all',this)"><span class="fdot fd-all"></span>All personas</button>`;
+  DATA.personas.forEach(p=>{ html += `<button class="fbtn b-${p.color}" data-p="${p.id}" onclick="filt('${p.id}',this)"><span class="fdot fd-${p.color}"></span>${p.name}</button>`; });
+  wrap.innerHTML = html;
+}
+function optionHTML(q, opt, oi){
+  const tag = opt.tag ? `<span class="tagpill ${opt.tagClass||'tp-new'}">${opt.tag}</span>` : '';
+  const del = `<span class="del-opt" onclick="delOpt('${q.id}',${oi})" title="Delete option">✕</span>`;
+  return `<div class="opt"><span class="opt-txt editable opt-editable" contenteditable="false" data-q="${q.id}" data-oi="${oi}" data-field="optlabel">${opt.label}</span>${tag}${del}</div>`;
+}
+function commentBlock(qid, slot){
+  const c = (DATA.comments[qid]||{})[slot] || '';
+  const has = c.trim().length>0;
+  return `
+    <div class="qcomment">
+      <div class="qcomment-label">✎ note ${has?'<span class="comment-marker">saved</span>':''}</div>
+      <textarea class="qcomment-box" data-q="${qid}" data-slot="${slot}" placeholder="Add a note to revisit later…" oninput="saveComment(this)">${c}</textarea>
+      <div class="qcomment-saved ${has?'show':''}" id="csaved-${qid}-${slot}"><b>Note</b>${c}</div>
+    </div>`;
+}
+function cardHTML(q){
+  const dots = q.personas ? `<span class="qcard-dots">${q.personas.map(pid=>{const p=DATA.personas.find(x=>x.id===pid);return `<span class="pdot pd-${p.color}"></span>`}).join('')}</span>` : '';
+  const opts = q.options.map((o,i)=>optionHTML(q,o,i)).join('');
+  const addBtn = `<div class="add-opt" onclick="addOpt('${q.id}')">+ add option</div>`;
+  const drives = q.drives.map(d=>{const fp=d.fp?`<span class="fp ${d.fpClass||'fp-free'}">${d.fp}</span>`:'';return `<div class="drives-item">${d.text}${fp}</div>`;}).join('');
+  const iso = q.isolates ? `<div class="isolates">ISOLATES: ${q.isolates}</div>` : '';
+  const personaAttr = q.personas ? q.personas.join(' ') : 'all';
+  const cc = DATA.comments[q.id]||{};
+  const marker = (cc.why||cc.output) ? `<span class="comment-marker">✎ note</span>` : '';
+  return `
+  <div class="qcard" data-personas="${personaAttr}" data-qid="${q.id}">
+    <div class="qcard-head">
+      <span class="qcard-tag ${q.tagClass}">${q.tag}</span>${dots}
+      <span class="qcard-title editable" contenteditable="false" data-q="${q.id}" data-field="title">${q.title}</span>
+      ${marker}<span class="qcard-step">${q.step}</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qcol">
+        <div class="qcol-label l-q"><span class="lnum">1</span>The Question <span style="opacity:.5;font-size:8px;margin-left:4px;">${fieldTypeLabel(q)}</span></div>
+        ${opts}${addBtn}
+      </div>
+      <div class="qcol">
+        <div class="qcol-label l-w"><span class="lnum">2</span>The Why</div>
+        <div class="why-text editable" contenteditable="false" data-q="${q.id}" data-field="why">${q.why}</div>
+        ${iso}
+        ${commentBlock(q.id,'why')}
+      </div>
+      <div class="qcol">
+        <div class="qcol-label l-o"><span class="lnum">3</span>The Output</div>
+        ${drives}
+        ${commentBlock(q.id,'output')}
+      </div>
+    </div>
+  </div>`;
+}
+function fieldTypeLabel(q){
+  const m={single:'single-select',composite:'multi-field',rank:'drag-rank',dials:'sliders',file:'upload'};
+  return m[q.fieldType]||'';
+}
+let openStages = null; // Set of open stage numbers; null = first-open default
+function renderMachine(){
+  const stages = [
+    {n:1, title:"The Fork — one question routes everything", sub:"Q1 · asked first", items:[DATA.fork]},
+    {n:2, title:"Branch questions — specific to each persona", sub:"Q2–Q3 · two per persona", items:DATA.branches},
+    {n:3, title:"Shared questions — everyone answers these", sub:"asked of all 5 personas", items:DATA.shared},
+    {n:4, title:"Premium — the second, paid questionnaire", sub:"only after they continue with us", items:DATA.premium}
+  ];
+  if(openStages===null){ openStages = new Set([1]); } // first stage open only
+  let html = '';
+  stages.forEach(s=>{
+    const open = openStages.has(s.n);
+    let body = '';
+    if(s.n===1){
+      body += cardHTML(s.items[0]);
+      body += `<div class="openq"><b>Open — the intake approach (3 options to test)</b><ul>
+        <li>Option 1: self-select persona up front (shown above)</li>
+        <li>Option 2: ask generic questions first, then assign the persona</li>
+        <li>Option 3: hybrid — questions first, mid-flow "we think you're here" confirm, then continue</li></ul></div>`;
+    } else { s.items.forEach(q=>{ body += cardHTML(q); }); }
+    html += `<div class="mstage ${open?'open':''}">
+      <div class="mstage-head" onclick="toggleStage(${s.n})">
+        <span class="grp-arrow">▸</span>
+        <span class="stage-num">${s.n}</span>
+        <span class="stage-title">${s.title}</span>
+        <span class="stage-sub">${s.sub}</span>
+      </div>
+      <div class="mstage-body">${body}</div>
+    </div>`;
+  });
+  // output sections group (collapsible too)
+  const outOpen = openStages.has(5);
+  let outBody = `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">`;
+  DATA.outputs.forEach(o=>{const cls=o.fp==='PAID'||o.fp==='MIXED'?'fp-paid':'fp-free';outBody += `<div class="qcard" style="margin:0;"><div class="qcard-head"><span class="qcard-title" style="font-size:14px;">${o.name}</span><span class="fp ${cls}">${o.fp}</span></div><div style="padding:12px 16px;font-size:12px;color:var(--ink-soft);">Fed by: ${o.fed}</div></div>`;});
+  outBody += `</div>`;
+  html += `<div class="mstage ${outOpen?'open':''}">
+    <div class="mstage-head" onclick="toggleStage(5)">
+      <span class="grp-arrow">▸</span><span class="stage-num">✓</span>
+      <span class="stage-title">The output sections — the other end</span>
+      <span class="stage-sub">what every question feeds</span>
+    </div>
+    <div class="mstage-body">${outBody}</div>
+  </div>`;
+  document.getElementById('machineBody').innerHTML = html;
+  applyFilter();
+  if(editing) reEnableEdit();
+}
+function toggleStage(n){
+  if(openStages.has(n)) openStages.delete(n); else openStages.add(n);
+  renderMachine();
+}
+function filt(p, btn){ currentFilter=p; document.querySelectorAll('#filters .fbtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); applyFilter(); }
+function applyFilter(){
+  document.querySelectorAll('#machineBody .qcard[data-personas]').forEach(card=>{
+    const ps=card.getAttribute('data-personas'); const show=(currentFilter==='all')||ps==='all'||ps.split(' ').includes(currentFilter);
+    card.classList.toggle('dim', !show);
+  });
+}
+
+/* =================== COMMENTS =================== */
+function saveComment(el){
+  const qid=el.dataset.q, slot=el.dataset.slot;
+  if(!DATA.comments[qid]) DATA.comments[qid]={};
+  DATA.comments[qid][slot]=el.value;
+  const saved=document.getElementById(`csaved-${qid}-${slot}`);
+  if(saved){ saved.innerHTML=`<b>Note</b>${el.value}`; saved.classList.toggle('show', el.value.trim().length>0); }
+  markDirty();
+}
+
+/* =================== EDIT + PUBLISH =================== */
+function toggleEdit(){
+  editing=!editing;
+  document.body.classList.toggle('editing', editing);
+  const t=document.getElementById('editToggle');
+  t.classList.toggle('on', editing);
+  t.textContent = editing ? '✓ Done editing' : '✎ Edit content';
+  document.getElementById('saveNote').textContent = editing ? 'Editing — publish to push changes to the Form' : '';
+  reEnableEdit();
+}
+function reEnableEdit(){
+  document.querySelectorAll('.editable').forEach(el=>{ el.setAttribute('contenteditable', editing?'true':'false'); if(editing) el.onblur=()=>saveEdit(el); });
+}
+function saveEdit(el){
+  const qid=el.dataset.q, field=el.dataset.field;
+  const q=allQuestions().find(x=>x.id===qid); if(!q) return;
+  if(field==='title') q.title=el.textContent;
+  else if(field==='why') q.why=el.innerHTML;
+  else if(field==='optlabel') q.options[+el.dataset.oi].label=el.textContent;
+  markDirty();
+}
+function addOpt(qid){ const q=allQuestions().find(x=>x.id===qid); q.options.push({label:'New option',tag:'NEW',tagClass:'tp-new'}); markDirty(); renderMachine(); }
+function delOpt(qid,oi){ const q=allQuestions().find(x=>x.id===qid); q.options.splice(oi,1); markDirty(); renderMachine(); }
+function markDirty(){ dirty=true; updatePublishBar(); }
+function updatePublishBar(){
+  const st=document.getElementById('pubStatus'), btn=document.getElementById('pubBtn');
+  if(!st) return;
+  if(dirty){ st.textContent='● Unpublished changes'; st.classList.add('dirty'); btn.disabled=false; }
+  else { st.textContent='✓ Published — Form is in sync'; st.classList.remove('dirty'); btn.disabled=true; }
+}
+function publish(){
+  PUBLISHED = JSON.parse(JSON.stringify(DATA));
+  dirty=false; updatePublishBar();
+  const st=document.getElementById('pubStatus'); st.textContent='✓ Published! Form updated'; 
+  setTimeout(updatePublishBar, 1600);
+}
+
+/* =================== FORM VIEW (renders from PUBLISHED) =================== */
+let formStep = 0;
+function buildFormScreens(){
+  const screens=[{type:'welcome'}];
+  screens.push({type:'q', q:PUBLISHED.fork});
+  if(formAnswers.fork!=null){
+    const pid=resolvePersona();
+    PUBLISHED.branches.filter(b=>b.personas.includes(pid)).forEach(b=>screens.push({type:'q',q:b}));
+    PUBLISHED.shared.forEach(s=>screens.push({type:'q',q:s}));
+    screens.push({type:'done'});
+  } else { const projected=2+PUBLISHED.shared.length; for(let i=0;i<projected;i++) screens.push({type:'placeholder'}); }
+  return screens;
+}
+function resolvePersona(){
+  if(formAnswers.fork==null) return null;
+  let pid=PUBLISHED.fork.options[formAnswers.fork].routesTo;
+  if((pid==='scoutp'||pid==='scouta') && formAnswers.scout_q2!=null){
+    const r=PUBLISHED.branches.find(b=>b.id==='scout_q2').options[formAnswers.scout_q2].routesTo; if(r) pid=r;
+  }
+  return pid;
+}
+function renderForm(){
+  const stage=document.getElementById('formStage');
+  const screens=buildFormScreens(); const total=screens.length;
+  if(formStep>=total) formStep=total-1;
+  const screen=screens[formStep];
+  let inner='';
+  if(screen.type==='welcome'){
+    inner=`<div class="form-glass form-welcome">
+      <div class="form-brand"><span class="brand-dot"></span>[The Platform]</div>
+      <div class="form-wtag">The tools, the strategy, and the confidence to find your next job.</div>
+      <div class="form-wtitle">Let's find <em>your</em> next move.</div>
+      <div class="form-wlede">A few quick questions. At the end, you'll get a customized read on where you stand — and the clarity to move forward.</div>
+      <button class="form-wcta" onclick="formNext()">Begin →</button>
+    </div>`;
+  } else if(screen.type==='done'){
+    inner=`<div class="form-glass form-welcome">
+      <div class="form-eyebrow" style="margin-bottom:14px;">All set</div>
+      <div class="form-wtitle" style="font-size:30px;">Your read is <em>ready</em>.</div>
+      <div class="form-wlede">We've built your personalized diagnosis from your answers.</div>
+      <button class="form-wcta" onclick="submitForm()">See my results →</button>
+      <div style="margin-top:16px;"><button class="form-btn form-btn-back" onclick="formBack()">← Back</button></div>
+    </div>`;
+  } else {
+    inner=renderQuestionScreen(screen.q, formStep, total);
+  }
+  stage.innerHTML=inner;
+  // wire up any dials/rank after injection
+  if(screen.type==='q') postRender(screen.q);
+}
+function renderQuestionScreen(q, step, total){
+  const premiumBadge = q.stage===4 ? `<div class="form-note-badge">Premium — second questionnaire</div>` : '';
+  let body='';
+  if(q.fieldType==='single') body=renderSingle(q);
+  else if(q.fieldType==='composite') body=renderComposite(q);
+  else if(q.fieldType==='rank') body=renderRank(q);
+  else if(q.fieldType==='dials') body=renderDials(q);
+  else if(q.fieldType==='file') body=renderFile(q);
+  const canNext = isAnswered(q);
+  return `<div class="form-glass">
+    <div class="form-brandbar"><div class="form-brand"><span class="brand-dot"></span>[The Platform]</div><div class="form-stepind">Step ${step} of ${total-2}</div></div>
+    <div class="form-progress">${Array.from({length:total-2},(_, i)=>`<div class="form-pstep ${i<step?'done':''}"></div>`).join('')}</div>
+    ${premiumBadge}
+    <div class="form-eyebrow">${q.tag}</div>
+    <div class="form-q">${q.title}</div>
+    ${q.lede?`<div class="form-lede">${q.lede}</div>`:''}
+    ${body}
+    <div class="form-actions">
+      <button class="form-btn form-btn-back" onclick="formBack()" ${step<=1?'style="visibility:hidden"':''}>← Back</button>
+      <button class="form-btn form-btn-primary" onclick="formNext()" ${canNext?'':'disabled'}>Continue →</button>
+    </div>
+  </div>`;
+}
+/* --- field renderers --- */
+function renderSingle(q){
+  const opts=q.options.filter(o=>!o.open).map((o,i)=>{
+    const emoji=o.emoji?`<span class="oemoji">${o.emoji}</span>`:'';
+    const desc=o.desc?`<span class="odesc">${o.desc}</span>`:'';
+    const sel=formAnswers[q.id]===i?'sel':'';
+    return `<button class="form-opt ${sel}" onclick="pickSingle('${q.id}',${i})">${emoji}<span>${o.label}${desc}</span></button>`;
+  }).join('');
+  const openO=q.options.find(o=>o.open);
+  const openField=openO?`<input class="form-input" style="margin-top:10px;" placeholder="${openO.label}" value="${(formAnswers[q.id+'_open']||'')}" oninput="setOpen('${q.id}',this.value)">`:'';
+  return `<div class="form-opts">${opts}</div>${openField}`;
+}
+function renderComposite(q){
+  return q.fields.map(f=>{
+    const val=(formAnswers[q.id]||{})[f.key];
+    let ctrl='';
+    if(f.input==='chips'){
+      ctrl=`<div class="chip-row">${f.choices.map(c=>`<button class="chip ${val===c?'sel':''}" onclick="setField('${q.id}','${f.key}','${c}')">${c}</button>`).join('')}</div>`;
+    } else if(f.input==='number'){
+      ctrl=`<input type="number" class="num-input" min="0" placeholder="${f.placeholder||''}" value="${val!=null?val:''}" oninput="setFieldText('${q.id}','${f.key}',this.value)">`;
+    } else if(f.input==='text'){
+      ctrl=`<input class="form-input" placeholder="${f.placeholder||''}" value="${val||''}" oninput="setFieldText('${q.id}','${f.key}',this.value)">`;
+    } else if(f.input==='select'){
+      const opts=f.choices.map(c=>`<option ${val===c?'selected':''}>${c}</option>`).join('');
+      const otherOpen = (val===f.otherOpens);
+      const otherField = otherOpen?`<input class="form-input" style="margin-top:9px;" placeholder="Tell us your industry" value="${(formAnswers[q.id]||{})[f.key+'_other']||''}" oninput="setFieldText('${q.id}','${f.key}_other',this.value)">`:'';
+      ctrl=`<select class="fdrop" onchange="setField('${q.id}','${f.key}',this.value)"><option value="" ${!val?'selected':''} disabled>Choose one…</option>${opts}</select>${otherField}`;
+    }
+    return `<div class="field-group"><div class="field-label">${f.label}</div>${f.sub?`<div class="field-sub">${f.sub}</div>`:''}${ctrl}</div>`;
+  }).join('');
+}
+function renderRank(q){
+  const order = formAnswers[q.id] || q.rankItems.map(r=>r.key);
+  const items = order.map((k,idx)=>{ const it=q.rankItems.find(r=>r.key===k);
+    return `<div class="rank-item" draggable="true" data-key="${k}" data-q="${q.id}">
+      <span class="rank-num">${idx+1}</span>
+      <span class="rank-name">${it.name}<span class="rank-desc">${it.desc}</span></span>
+      <span class="rank-grip">⋮⋮</span></div>`;
+  }).join('');
+  return `<div class="rank-list" id="ranklist-${q.id}">${items}</div>`;
+}
+function renderDials(q){
+  return q.dials.map(d=>{
+    const val=(formAnswers[q.id]||{})[d.key] ?? d.def;
+    const pct=((val-d.min)/(d.max-d.min))*100;
+    const band=d.bands.find(b=>val<=b.max)?.label||'';
+    const disp = d.unit?`${val} ${d.unit}`:band;
+    return `<div class="dial-wrap">
+      <div class="dial-top"><span class="dial-q">${d.q}</span><span class="dial-val" id="dialval-${q.id}-${d.key}">${disp}</span></div>
+      <input type="range" class="dial" min="${d.min}" max="${d.max}" value="${val}" style="--pct:${pct}%"
+        oninput="setDial('${q.id}','${d.key}',this.value,this)">
+      <div class="dial-scale"><span>${d.lowLabel}</span><span>${d.highLabel}</span></div>
+    </div>`;
+  }).join('');
+}
+function renderFile(q){
+  const chosen=formAnswers[q.id];
+  return `<div class="file-drop" onclick="document.getElementById('cvfile').click()">
+      <div class="fd-icon">📄</div>
+      <div class="fd-main">${chosen?chosen:'Click to upload your CV'}</div>
+      <div class="fd-sub">PDF or DOCX — or skip this step</div>
+    </div>
+    <input type="file" id="cvfile" style="display:none" accept=".pdf,.doc,.docx" onchange="setFile('${q.id}',this)">
+    ${chosen?`<div class="file-chosen">✓ ${chosen} attached</div>`:''}`;
+}
+/* --- answer setters (all persist in formAnswers, all update output live) --- */
+function pickSingle(qid,i){ formAnswers[qid]=i; renderForm(); liveOutput(); }
+function setOpen(qid,v){ formAnswers[qid+'_open']=v; liveOutput(); }
+/* text/number: update state only, no re-render (keeps focus). Enables Continue if needed. */
+function setFieldText(qid,key,v){ if(!formAnswers[qid])formAnswers[qid]={}; formAnswers[qid][key]=v; refreshContinue(qid); liveOutput(); }
+/* chips/select: re-render so the visible selection + any 'other' field update */
+function setField(qid,key,v){ if(!formAnswers[qid])formAnswers[qid]={}; formAnswers[qid][key]=v; renderForm(); liveOutput(); }
+function refreshContinue(qid){
+  const q=allQuestions(PUBLISHED).find(x=>x.id===qid);
+  const btn=document.querySelector('#formStage .form-btn-primary');
+  if(btn && q) btn.disabled = !isAnswered(q);
+}
+function setDial(qid,key,v,el){
+  if(!formAnswers[qid])formAnswers[qid]={}; formAnswers[qid][key]=+v;
+  const q=PUBLISHED.shared.find(x=>x.id===qid); const d=q.dials.find(x=>x.key===key);
+  const pct=((v-d.min)/(d.max-d.min))*100; el.style.setProperty('--pct',pct+'%');
+  const band=d.bands.find(b=>v<=b.max)?.label||''; const disp=d.unit?`${v} ${d.unit}`:band;
+  document.getElementById(`dialval-${qid}-${key}`).textContent=disp; liveOutput();
+}
+function setFile(qid,input){ formAnswers[qid]=input.files[0]?input.files[0].name:null; renderForm(); }
+function isAnswered(q){
+  if(q.fieldType==='single') return formAnswers[q.id]!=null || (q.options.some(o=>o.open)&&(formAnswers[q.id+'_open']||'').length>0);
+  if(q.fieldType==='composite'){ const a=formAnswers[q.id]||{}; return q.fields.some(f=>a[f.key]!=null && a[f.key]!==''); }
+  if(q.fieldType==='rank') return true; // has a default order
+  if(q.fieldType==='dials') return true; // has defaults
+  if(q.fieldType==='file') return true;  // optional
+  return true;
+}
+function formNext(){ formStep++; renderForm(); liveOutput(); }
+function formBack(){ if(formStep>0) formStep--; renderForm(); }
+function submitForm(){ formSubmitted=true; switchView('output', document.querySelector('[data-view="output"]')); }
+
+/* drag-drop wiring for rank */
+function postRender(q){
+  if(q.fieldType==='rank'){
+    const list=document.getElementById('ranklist-'+q.id); let dragEl=null;
+    list.querySelectorAll('.rank-item').forEach(item=>{
+      item.addEventListener('dragstart',()=>{dragEl=item;item.classList.add('dragging');});
+      item.addEventListener('dragend',()=>{item.classList.remove('dragging');list.querySelectorAll('.rank-item').forEach(x=>x.classList.remove('over'));commitRank(q.id,list);});
+      item.addEventListener('dragover',e=>{e.preventDefault();const after=afterEl(list,e.clientY);list.querySelectorAll('.rank-item').forEach(x=>x.classList.remove('over'));if(after)after.classList.add('over');if(after==null)list.appendChild(dragEl);else list.insertBefore(dragEl,after);});
+    });
+  }
+}
+function afterEl(list,y){ const els=[...list.querySelectorAll('.rank-item:not(.dragging)')];
+  return els.reduce((closest,child)=>{const box=child.getBoundingClientRect();const off=y-box.top-box.height/2;if(off<0&&off>closest.offset)return{offset:off,element:child};return closest;},{offset:-Infinity}).element;
+}
+function commitRank(qid,list){ formAnswers[qid]=[...list.querySelectorAll('.rank-item')].map(x=>x.dataset.key);
+  [...list.querySelectorAll('.rank-item')].forEach((x,i)=>x.querySelector('.rank-num').textContent=i+1); liveOutput();
+}
+
+/* =================== OUTPUT VIEW (live from answers) =================== */
+function liveOutput(){ if(document.getElementById('view-output').classList.contains('active')) renderOutput(); }function answerLabel(qid){ const q=allQuestions(PUBLISHED).find(x=>x.id===qid); if(!q||formAnswers[qid]==null) return null;
+  if(q.fieldType==='single') return q.options[formAnswers[qid]]?.label; return null; }
+function offeringsFor(secName){
+  const ids = DATA.assignments[secName] || [];
+  if(!ids.length) return '';
+  const chips = ids.map(oid=>{ const o=DATA.offerings.find(x=>x.id===oid); if(!o) return '';
+    const t=o.tier===null?'—':['Basic','Paid','Premium'][o.tier]; const c=o.tier===null?'#8a8fa8':['#bbf7d0','#ffd9a8','#e0c9f5'][o.tier];
+    return `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:5px 9px;border-radius:7px;background:rgba(255,255,255,0.08);border:1px solid ${c}55;color:${c};margin:3px 4px 0 0;">${o.name} <span style="font-family:var(--mono);font-size:8px;opacity:0.8;">${t}</span></span>`;
+  }).join('');
+  return `<div style="margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:6px;">You get</div>${chips}</div>`;
+}
+function renderOutput(){
+  const pid=resolvePersona();
+  const stage=document.getElementById('outStage');
+  if(!pid){ stage.innerHTML=`<div class="out-glass out-hero"><div class="out-headline">Your read will appear here.</div><div class="out-sub">Head to the <strong>Form</strong> tab and answer a few questions — this builds live from what you enter.</div></div>`; return; }
+  const persona=DATA.personas.find(p=>p.id===pid);
+  const a=formAnswers;
+  const exp=(a.experience||{}); const basics=(a.basics||{});
+  const industry=exp.industry===''?null:exp.industry; const role=exp.role; const years=exp.years;
+  const dials=(a.dials||{}); const conf=dials.confidence??50; const hours=dials.hours??10;
+  const confBand=conf<=33?'overwhelmed':conf<=66?'finding your footing':'confident';
+  const tri=a.trifecta||['learn','earn','stability']; const triTop=tri[0];
+  const dir=answerLabel('direction');
+  const reason=answerLabel('scout_q1');
+
+  const whereYou = `You're ${years?`about <strong>${years} years</strong> in`:'building experience'}${industry?`, in <strong>${industry}</strong>`:''}${role?`, most recently a <strong>${role}</strong>`:''}. As a <strong>${persona.name}</strong>, ${persona.state.toLowerCase()}.`;
+  const positioned = `${role?`The market may read "${role}" differently than you intend`:'Your positioning is the lever'} — ${dir?`with a direction of <em>${dir.replace(/—.*/,'').trim()}</em>, `:''}the gap is nameable, and it's fixable.`;
+  const doAbout = `Here's the bridge: ${confBand==='overwhelmed'?'we start small and steady, one move at a time':confBand==='confident'?'we move fast and aim high, since you\'re ready':'we build momentum with a couple of focused wins'}.`;
+  const asset = `Your top priority is <strong>${triTop.charAt(0).toUpperCase()+triTop.slice(1)}</strong> — we lead with that.`;
+  const firstMove = `${confBand==='overwhelmed'?'Gently: pick one company that excites you and learn three things about it today.':confBand==='confident'?'Go direct: reach out to one decision-maker at a target company today.':'One focused win: tighten your headline to match the role you want.'}`;
+
+  const laidOff = (pid==='wanderer'||pid==='sprinter'||pid==='marathoner');
+  const whereStart = laidOff
+    ? `First, a reframe: <strong>interviewing is a muscle</strong> — not a talent you either have or don't. Right now it's cold, and that's normal. You don't need the whole plan today; you need your first few reps. We'll start you with low-stakes practice and build from there.`
+    : `Since you're still employed, you have the rarest thing in a job search: <strong>time to train</strong>. Interviewing is a muscle — start doing light reps now, while there's no pressure, so you're warm when it counts.`;
+
+  const secText={
+    "Headline":`${persona.emoji} A ${confBand} start — here's your ${persona.short} read.`,
+    "Where You Are":whereYou,
+    "Where to Start":whereStart,
+    "How You're Positioned":positioned,
+    "What You'll Do About It":doAbout,
+    "Strongest Asset":asset,
+    "First Move Today":firstMove
+  };
+  const submittedBanner = formSubmitted?'':`<div class="out-hint" style="margin-bottom:14px;">⚡ Live preview — updates as you fill the Form. Submit the form to lock it in.</div>`;
+  stage.innerHTML=`
+    ${submittedBanner}
+    <div class="out-glass out-hero">
+      <div class="out-persona-tag">${persona.name} · ${persona.state}</div>
+      <div class="out-headline">${secText["Headline"]}</div>
+      <div class="out-sub">Built from your answers${role?` · ${role}`:''}${industry?` · ${industry}`:''}</div>
+    </div>
+    <div class="free-banner"><span></span>Your free read — the diagnosis</div>
+    ${DATA.outputs.filter(o=>o.fp!=='PAID'&&secText[o.name]).map(o=>`
+      <div class="out-glass out-block">
+        <div class="out-label">${o.name} ${o.fp==='FREE'?'<span class="free-pill">Free</span>':''}</div>
+        <div class="out-text">${secText[o.name]}</div>
+        ${offeringsFor(o.name)}
+      </div>`).join('')}
+    <div class="out-glass out-locked">
+      <div class="out-locked-head"><span style="font-size:20px;">🔒</span><span class="out-locked-title">Your ${persona.short} Plan</span><span class="paywall-label">Full plan</span></div>
+      <div class="out-text" style="margin-bottom:14px;">Your 4-phase path — sequenced for a ${persona.short}, calibrated to your <strong>${hours} hrs/week</strong>.</div>
+      <div class="blur">
+        <div class="phase"><div class="phase-num">1</div><div><div class="phase-t">Fix fast</div><div class="phase-d">Resume + LinkedIn in 48 hours</div></div></div>
+        <div class="phase"><div class="phase-num">2</div><div><div class="phase-t">Target</div><div class="phase-d">Lock highest-fit companies</div></div></div>
+        <div class="phase"><div class="phase-num">3</div><div><div class="phase-t">Engage</div><div class="phase-d">Reach a human at each</div></div></div>
+      </div>
+      <button class="unlock-cta">Unlock my full plan →</button>
+    </div>
+    <div class="out-hint">This preview fills each section from your actual answers. Change an answer in the Form and watch it update.</div>
+  `;
+}
+
+/* =================== VIEW SWITCHING (answers persist!) =================== */
+function switchView(v, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  if(v==='form'){ renderForm(); }      // does NOT reset formStep or answers
+  if(v==='output'){ renderOutput(); }
+  if(v==='offerings'){ renderOfferings(); }
+  if(v==='content'){ renderContent(); }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function exportData(){
+  const out={DATA, comments:DATA.comments};
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='intake_data.json'; a.click();
+}
+
+/* =================== OFFERINGS VIEW =================== */
+const TIER_META = [
+  {label:"Basic", cls:"tier-0"},
+  {label:"Paid", cls:"tier-1"},
+  {label:"Premium", cls:"tier-2"}
+];
+let draggedOffering = null;
+
+function renderOfferings(){
+  renderOfferPalette();
+  renderOfferSections();
+}
+let openGroups = null; // Set of open group ids; null = first-open default
+function renderOfferPalette(){
+  const wrap = document.getElementById('offerPalette');
+  const bundledIds = new Set(DATA.bundles.flatMap(b=>b.includes));
+  const cats = [...new Set(DATA.offerings.filter(o=>!bundledIds.has(o.id)).map(o=>o.cat))];
+  // build the ordered list of group ids: bundles first, then categories
+  const groupIds = [...DATA.bundles.map(b=>'bundle:'+b.id), ...cats.map(c=>'cat:'+c)];
+  if(openGroups===null){ openGroups = new Set([groupIds[0]]); } // first open only
+
+  let html = '';
+  // Bundles
+  DATA.bundles.forEach(bundle=>{
+    const gid = 'bundle:'+bundle.id;
+    const open = openGroups.has(gid);
+    const items = bundle.includes.map(id=>DATA.offerings.find(o=>o.id===id)).filter(Boolean);
+    const tierBadge = bundle.tier===null?'<span class="grp-tier tier-none">Set tier</span>':`<span class="grp-tier ${TIER_META[bundle.tier].cls}">${TIER_META[bundle.tier].label}</span>`;
+    html += `<div class="grp grp-bundle ${open?'open':''}">
+      <div class="grp-head" onclick="toggleGroup('${gid}')">
+        <span class="grp-arrow">▸</span>
+        <span class="grp-emoji">${bundle.emoji}</span>
+        <span class="grp-title">${bundle.name}</span>
+        <span class="grp-badge">BUNDLE · ${items.length} tools</span>
+        <span class="grp-count">${open?'':items.length+' cards'}</span>
+      </div>
+      <div class="grp-desc">${bundle.desc}</div>
+      <div class="grp-body">
+        <div class="bundle-summary-card" onclick="cycleTierBundle('${bundle.id}')" title="Set the bundle tier">
+          ${tierBadge}
+          <div class="bundle-sum-name">${bundle.name} — sold as one module</div>
+          <div class="bundle-sum-includes">${items.map(i=>`<span class="bundle-pill">${i.name}</span>`).join('')}</div>
+        </div>
+        <div class="offer-palette">${items.map(offerCardHTML).join('')}</div>
+      </div>
+    </div>`;
+  });
+  // Categories
+  cats.forEach(cat=>{
+    const gid = 'cat:'+cat;
+    const open = openGroups.has(gid);
+    const meta = DATA.categoryMeta[cat] || {emoji:"•", desc:""};
+    const items = DATA.offerings.filter(o=>o.cat===cat && !bundledIds.has(o.id));
+    html += `<div class="grp ${open?'open':''}">
+      <div class="grp-head" onclick="toggleGroup('${gid}')">
+        <span class="grp-arrow">▸</span>
+        <span class="grp-emoji">${meta.emoji}</span>
+        <span class="grp-title">${cat}</span>
+        <span class="grp-count">${items.length} tool${items.length===1?'':'s'}</span>
+      </div>
+      <div class="grp-desc">${meta.desc}</div>
+      <div class="grp-body"><div class="offer-palette">${items.map(offerCardHTML).join('')}</div></div>
+    </div>`;
+  });
+  wrap.innerHTML = html;
+}
+function toggleGroup(gid){
+  if(openGroups.has(gid)) openGroups.delete(gid); else openGroups.add(gid);
+  renderOfferPalette();
+}
+function sectionsForOffering(oid){
+  const secs = [];
+  Object.keys(DATA.assignments).forEach(sec=>{ if((DATA.assignments[sec]||[]).includes(oid)) secs.push(sec); });
+  return secs;
+}
+function assignStatusHTML(oid){
+  const secs = sectionsForOffering(oid);
+  if(secs.length===0){
+    return `<div class="oc-assign none"><span class="assign-dot"></span>No section assigned</div>`;
+  }
+  return `<div class="oc-assign yes"><span class="assign-dot"></span>Assigned to: ${secs.join(', ')}</div>`;
+}
+function offerCardHTML(o){
+  const tm = o.tier===null ? {label:"Set tier", cls:"tier-none"} : TIER_META[o.tier];
+  const hasComment = (DATA.offerComments[o.id]||'').trim().length>0;
+  const p2 = o.phase2 ? `<span class="phase2-tag">P2</span>` : '';
+  const longDesc = (o.desc||'').length > 95;
+  return `<div class="offer-card ${tm.cls}" draggable="true" data-oid="${o.id}"
+    ondragstart="offerDragStart(event,'${o.id}')" ondragend="offerDragEnd(event)">
+    <div class="oc-tierbar"><span class="oc-tier ${tm.cls}" onclick="event.stopPropagation();cycleTier('${o.id}')" title="Click to change tier">${tm.label}</span>${p2}</div>
+    <div class="oc-name" onclick="cycleTier('${o.id}')" title="Click to change tier">${o.name}</div>
+    <div class="oc-desc" id="desc-${o.id}">${o.desc}</div>
+    ${longDesc?`<span class="oc-seemore" onclick="event.stopPropagation();toggleDesc('${o.id}',this)">see more</span>`:''}
+    ${assignStatusHTML(o.id)}
+    <div class="oc-actions">
+      <span class="oc-icon" onclick="event.stopPropagation();toggleInfo('${o.id}')" title="Effort, complexity & cost">ⓘ</span>
+      <span class="oc-icon oc-comment-btn ${hasComment?'has':''}" onclick="event.stopPropagation();toggleOfferComment('${o.id}')" title="Add a note">✎${hasComment?'•':''}</span>
+    </div>
+    <div class="oc-info-panel" id="info-${o.id}">${infoPanelHTML(o.id)}</div>
+    <div class="oc-comment-panel" id="ocomment-${o.id}"><textarea class="oc-comment-box" placeholder="Note for the Michelle discussion…" oninput="saveOfferComment('${o.id}',this.value)">${DATA.offerComments[o.id]||''}</textarea></div>
+  </div>`;
+}
+function toggleDesc(oid, el){
+  const d = document.getElementById('desc-'+oid);
+  const expanded = d.classList.toggle('expanded');
+  el.textContent = expanded ? 'see less' : 'see more';
+}
+function renderOfferSections(){
+  const wrap = document.getElementById('offerSections');
+  wrap.className = 'offer-sections';
+  let html = '';
+  DATA.outputs.forEach(sec=>{
+    const fpCls = sec.fp==='PAID'||sec.fp==='MIXED'?'fp-paid':'fp-free';
+    const assigned = DATA.assignments[sec.name] || [];
+    const chips = assigned.map(oid=>{
+      const o = DATA.offerings.find(x=>x.id===oid); if(!o) return '';
+      const tm = o.tier===null ? {label:"—", cls:"tier-none"} : TIER_META[o.tier];
+      return `<span class="drop-chip ${tm.cls}" data-desc="${(o.desc||'').replace(/"/g,'&quot;')}">${o.name}<span class="dc-tip">${o.desc||''}</span><span class="dc-x" onclick="unassign('${sec.name}','${oid}')">✕</span></span>`;
+    }).join('');
+    html += `<div class="offer-section" data-sec="${sec.name}"
+      ondragover="offerDragOver(event,this)" ondragleave="this.classList.remove('dragover')"
+      ondrop="offerDrop(event,'${sec.name}',this)">
+      <div class="offer-section-head">
+        <span class="offer-section-name">${sec.name}</span>
+        <span class="offer-section-fp ${fpCls}">${sec.fp}</span>
+        <span class="offer-section-count">${assigned.length} offering${assigned.length===1?'':'s'}</span>
+      </div>
+      <div class="offer-drops">${chips}</div>
+    </div>`;
+  });
+  wrap.innerHTML = html;
+}
+function nextTier(t){
+  // cycle: Set tier (null) -> Basic (0) -> Paid (1) -> Premium (2) -> Set tier (null)
+  if(t===null) return 0;
+  if(t>=2) return null;
+  return t+1;
+}
+function cycleTier(oid){
+  const o = DATA.offerings.find(x=>x.id===oid);
+  o.tier = nextTier(o.tier);
+  renderOfferings();
+}
+function cycleTierBundle(bid){
+  const bnd = DATA.bundles.find(b=>b.id===bid);
+  bnd.tier = nextTier(bnd.tier);
+  renderOfferings();
+}
+/* ---------- CONTENT STUDIO ---------- */
+function renderContent(){
+  const wrap = document.getElementById('contentBody');
+  let html = '';
+  DATA.contentBuckets.forEach(bucket=>{
+    const tipCount = bucket.tips.length;
+    const inProduct = bucket.tips.filter(t=>t.use==='in-product tip').length;
+    html += `<div class="cs-bucket">
+      <div class="cs-bucket-head"><span class="cs-emoji">${bucket.emoji}</span><span class="cs-bucket-name">${bucket.name}</span>
+        <span class="cs-bucket-meta">${tipCount} tips · ${inProduct} in-product</span></div>
+      <div class="cs-tips">`;
+    bucket.tips.forEach((tip,i)=>{
+      const tool = tip.attachesTo ? DATA.offerings.find(o=>o.id===tip.attachesTo) : null;
+      const useCls = tip.use==='in-product tip'?'use-tip':'use-content';
+      const link = tool ? `<span class="cs-attach" title="Attaches to this tool">↳ ${tool.name}</span>` : `<span class="cs-attach cs-attach-none">↳ standalone</span>`;
+      html += `<div class="cs-tip">
+        <div class="cs-tip-top">
+          <span class="cs-use-badge ${useCls}" onclick="toggleTipUse('${bucket.id}',${i})" title="Click to switch use">${tip.use}</span>
+          ${link}
+        </div>
+        <div class="cs-tip-text">${tip.t}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  wrap.innerHTML = html;
+}
+function toggleTipUse(bucketId, i){
+  const bucket = DATA.contentBuckets.find(b=>b.id===bucketId);
+  const tip = bucket.tips[i];
+  tip.use = tip.use==='in-product tip' ? 'content piece' : 'in-product tip';
+  renderContent();
+}
+function exportContent(){
+  const out = DATA.contentBuckets.map(b=>({
+    bucket:b.name,
+    tips:b.tips.map(t=>{ const tool=t.attachesTo?DATA.offerings.find(o=>o.id===t.attachesTo):null;
+      return {tip:t.t, use:t.use, attachesTo:tool?tool.name:"(standalone)"}; })
+  }));
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='content_plan.json'; a.click();
+}
+function infoPanelHTML(oid){
+  const inf = DATA.offeringInfo[oid];
+  if(!inf) return `<div class="oc-info-empty">No estimate yet — add during the effort review.</div>`;
+  const row=(label,val)=>`<div class="oc-info-row"><span class="oc-info-k">${label}</span><span class="oc-info-v eff-${(val||'').toLowerCase().replace(/[^a-z]/g,'')}">${val}</span></div>`;
+  return `<div class="oc-info-draft">DRAFT estimate — for discussion</div>
+    ${row('Technical build', inf.tech)}
+    ${row('Content / detail', inf.content)}
+    ${row('Portal effort', inf.portal)}
+    ${row('Complexity', inf.complexity)}
+    ${row('API / token cost', inf.cost)}
+    <div class="oc-info-note">${inf.note}</div>`;
+}
+function toggleInfo(oid){
+  const p=document.getElementById('info-'+oid);
+  const open=p.classList.toggle('open');
+  // close comment panel if opening info
+  if(open){ const c=document.getElementById('ocomment-'+oid); if(c)c.classList.remove('open'); }
+}
+function toggleOfferComment(oid){
+  const p=document.getElementById('ocomment-'+oid);
+  const open=p.classList.toggle('open');
+  if(open){ const i=document.getElementById('info-'+oid); if(i)i.classList.remove('open'); p.querySelector('textarea').focus(); }
+}
+function saveOfferComment(oid,val){
+  DATA.offerComments[oid]=val;
+  // update the ✎ marker without full re-render (keep focus)
+  const card=document.querySelector(`.offer-card[data-oid="${oid}"] .oc-comment-btn`);
+  if(card){ card.classList.toggle('has', val.trim().length>0); card.innerHTML = '✎'+(val.trim().length>0?' •':''); }
+}
+function offerDragStart(e,oid){ draggedOffering=oid; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed='copy'; }
+function offerDragEnd(e){ e.currentTarget.classList.remove('dragging'); draggedOffering=null; document.querySelectorAll('.offer-section').forEach(s=>s.classList.remove('dragover')); }
+function offerDragOver(e,el){ e.preventDefault(); el.classList.add('dragover'); }
+function offerDrop(e,secName,el){
+  e.preventDefault(); el.classList.remove('dragover');
+  if(!draggedOffering) return;
+  if(!DATA.assignments[secName]) DATA.assignments[secName]=[];
+  if(!DATA.assignments[secName].includes(draggedOffering)) DATA.assignments[secName].push(draggedOffering);
+  const oid = draggedOffering;
+  renderOfferSections();
+  refreshCardStatus(oid);
+}
+function unassign(secName,oid){
+  DATA.assignments[secName] = (DATA.assignments[secName]||[]).filter(x=>x!==oid);
+  renderOfferSections();
+  refreshCardStatus(oid);
+}
+function refreshCardStatus(oid){
+  // update the status line on the palette card in place (keeps groups open + scroll)
+  const card = document.querySelector(`.offer-card[data-oid="${oid}"]`);
+  if(!card) return;
+  const old = card.querySelector('.oc-assign');
+  if(old){ const tmp=document.createElement('div'); tmp.innerHTML=assignStatusHTML(oid); old.replaceWith(tmp.firstElementChild); }
+}
+function exportOfferings(){
+  const map = {};
+  Object.keys(DATA.assignments).forEach(sec=>{
+    map[sec] = (DATA.assignments[sec]||[]).map(oid=>{
+      const o=DATA.offerings.find(x=>x.id===oid);
+      return {name:o.name, tier:o.tier===null?"UNSET":TIER_META[o.tier].label, cat:o.cat};
+    });
+  });
+  const out = {offerings:DATA.offerings.map(o=>({name:o.name,cat:o.cat,tier:o.tier===null?"UNSET":TIER_META[o.tier].label,desc:o.desc})), assignments:map};
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='offerings_map.json'; a.click();
+}
+
+/* =================== INIT =================== */
+renderFilters();
+renderMachine();
+updatePublishBar();
+</script>
+</body>
+</html>
