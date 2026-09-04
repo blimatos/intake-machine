@@ -499,6 +499,32 @@
   .sync-btn{font-family:var(--sans);font-size:11.5px;font-weight:600;padding:6px 12px;border-radius:9px;border:1.5px solid var(--rule);background:var(--paper);color:var(--ink-soft);cursor:pointer;transition:all .13s;white-space:nowrap;}
   .sync-btn:hover{border-color:var(--orange);color:var(--orange);}
   @media(max-width:820px){ .sync-status{display:none;} }
+  /* ---- checklist tab ---- */
+  .chk-progress{margin:0 0 26px;background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:18px 22px;}
+  .chk-prog-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+  .chk-prog-label{font-family:var(--mono);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);}
+  .chk-prog-count{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--free);}
+  .chk-prog-bar{height:11px;background:var(--rule-soft);border-radius:8px;overflow:hidden;}
+  .chk-prog-fill{height:100%;background:linear-gradient(90deg,var(--free),#3da878);border-radius:8px;transition:width .4s ease;width:0;}
+  .chk-prog-sub{margin-top:9px;font-size:12px;color:var(--ink-soft);}
+  .chk-legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:22px;}
+  .chk-legkey{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-soft);}
+  .chk-legdot{width:11px;height:11px;border-radius:50%;}
+  .ld-done{background:var(--free);} .ld-pending{background:#b8860b;} .ld-blocked{background:#b83a3a;} .ld-decision{background:var(--premium);}
+  .chk-section{margin-bottom:22px;}
+  .chk-section-head{font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:3px;}
+  .chk-section-sub{font-size:12px;color:var(--ink-faint);margin-bottom:12px;}
+  .chk-item{background:var(--paper);border:1px solid var(--rule);border-radius:12px;padding:13px 15px;margin-bottom:9px;display:flex;gap:13px;align-items:flex-start;}
+  .chk-item.chk-done{background:var(--free-soft);border-color:var(--free);}
+  .chk-box{width:25px;height:25px;border-radius:7px;border:2px solid var(--rule);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:white;transition:all .13s;margin-top:1px;}
+  .chk-box.chk-checked{background:var(--free);border-color:var(--free);}
+  .chk-box.chk-auto{cursor:default;}
+  .chk-item-body{flex:1;}
+  .chk-ask{font-weight:600;font-size:14px;margin-bottom:3px;}
+  .chk-delivered{font-size:12px;color:var(--ink-soft);line-height:1.45;}
+  .chk-src{font-family:var(--mono);font-size:8.5px;color:var(--ink-faint);letter-spacing:0.04em;margin-top:3px;}
+  .chk-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600;padding:3px 8px;border-radius:5px;white-space:nowrap;flex-shrink:0;margin-top:2px;color:white;}
+  .chk-tag-done{background:var(--free);} .chk-tag-pending{background:#b8860b;} .chk-tag-blocked{background:#b83a3a;} .chk-tag-decision{background:var(--premium);}
 </style>
 </head>
 <body>
@@ -512,6 +538,7 @@
       <button class="tab" data-view="output" onclick="switchView('output',this)"><span class="tnum">03</span> Output</button>
       <button class="tab" data-view="offerings" onclick="switchView('offerings',this)"><span class="tnum">04</span> Offerings</button>
       <button class="tab" data-view="content" onclick="switchView('content',this)"><span class="tnum">05</span> Content Studio</button>
+      <button class="tab" data-view="checklist" onclick="switchView('checklist',this)"><span class="tnum">06</span> Checklist</button>
     </div>
     <div class="topbar-right">
       <span class="sync-status" id="syncStatus"><span class="sync-dot"></span>Connecting…</span>
@@ -616,6 +643,29 @@
       <span class="cs-legend-item" style="margin-left:auto;"><button class="edit-toggle" onclick="exportContent()" style="display:inline-flex;">⬇ Export content plan</button></span>
     </div>
     <div id="contentBody"></div>
+  </div>
+</div>
+
+<!-- ===== CHECKLIST VIEW ===== -->
+<div class="view" id="view-checklist">
+  <div class="container">
+    <div class="vhead">
+      <div class="pre">V12 + V13 · Ask vs. Delivered</div>
+      <h1>Action <em>Checklist</em></h1>
+      <p class="sub">What we asked for across the last two sessions — and what's built. Check items off as we review together; it saves to the shared database.</p>
+    </div>
+    <div class="chk-progress">
+      <div class="chk-prog-top"><span class="chk-prog-label">Delivered &amp; shipped in this build</span><span class="chk-prog-count" id="chkCount">0 / 0</span></div>
+      <div class="chk-prog-bar"><div class="chk-prog-fill" id="chkFill"></div></div>
+      <div class="chk-prog-sub" id="chkSub"></div>
+    </div>
+    <div class="chk-legend">
+      <span class="chk-legkey"><span class="chk-legdot ld-done"></span>Done — shipped</span>
+      <span class="chk-legkey"><span class="chk-legdot ld-pending"></span>Pending — next build</span>
+      <span class="chk-legkey"><span class="chk-legdot ld-blocked"></span>Was blocked — now fixed</span>
+      <span class="chk-legkey"><span class="chk-legdot ld-decision"></span>Decision / needs a session</span>
+    </div>
+    <div id="checklistBody"></div>
   </div>
 </div>
 <script>
@@ -1036,6 +1086,44 @@ const DATA = {
   },
 
   /* per-offering comments for Michelle discussions */
+  /* ===== V12/V13 ACTION CHECKLIST ===== */
+  checklistChecked: {},
+  checklist: [
+    {sec:"Critical fixes (were blocking the workflow)", sub:"The bugs that had to be fixed before anything else", items:[
+      {ask:"Save & Publish must persist — edits should survive a refresh AND sync across both of us", delivered:"FIXED. Now saves to a shared Supabase database — Michelle sees your saves, you see hers. Verified live.", tag:"blocked", src:"V13 · bug #1", auto:true},
+      {ask:"'Other' option on the form — you couldn't continue after typing the write-in", delivered:"FIXED. 'Other' is selectable, opens the write-in, and counts as an answer so you advance.", tag:"blocked", src:"V13 · bug #2", auto:true}
+    ]},
+    {sec:"Questionnaire edits (per persona)", sub:"Wording, logic and options from the Aug 24 walkthrough", items:[
+      {ask:"Lead every form answer with the verb ('I want more growth')", delivered:"DONE. Scout 'why' answers lead with the verb.", tag:"done", src:"V13 §2.2", auto:true},
+      {ask:"'Do you manage people?' → Yes opens a number; No opens 'Do you want to manage people?'", delivered:"DONE. Conditional logic built and verified.", tag:"done", src:"V13 §2.3", auto:true},
+      {ask:"Remove 'be specific' from the role-title question — keep it generic", delivered:"DONE. The output reveals the market-name gap instead.", tag:"done", src:"V13 §2.3", auto:true},
+      {ask:"Direction question — allow multiple-select", delivered:"DONE. Multiple picks signal 'still exploring'.", tag:"done", src:"V13 §2.3", auto:true},
+      {ask:"Dials — 'I haven't started my search yet' checkbox that grays the confidence dial", delivered:"DONE. Checkbox first; grays the confidence dial when checked.", tag:"done", src:"V13 §2.3", auto:true},
+      {ask:"Sprinter 'what have you tried?' — add LinkedIn + 'using AI' (with write-in)", delivered:"DONE. Both added; 'using AI' opens a write-in.", tag:"done", src:"V13 §2.5", auto:true},
+      {ask:"Marathoner Q1 — multi-select 'select all you've done' + networking/LinkedIn/reconnecting/interviewing/other", delivered:"DONE. Multi-select with all new options.", tag:"done", src:"V13 §2.6", auto:true},
+      {ask:"Marathoner — if interviewing, capture the stage reached", delivered:"DONE. 'Interviewing' opens a stage question (recruiter/HM/peers/multiple).", tag:"done", src:"V13 §2.6", auto:true}
+    ]},
+    {sec:"UI improvements", sub:"Affordances that make the tool easier to work in", items:[
+      {ask:"Form — add a reset button to quickly clear and re-test", delivered:"DONE. '↺ reset' in the form header.", tag:"done", src:"V13 §7", auto:true},
+      {ask:"Machine — collapse/expand sections so you don't scroll endlessly", delivered:"DONE. Stages collapse; first open, rest collapsed.", tag:"done", src:"V13 §7", auto:true},
+      {ask:"Offering cards — fix overlap, uniform size, merged icon, assignment status, hover tooltips", delivered:"DONE. Uniform cards + 'assigned to' status + hover descriptions.", tag:"done", src:"V4 UI pass", auto:true},
+      {ask:"Shared cloud sync with a status indicator + 'Sync now' button", delivered:"DONE. Green dot = in sync; 'Sync now' pulls the other person's latest.", tag:"done", src:"this build", auto:true}
+    ]},
+    {sec:"Bigger builds — next", sub:"Real work that needs its own build cycle", items:[
+      {ask:"Build the 'five outputs side by side' tab for output refinement", delivered:"NEXT. The tool for refining output before assigning offerings.", tag:"pending", src:"V13 §5.2", auto:false},
+      {ask:"Refine the output copy/logic using all the Aug 24 context (before assigning offerings)", delivered:"NEXT. Agreed sequence: output first, then offerings.", tag:"pending", src:"V13 §5.1", auto:false},
+      {ask:"To-do list as the logged-in hero — each item links to a tool", delivered:"NEXT. The core of the real backend.", tag:"pending", src:"V13 §3", auto:false},
+      {ask:"Build the real backend with ~10 capabilities + login (pilot needs real value)", delivered:"NEXT. Target mid-September; ~a week once the 10 are chosen.", tag:"pending", src:"V12 §3", auto:false}
+    ]},
+    {sec:"Decisions & sessions", sub:"Not build items — things to decide together", items:[
+      {ask:"Pick the final name (Boulder/Bolder vs NavCareer)", delivered:"Sep 4 brand session. Boulder/Bolder front-runner; bolder.ai available.", tag:"decision", src:"V13 §8", auto:false},
+      {ask:"Choose the ~10 pilot capabilities", delivered:"After output is refined — the drag-and-drop picks the 10.", tag:"decision", src:"V12 §3", auto:false},
+      {ask:"Progress UI pattern (checklist vs. path vs. %) — A/B test", delivered:"Test in the UI phase; may vary by persona.", tag:"decision", src:"V13 §3.2", auto:false},
+      {ask:"Persona metaphor → crawl / walk / run / fly", delivered:"Direction agreed; final naming ties to brand (Sep 4).", tag:"decision", src:"V13 §8.5", auto:false},
+      {ask:"Marathoner cutoff: 3+ or 6+ months (open since V8)", delivered:"Still open — decide in a session.", tag:"decision", src:"carried", auto:false}
+    ]}
+  ],
+
   /* ===== CATEGORY META — descriptions for the bundle-style group headers ===== */
   categoryMeta: {
     "Frameworks":{emoji:"🧭", desc:"The proprietary IP — the models and filters that make the read feel expert, not generic."},
@@ -1782,6 +1870,7 @@ function switchView(v, btn){
   if(v==='output'){ renderOutput(); }
   if(v==='offerings'){ renderOfferings(); }
   if(v==='content'){ renderContent(); }
+  if(v==='checklist'){ renderChecklist(); }
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function exportData(){
@@ -1969,7 +2058,49 @@ function toggleTipUse(bucketId, i){
   const bucket = DATA.contentBuckets.find(b=>b.id===bucketId);
   const tip = bucket.tips[i];
   tip.use = tip.use==='in-product tip' ? 'content piece' : 'in-product tip';
-  renderContent();
+  renderContent(); persistState();
+}
+/* ---------- CHECKLIST ---------- */
+function chkKey(gi,ii){ return gi+'::'+ii; }
+function renderChecklist(){
+  if(!DATA.checklistChecked) DATA.checklistChecked={};
+  const wrap=document.getElementById('checklistBody');
+  let html='';
+  (DATA.checklist||[]).forEach((group,gi)=>{
+    html+=`<div class="chk-section"><div class="chk-section-head">${group.sec}</div><div class="chk-section-sub">${group.sub}</div>`;
+    group.items.forEach((it,ii)=>{
+      const k=chkKey(gi,ii);
+      const checked = it.auto || DATA.checklistChecked[k];
+      const tagLabel = it.tag==='blocked'?'fixed':it.tag;
+      html+=`<div class="chk-item ${checked?'chk-done':''}">
+        <div class="chk-box ${it.auto?'chk-auto chk-checked':(DATA.checklistChecked[k]?'chk-checked':'')}" ${it.auto?'':`onclick="toggleCheck(${gi},${ii})"`}>${checked?'✓':''}</div>
+        <div class="chk-item-body">
+          <div class="chk-ask">${it.ask}</div>
+          <div class="chk-delivered">${it.delivered}</div>
+          <div class="chk-src">${it.src}</div>
+        </div>
+        <span class="chk-tag chk-tag-${it.tag}">${tagLabel}</span>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  wrap.innerHTML=html;
+  updateChkProgress();
+}
+function toggleCheck(gi,ii){
+  if(!DATA.checklistChecked) DATA.checklistChecked={};
+  const k=chkKey(gi,ii);
+  DATA.checklistChecked[k]=!DATA.checklistChecked[k];
+  renderChecklist(); persistState();
+}
+function updateChkProgress(){
+  let total=0,done=0;
+  (DATA.checklist||[]).forEach((g,gi)=>g.items.forEach((it,ii)=>{ total++; if(it.auto||DATA.checklistChecked[chkKey(gi,ii)]) done++; }));
+  const c=document.getElementById('chkCount'), f=document.getElementById('chkFill'), s=document.getElementById('chkSub');
+  if(c) c.textContent=`${done} / ${total}`;
+  if(f) f.style.width=(total?done/total*100:0)+'%';
+  const autoDone=(DATA.checklist||[]).reduce((n,g)=>n+g.items.filter(it=>it.auto).length,0);
+  if(s) s.textContent=`${autoDone} items built & verified in this version. ${total-autoDone} remaining are next-build or decisions.`;
 }
 function exportContent(){
   const out = DATA.contentBuckets.map(b=>({
