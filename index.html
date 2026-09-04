@@ -480,6 +480,25 @@
   .dc-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ink);}
   .drop-chip:hover .dc-tip{opacity:1;visibility:visible;}
 
+  /* ---- v13 form additions ---- */
+  .form-topright{display:flex;align-items:center;gap:12px;}
+  .form-reset{font-family:var(--mono);font-size:9.5px;letter-spacing:0.04em;color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:7px;padding:4px 9px;cursor:pointer;transition:all .13s;}
+  .form-reset:hover{color:#ffd9a8;border-color:rgba(255,217,168,0.5);}
+  .multi-check{font-size:16px;margin-right:4px;opacity:0.85;}
+  .dial-check{display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,0.9);cursor:pointer;margin-bottom:22px;padding:12px 14px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.14);border-radius:12px;user-select:none;}
+  .dial-check:hover{border-color:rgba(255,217,168,0.4);}
+  .dial-check-box{width:22px;height:22px;border-radius:6px;border:1.5px solid rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;font-size:14px;color:#1c1530;background:transparent;flex-shrink:0;}
+  .dial-check-box.on{background:#ffd9a8;border-color:#ffd9a8;}
+  .dial-wrap.grayed{opacity:0.4;pointer-events:none;}
+  .dial-wrap.grayed .dial-q::after{content:' — skipped';font-style:italic;font-size:11px;color:rgba(255,255,255,0.5);}
+  /* ---- cloud sync status ---- */
+  .sync-status{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:0.03em;color:var(--ink-faint);white-space:nowrap;}
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--ink-faint);flex-shrink:0;transition:background .2s;}
+  .sync-dot.on{background:#2e7d5b;box-shadow:0 0 6px #2e7d5b;}
+  .sync-dot.off{background:#b8860b;box-shadow:0 0 6px #b8860b;}
+  .sync-btn{font-family:var(--sans);font-size:11.5px;font-weight:600;padding:6px 12px;border-radius:9px;border:1.5px solid var(--rule);background:var(--paper);color:var(--ink-soft);cursor:pointer;transition:all .13s;white-space:nowrap;}
+  .sync-btn:hover{border-color:var(--orange);color:var(--orange);}
+  @media(max-width:820px){ .sync-status{display:none;} }
 </style>
 </head>
 <body>
@@ -495,6 +514,8 @@
       <button class="tab" data-view="content" onclick="switchView('content',this)"><span class="tnum">05</span> Content Studio</button>
     </div>
     <div class="topbar-right">
+      <span class="sync-status" id="syncStatus"><span class="sync-dot"></span>Connecting…</span>
+      <button class="sync-btn" onclick="syncNow()" title="Pull the latest from Michelle">⟳ Sync now</button>
       <span class="save-note" id="saveNote"></span>
       <button class="edit-toggle" id="editToggle" onclick="toggleEdit()">✎ Edit content</button>
     </div>
@@ -538,6 +559,7 @@
 
     <div style="text-align:center;margin-top:28px;">
       <button class="edit-toggle" onclick="exportData()" style="display:inline-flex;">⬇ Export data (save your version)</button>
+      <button class="edit-toggle" onclick="clearSaved()" style="display:inline-flex;margin-left:8px;">↺ Reset to defaults</button>
     </div>
   </div>
   <div class="publishbar">
@@ -639,11 +661,11 @@ const DATA = {
      why:"A Scout's <strong>reason</strong> for looking sets everything downstream — growth-seekers get stretch roles, pay-seekers get comp-calibrated targets. 'Bored' nests under growth.",
      isolates:"the motivation behind the search",
      options:[
-       {label:"More growth", tag:"KEEP", tagClass:"tp-keep"},
-       {label:"Bored / stagnated — no or limited career trajectory", tag:"NEW", tagClass:"tp-new"},
-       {label:"Ready for a change — too long in the same role/company", tag:"NEW", tagClass:"tp-new"},
-       {label:"Better pay", tag:"KEEP", tagClass:"tp-keep"},
-       {label:"Better environment — culture / colleagues / management", tag:"NEW SUB-COPY", tagClass:"tp-new"},
+       {label:"I want more growth", tag:"KEEP", tagClass:"tp-keep"},
+       {label:"I'm bored / stagnated — no or limited career trajectory", tag:"NEW", tagClass:"tp-new"},
+       {label:"I'm ready for a change — too long in the same role/company", tag:"NEW", tagClass:"tp-new"},
+       {label:"I want better pay", tag:"KEEP", tagClass:"tp-keep"},
+       {label:"I want a better environment — culture / colleagues / management", tag:"NEW SUB-COPY", tagClass:"tp-new"},
        {label:"Other", tag:"PILOT", tagClass:"tp-pilot", open:true}
      ],
      drives:[
@@ -687,14 +709,38 @@ const DATA = {
      title:"What have you already tried?",
      why:"So we don't tell them to do what they're already doing. Applying heavily with no response is a <strong>positioning fix</strong>, not a volume problem.",
      isolates:"what's already been tried → what to change",
-     options:[{label:"Just getting started"},{label:"Applying a lot"},{label:"Networking"}],
+     options:[
+       {label:"Just getting started"},
+       {label:"Applying a lot"},
+       {label:"Networking"},
+       {label:"Working on my LinkedIn", tag:"NEW", tagClass:"tp-new"},
+       {label:"Using AI in my search", tag:"NEW", tagClass:"tp-new", open:true}
+     ],
      drives:[{text:"<span class='osec'>How You're Positioned</span> — pinpoints the stretch.", fp:"FREE", fpClass:"fp-free"}]},
-    {id:"marathoner_q1", stage:2, personas:["marathoner"], tag:"Marathoner only", tagClass:"tag-persona", step:"Branch Q1", fieldType:"single",
-     title:"Roughly how much have you done?",
-     why:"Volume tells us whether it's a <strong>positioning problem or a targeting problem</strong>. High volume + no results almost always means positioning, not effort.",
-     isolates:"strategy problem vs. positioning problem",
-     options:[{label:"100+ applications"},{label:"A steady amount"},{label:"Fewer, targeted"}],
+    {id:"marathoner_q1", stage:2, personas:["marathoner"], tag:"Marathoner only", tagClass:"tag-persona", step:"Branch Q1", fieldType:"multi",
+     title:"Select everything you've done in your search so far",
+     why:"Volume + mix tells us whether it's a <strong>positioning problem or a targeting problem</strong>. High activity + no results almost always means positioning, not effort.",
+     isolates:"where the effort has gone → what to change",
+     options:[
+       {label:"Sent applications"},
+       {label:"Networking"},
+       {label:"Spent time on my LinkedIn"},
+       {label:"Reconnected with old colleagues"},
+       {label:"Started interviewing", tag:"NEW", tagClass:"tp-new"},
+       {label:"Other", tag:"PILOT", tagClass:"tp-pilot", open:true}
+     ],
      drives:[{text:"<span class='osec'>Where You Are</span> — the honest diagnosis.", fp:"FREE", fpClass:"fp-free"}]},
+    {id:"marathoner_q1b", stage:2, personas:["marathoner"], tag:"Marathoner only", tagClass:"tag-persona", step:"Branch Q1b · if interviewing", fieldType:"single",
+     title:"How far have your interviews gone?",
+     why:"The <strong>stage reached</strong> isolates where momentum is lost — can't pass the screen is a positioning fix; can't close the final round is an interview-skills fix.",
+     isolates:"which interview stage is leaking",
+     options:[
+       {label:"Recruiter screening"},
+       {label:"Hiring manager round"},
+       {label:"Peer / panel round"},
+       {label:"Multiple / final rounds"}
+     ],
+     drives:[{text:"<span class='osec'>How You're Positioned</span> + which interview help to surface.", fp:"FREE", fpClass:"fp-free"}]},
     {id:"marathoner_q2", stage:2, personas:["marathoner"], tag:"Marathoner only", tagClass:"tag-persona", step:"Branch Q2", fieldType:"single",
      title:"Where do you feel stuck?",
      why:"Naming the gap is how we fix it. Each answer points at a different lever — keyword/filter fix, interview closing, or gentlest tone + confidence rebuild.",
@@ -711,13 +757,15 @@ const DATA = {
      fields:[
        {key:"roletype", label:"What role type are you after?", input:"chips", choices:["Full-time","Part-time","Contract","Temp"]},
        {key:"location", label:"Where are you based?", sub:"ZIP or city — we use it to read your local market", input:"text", placeholder:"e.g. 98101 or Seattle, WA"},
-       {key:"manage", label:"How many people do you manage?", sub:"0 is a perfectly good answer", input:"number", placeholder:"0"},
+       {key:"manages", label:"Do you manage people?", input:"chips", choices:["Yes","No"]},
+       {key:"managenum", label:"How many people do you manage?", sub:"", input:"number", placeholder:"0", showIf:{key:"manages",eq:"Yes"}},
+       {key:"managewant", label:"Do you want to manage people?", input:"chips", choices:["Yes","No"], showIf:{key:"manages",eq:"No"}},
        {key:"projsize", label:"Largest project or team you've led", sub:"Team size, budget, or scope — your words", input:"text", placeholder:"e.g. led a team of 8, $2M budget"}
      ],
      options:[
        {label:"Role type — full-time / part-time / contract / temp", tag:"NEW", tagClass:"tp-new"},
        {label:"Location — where you're based (zip)", tag:"NEW", tagClass:"tp-new"},
-       {label:"Do you want to manage people? → number field", tag:"NEW", tagClass:"tp-new"},
+       {label:"Do you manage people? → yes opens #, no opens 'want to?'", tag:"UPDATED", tagClass:"tp-new"},
        {label:"Project / team size → open field", tag:"NEW", tagClass:"tp-new"}
      ],
      drives:[
@@ -726,27 +774,28 @@ const DATA = {
      ]},
     {id:"experience", stage:3, tag:"Shared", tagClass:"tag-shared", step:"Step 5", fieldType:"composite",
      title:"Experience, industry & role",
-     why:"The <strong>highest-leverage shared question</strong> — feeds three output places. Role specificity matters: 'Delivery Manager' could be 500 jobs, so the write-in is essential.",
-     isolates:"seniority, specialist vs. agnostic tools, the role/market gap",
+     why:"The <strong>highest-leverage shared question</strong> — kept GENERIC on purpose. A generic self-described title lets the OUTPUT reveal the gap: 'that's not what the market is searching for.'",
+     isolates:"seniority, specialist vs. agnostic tools, the role/market-name gap",
      fields:[
        {key:"years", label:"Years of experience", input:"chips", choices:["1–5","5–10","10–15","15+"]},
        {key:"industry", label:"Industry", input:"select", choices:["Technology / Software","Consumer Goods (CPG)","Retail","Finance","Healthcare","Manufacturing","Media / Entertainment","Education","Other"], otherOpens:"Other"},
-       {key:"role", label:"Current or most recent role title", sub:"Be specific — it sharpens your targeting", input:"text", placeholder:"e.g. Senior Product Manager"}
+       {key:"role", label:"Current or most recent role title", input:"text", placeholder:"e.g. Product Manager"}
      ],
      options:[
        {label:"Years of experience — brackets (1–5 / 5–10 / 10–15 / 15+)"},
        {label:"Industry — dropdown + write-in for 'Other'", tag:"FIX", tagClass:"tp-new"},
-       {label:"Current/last role title — open field", tag:"FIX", tagClass:"tp-new"}
+       {label:"Role title — kept generic (removed 'be specific')", tag:"UPDATED", tagClass:"tp-new"}
      ],
      drives:[
        {text:"<span class='osec'>Where You Are</span> — experience + industry woven in.", fp:"FREE", fpClass:"fp-free"},
-       {text:"<span class='osec'>How You're Positioned</span> — the role/market read.", fp:"FREE", fpClass:"fp-free"},
+       {text:"<span class='osec'>How You're Positioned</span> — the role/market-name gap.", fp:"FREE", fpClass:"fp-free"},
        {text:"<span class='osec'>Toolkit</span> — specialist vs. agnostic.", fp:"MIXED", fpClass:"fp-paid"}
      ]},
-    {id:"direction", stage:3, tag:"Shared", tagClass:"tag-shared", step:"Step 6 · after a 'now, your future' signpost", fieldType:"single",
+    {id:"direction", stage:3, tag:"Shared", tagClass:"tag-shared", step:"Step 6 · after a 'now, your future' signpost", fieldType:"multi",
      title:"Direction — where you want to go",
-     why:"Direction shapes the whole positioning frame. The <strong>'real pivot' split</strong> matters: career switch we serve fully; a business idea we only capture (light resources, no package yet).",
-     isolates:"stay / adjacent / switch / entrepreneur / open",
+     lede:"Pick all that apply — being unsure is itself something we can help name.",
+     why:"Direction shapes the whole positioning frame. Now <strong>multi-select</strong> — picking several signals 'not sure yet', which the output can name. Business idea stays capture-only.",
+     isolates:"stay / adjacent / switch / entrepreneur / open (multi)",
      options:[
        {label:"Stay in my field"},
        {label:"An adjacent move"},
@@ -756,26 +805,27 @@ const DATA = {
      ],
      drives:[
        {text:"<span class='osec'>How You're Positioned</span> + <span class='osec'>First Move</span> (pivot note).", fp:"FREE", fpClass:"fp-free"},
-       {text:"Business idea → light resources + 'we don't do this deeply yet.'", fp:"FREE", fpClass:"fp-free"}
+       {text:"Multiple picks → 'you're still exploring' framing. Business idea → light resources only.", fp:"FREE", fpClass:"fp-free"}
      ]},
     {id:"trifecta", stage:3, tag:"Shared", tagClass:"tag-shared", step:"Step 7", fieldType:"rank",
      title:"What matters most right now?",
      lede:"Drag to rank these — your #1 shapes what we point you toward first.",
-     why:"A lightweight read on priorities via ranking. Flagged as maybe <strong>too simple</strong> — the deeper version is the premium Non-Negotiables question.",
-     isolates:"priority order (free, lightweight)",
+     why:"Complements the Direction question and reveals <strong>risk tolerance</strong> — e.g. stability → big-tech; earn-over-stability → startup / banking bonuses. Shapes the TYPE of company to target.",
+     isolates:"priority order + risk profile → company type",
      rankItems:[
        {key:"learn", name:"Learn", desc:"Growth, new skills, a bigger challenge"},
        {key:"earn", name:"Earn", desc:"Compensation, title, financial upside"},
        {key:"stability", name:"Stability", desc:"Security, balance, a steady footing"}
      ],
      options:[{label:"Rank: Learn / Earn / Stability (drag to order)"}],
-     drives:[{text:"<span class='osec'>Strongest Asset</span> — the #1 + #2 ranked values combine.", fp:"FREE", fpClass:"fp-free"}]},
+     drives:[{text:"<span class='osec'>Strongest Asset</span> + the company TYPE to target (risk profile).", fp:"FREE", fpClass:"fp-free"}]},
     {id:"dials", stage:3, tag:"Shared", tagClass:"tag-shared", step:"Step 8", fieldType:"dials",
      title:"Two quick dials",
      why:"Confidence sets the <strong>tone</strong> (gentle vs. direct); hours set the <strong>pace</strong> of the plan. Both feed the output directly.",
      isolates:"emotional tone + realistic pace",
+     notStartedCheckbox:true,
      dials:[
-       {key:"confidence", q:"How are you feeling in your search?", min:0, max:100, def:50, lowLabel:"Overwhelmed", highLabel:"Confident",
+       {key:"confidence", q:"How are you feeling in your search?", min:0, max:100, def:50, lowLabel:"Overwhelmed", highLabel:"Confident", graysIfNotStarted:true,
         bands:[{max:33,label:"Overwhelmed"},{max:66,label:"Finding my footing"},{max:100,label:"Confident"}]},
        {key:"hours", q:"How many hours a week can you invest?", min:1, max:40, def:10, lowLabel:"1 hr", highLabel:"40+ hrs", unit:"hrs/wk",
         bands:[{max:5,label:"Light"},{max:15,label:"Steady"},{max:40,label:"Intense"}]}
@@ -1247,7 +1297,7 @@ function saveEdit(el){
 }
 function addOpt(qid){ const q=allQuestions().find(x=>x.id===qid); q.options.push({label:'New option',tag:'NEW',tagClass:'tp-new'}); markDirty(); renderMachine(); }
 function delOpt(qid,oi){ const q=allQuestions().find(x=>x.id===qid); q.options.splice(oi,1); markDirty(); renderMachine(); }
-function markDirty(){ dirty=true; updatePublishBar(); }
+function markDirty(){ dirty=true; updatePublishBar(); persistState(); }
 function updatePublishBar(){
   const st=document.getElementById('pubStatus'), btn=document.getElementById('pubBtn');
   if(!st) return;
@@ -1257,8 +1307,150 @@ function updatePublishBar(){
 function publish(){
   PUBLISHED = JSON.parse(JSON.stringify(DATA));
   dirty=false; updatePublishBar();
-  const st=document.getElementById('pubStatus'); st.textContent='✓ Published! Form updated'; 
+  persistState();
+  const st=document.getElementById('pubStatus'); st.textContent='✓ Published & saved! Form updated';
   setTimeout(updatePublishBar, 1600);
+}
+
+/* =================== PERSISTENCE — Supabase shared sync + local fallback =================== */
+const STORE_KEY = 'intakeMachine.v13';
+const SUPA_URL = 'https://zwscajqkqjwywqwylhnp.supabase.co';
+const SUPA_KEY = 'sb_publishable_NnHD4SNB-l9Naoa1SOomnw_SVo4fFKb';
+const SUPA_ROW = 'main';
+const SUPA_ENDPOINT = SUPA_URL + '/rest/v1/app_state';
+const SUPA_HEADERS = { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Content-Type': 'application/json' };
+
+let cloudSaveTimer = null;
+let lastCloudSavedAt = 0;
+let cloudOnline = true;
+
+function currentStateObj(){
+  return { data: DATA, published: PUBLISHED, answers: formAnswers,
+           openGroups: openGroups?[...openGroups]:null, savedAt: Date.now() };
+}
+
+/* Save locally immediately, and schedule a debounced cloud write. */
+function persistState(){
+  const state = currentStateObj();
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  const note=document.getElementById('saveNote'); if(note && editing) note.textContent='Saved locally · syncing…';
+  scheduleCloudSave();
+}
+function scheduleCloudSave(){
+  if(cloudSaveTimer) clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(cloudSave, 900); // wait for edits to settle
+}
+async function cloudSave(){
+  const state = currentStateObj();
+  try{
+    const res = await fetch(SUPA_ENDPOINT + '?id=eq.' + SUPA_ROW, {
+      method:'PATCH', headers:{...SUPA_HEADERS, 'Prefer':'return=minimal'},
+      body: JSON.stringify({ data: state, updated_at: new Date().toISOString() })
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    lastCloudSavedAt = state.savedAt; cloudOnline = true;
+    updateSyncStatus('Saved & synced', true);
+  }catch(e){
+    cloudOnline = false;
+    updateSyncStatus('Saved locally (cloud offline — will retry on next save)', false);
+  }
+}
+
+/* Pull the shared state from the cloud. Returns the state object or null. */
+async function cloudLoad(){
+  try{
+    const res = await fetch(SUPA_ENDPOINT + '?id=eq.' + SUPA_ROW + '&select=data,updated_at', { headers: SUPA_HEADERS });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const rows = await res.json();
+    cloudOnline = true;
+    if(rows && rows[0] && rows[0].data && rows[0].data.data){ return rows[0].data; }
+    return null;
+  }catch(e){ cloudOnline = false; return null; }
+}
+
+function applyState(s){
+  if(!s) return;
+  if(s.data){ Object.keys(s.data).forEach(k=>{ DATA[k]=s.data[k]; }); }
+  if(s.published){ PUBLISHED = s.published; } else { PUBLISHED = JSON.parse(JSON.stringify(DATA)); }
+  if(s.answers){ formAnswers = s.answers; }
+  if(s.openGroups){ openGroups = new Set(s.openGroups); }
+}
+
+/* Local restore (instant, used as fallback before cloud responds). */
+function restoreLocal(){
+  try{
+    const raw=localStorage.getItem(STORE_KEY); if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+
+/* Init: show local instantly, then pull cloud and adopt it if newer. */
+async function initState(){
+  const local = restoreLocal();
+  if(local){ applyState(local); }        // instant paint from local
+  const cloud = await cloudLoad();
+  if(cloud){
+    const localAt = local ? (local.savedAt||0) : 0;
+    const cloudAt = cloud.savedAt || 0;
+    // adopt cloud if it's newer, or if we had nothing local
+    if(!local || cloudAt >= localAt){
+      applyState(cloud);
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(cloud)); }catch(e){}
+      lastCloudSavedAt = cloudAt;
+    } else {
+      // local is newer (we edited offline) — push it up
+      scheduleCloudSave();
+    }
+    rerenderAll();
+    updateSyncStatus(cloudOnline?'In sync':'Offline', cloudOnline);
+  } else {
+    updateSyncStatus(cloudOnline?'In sync':'Cloud offline — working locally', cloudOnline);
+  }
+}
+
+/* Manual "Sync now" — pull the other person's latest. */
+async function syncNow(){
+  updateSyncStatus('Syncing…', true);
+  const cloud = await cloudLoad();
+  if(cloud){
+    applyState(cloud);
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(cloud)); }catch(e){}
+    lastCloudSavedAt = cloud.savedAt||0;
+    rerenderAll();
+    updateSyncStatus('Pulled latest ✓', true);
+    setTimeout(()=>updateSyncStatus('In sync', true), 1500);
+  } else {
+    updateSyncStatus('Cloud unreachable — try again', false);
+  }
+}
+
+function rerenderAll(){
+  try{ renderFilters(); renderMachine(); renderOfferings();
+    if(document.getElementById('view-form').classList.contains('active')) renderForm();
+    if(document.getElementById('view-output').classList.contains('active')) renderOutput();
+    if(document.getElementById('view-content').classList.contains('active')) renderContent();
+    updatePublishBar();
+  }catch(e){}
+}
+
+function updateSyncStatus(msg, ok){
+  const el=document.getElementById('syncStatus'); if(!el) return;
+  const when = lastCloudSavedAt ? new Date(lastCloudSavedAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '';
+  el.innerHTML = `<span class="sync-dot ${ok?'on':'off'}"></span>${msg}${when?` · last change ${when}`:''}`;
+}
+
+/* Reset: clears the SHARED state back to defaults (affects everyone). */
+async function clearSaved(){
+  if(!confirm('Reset the SHARED app back to built-in defaults? This affects everyone — Michelle will see the reset too on her next sync.')) return;
+  try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+  // write an empty state to the cloud so it resets for both
+  try{
+    await fetch(SUPA_ENDPOINT + '?id=eq.' + SUPA_ROW, {
+      method:'PATCH', headers:{...SUPA_HEADERS,'Prefer':'return=minimal'},
+      body: JSON.stringify({ data: {}, updated_at: new Date().toISOString() })
+    });
+  }catch(e){}
+  location.reload();
 }
 
 /* =================== FORM VIEW (renders from PUBLISHED) =================== */
@@ -1315,13 +1507,14 @@ function renderQuestionScreen(q, step, total){
   const premiumBadge = q.stage===4 ? `<div class="form-note-badge">Premium — second questionnaire</div>` : '';
   let body='';
   if(q.fieldType==='single') body=renderSingle(q);
+  else if(q.fieldType==='multi') body=renderMulti(q);
   else if(q.fieldType==='composite') body=renderComposite(q);
   else if(q.fieldType==='rank') body=renderRank(q);
   else if(q.fieldType==='dials') body=renderDials(q);
   else if(q.fieldType==='file') body=renderFile(q);
   const canNext = isAnswered(q);
   return `<div class="form-glass">
-    <div class="form-brandbar"><div class="form-brand"><span class="brand-dot"></span>[The Platform]</div><div class="form-stepind">Step ${step} of ${total-2}</div></div>
+    <div class="form-brandbar"><div class="form-brand"><span class="brand-dot"></span>[The Platform]</div><div class="form-topright"><button class="form-reset" onclick="resetForm()" title="Reset the form">↺ reset</button><span class="form-stepind">Step ${step} of ${total-2}</span></div></div>
     <div class="form-progress">${Array.from({length:total-2},(_, i)=>`<div class="form-pstep ${i<step?'done':''}"></div>`).join('')}</div>
     ${premiumBadge}
     <div class="form-eyebrow">${q.tag}</div>
@@ -1342,12 +1535,41 @@ function renderSingle(q){
     const sel=formAnswers[q.id]===i?'sel':'';
     return `<button class="form-opt ${sel}" onclick="pickSingle('${q.id}',${i})">${emoji}<span>${o.label}${desc}</span></button>`;
   }).join('');
-  const openO=q.options.find(o=>o.open);
-  const openField=openO?`<input class="form-input" style="margin-top:10px;" placeholder="${openO.label}" value="${(formAnswers[q.id+'_open']||'')}" oninput="setOpen('${q.id}',this.value)">`:'';
-  return `<div class="form-opts">${opts}</div>${openField}`;
+  // FIX: "Other" is now a selectable option (with .open) that reveals a write-in when picked, and counts as answered.
+  const openIdx = q.options.findIndex(o=>o.open);
+  let openBlock='';
+  if(openIdx>=0){
+    const openO=q.options[openIdx];
+    const sel=formAnswers[q.id]===openIdx?'sel':'';
+    openBlock=`<button class="form-opt ${sel}" onclick="pickSingle('${q.id}',${openIdx})"><span>${openO.label} ✎</span></button>`;
+    if(formAnswers[q.id]===openIdx){
+      openBlock+=`<input class="form-input" style="margin-top:10px;" placeholder="Tell us more…" value="${(formAnswers[q.id+'_open']||'')}" oninput="setOpen('${q.id}',this.value)">`;
+    }
+  }
+  return `<div class="form-opts">${opts}${openBlock}</div>`;
+}
+function renderMulti(q){
+  const sel = formAnswers[q.id] || [];
+  const opts=q.options.filter(o=>!o.open).map((o,i)=>{
+    const on=sel.includes(i)?'sel':'';
+    return `<button class="form-opt ${on}" onclick="toggleMulti('${q.id}',${i})"><span class="multi-check">${sel.includes(i)?'☑':'☐'}</span><span>${o.label}</span></button>`;
+  }).join('');
+  const openIdx=q.options.findIndex(o=>o.open);
+  let openBlock='';
+  if(openIdx>=0){
+    const openO=q.options[openIdx];
+    const on=sel.includes(openIdx)?'sel':'';
+    openBlock=`<button class="form-opt ${on}" onclick="toggleMulti('${q.id}',${openIdx})"><span class="multi-check">${sel.includes(openIdx)?'☑':'☐'}</span><span>${openO.label} ✎</span></button>`;
+    if(sel.includes(openIdx)){
+      openBlock+=`<input class="form-input" style="margin-top:10px;" placeholder="Tell us more…" value="${(formAnswers[q.id+'_open']||'')}" oninput="setOpen('${q.id}',this.value)">`;
+    }
+  }
+  return `<div class="form-opts">${opts}${openBlock}</div>`;
 }
 function renderComposite(q){
   return q.fields.map(f=>{
+    // conditional: skip if showIf condition not met
+    if(f.showIf){ const dep=(formAnswers[q.id]||{})[f.showIf.key]; if(dep!==f.showIf.eq) return ''; }
     const val=(formAnswers[q.id]||{})[f.key];
     let ctrl='';
     if(f.input==='chips'){
@@ -1376,18 +1598,26 @@ function renderRank(q){
   return `<div class="rank-list" id="ranklist-${q.id}">${items}</div>`;
 }
 function renderDials(q){
-  return q.dials.map(d=>{
+  const notStarted = (formAnswers[q.id]||{})._notStarted === true;
+  const checkbox = q.notStartedCheckbox ? `
+    <label class="dial-check" onclick="toggleNotStarted('${q.id}')">
+      <span class="dial-check-box ${notStarted?'on':''}">${notStarted?'✓':''}</span>
+      I haven't started my search yet
+    </label>` : '';
+  const dialsHtml = q.dials.map(d=>{
+    const grayed = notStarted && d.graysIfNotStarted;
     const val=(formAnswers[q.id]||{})[d.key] ?? d.def;
     const pct=((val-d.min)/(d.max-d.min))*100;
     const band=d.bands.find(b=>val<=b.max)?.label||'';
-    const disp = d.unit?`${val} ${d.unit}`:band;
-    return `<div class="dial-wrap">
+    const disp = grayed ? '—' : (d.unit?`${val} ${d.unit}`:band);
+    return `<div class="dial-wrap ${grayed?'grayed':''}">
       <div class="dial-top"><span class="dial-q">${d.q}</span><span class="dial-val" id="dialval-${q.id}-${d.key}">${disp}</span></div>
-      <input type="range" class="dial" min="${d.min}" max="${d.max}" value="${val}" style="--pct:${pct}%"
+      <input type="range" class="dial" min="${d.min}" max="${d.max}" value="${val}" style="--pct:${pct}%" ${grayed?'disabled':''}
         oninput="setDial('${q.id}','${d.key}',this.value,this)">
       <div class="dial-scale"><span>${d.lowLabel}</span><span>${d.highLabel}</span></div>
     </div>`;
   }).join('');
+  return checkbox + dialsHtml;
 }
 function renderFile(q){
   const chosen=formAnswers[q.id];
@@ -1400,12 +1630,23 @@ function renderFile(q){
     ${chosen?`<div class="file-chosen">✓ ${chosen} attached</div>`:''}`;
 }
 /* --- answer setters (all persist in formAnswers, all update output live) --- */
-function pickSingle(qid,i){ formAnswers[qid]=i; renderForm(); liveOutput(); }
-function setOpen(qid,v){ formAnswers[qid+'_open']=v; liveOutput(); }
+function pickSingle(qid,i){ formAnswers[qid]=i; renderForm(); liveOutput(); persistState(); }
+function setOpen(qid,v){ formAnswers[qid+'_open']=v; liveOutput(); persistState(); }
+function toggleMulti(qid,i){
+  if(!Array.isArray(formAnswers[qid])) formAnswers[qid]=[];
+  const arr=formAnswers[qid]; const idx=arr.indexOf(i);
+  if(idx>=0) arr.splice(idx,1); else arr.push(i);
+  renderForm(); liveOutput(); persistState();
+}
+function toggleNotStarted(qid){
+  if(!formAnswers[qid])formAnswers[qid]={};
+  formAnswers[qid]._notStarted = !formAnswers[qid]._notStarted;
+  renderForm(); liveOutput(); persistState();
+}
 /* text/number: update state only, no re-render (keeps focus). Enables Continue if needed. */
-function setFieldText(qid,key,v){ if(!formAnswers[qid])formAnswers[qid]={}; formAnswers[qid][key]=v; refreshContinue(qid); liveOutput(); }
-/* chips/select: re-render so the visible selection + any 'other' field update */
-function setField(qid,key,v){ if(!formAnswers[qid])formAnswers[qid]={}; formAnswers[qid][key]=v; renderForm(); liveOutput(); }
+function setFieldText(qid,key,v){ if(!formAnswers[qid])formAnswers[qid]={}; formAnswers[qid][key]=v; refreshContinue(qid); liveOutput(); persistState(); }
+/* chips/select: re-render so the visible selection + any 'other' field / conditional update */
+function setField(qid,key,v){ if(!formAnswers[qid])formAnswers[qid]={}; formAnswers[qid][key]=v; renderForm(); liveOutput(); persistState(); }
 function refreshContinue(qid){
   const q=allQuestions(PUBLISHED).find(x=>x.id===qid);
   const btn=document.querySelector('#formStage .form-btn-primary');
@@ -1416,18 +1657,24 @@ function setDial(qid,key,v,el){
   const q=PUBLISHED.shared.find(x=>x.id===qid); const d=q.dials.find(x=>x.key===key);
   const pct=((v-d.min)/(d.max-d.min))*100; el.style.setProperty('--pct',pct+'%');
   const band=d.bands.find(b=>v<=b.max)?.label||''; const disp=d.unit?`${v} ${d.unit}`:band;
-  document.getElementById(`dialval-${qid}-${key}`).textContent=disp; liveOutput();
+  document.getElementById(`dialval-${qid}-${key}`).textContent=disp; liveOutput(); persistState();
 }
-function setFile(qid,input){ formAnswers[qid]=input.files[0]?input.files[0].name:null; renderForm(); }
+function setFile(qid,input){ formAnswers[qid]=input.files[0]?input.files[0].name:null; renderForm(); persistState(); }
+function resetForm(){
+  if(!confirm('Reset the form and clear all answers?')) return;
+  formAnswers={fork:null}; formStep=0; formSubmitted=false;
+  renderForm(); liveOutput(); persistState();
+}
 function isAnswered(q){
-  if(q.fieldType==='single') return formAnswers[q.id]!=null || (q.options.some(o=>o.open)&&(formAnswers[q.id+'_open']||'').length>0);
+  if(q.fieldType==='single') return formAnswers[q.id]!=null;
+  if(q.fieldType==='multi') return Array.isArray(formAnswers[q.id]) && formAnswers[q.id].length>0;
   if(q.fieldType==='composite'){ const a=formAnswers[q.id]||{}; return q.fields.some(f=>a[f.key]!=null && a[f.key]!==''); }
-  if(q.fieldType==='rank') return true; // has a default order
-  if(q.fieldType==='dials') return true; // has defaults
-  if(q.fieldType==='file') return true;  // optional
+  if(q.fieldType==='rank') return true;
+  if(q.fieldType==='dials') return true;
+  if(q.fieldType==='file') return true;
   return true;
 }
-function formNext(){ formStep++; renderForm(); liveOutput(); }
+function formNext(){ formStep++; renderForm(); liveOutput(); persistState(); }
 function formBack(){ if(formStep>0) formStep--; renderForm(); }
 function submitForm(){ formSubmitted=true; switchView('output', document.querySelector('[data-view="output"]')); }
 
@@ -1684,12 +1931,12 @@ function nextTier(t){
 function cycleTier(oid){
   const o = DATA.offerings.find(x=>x.id===oid);
   o.tier = nextTier(o.tier);
-  renderOfferings();
+  renderOfferings(); persistState();
 }
 function cycleTierBundle(bid){
   const bnd = DATA.bundles.find(b=>b.id===bid);
   bnd.tier = nextTier(bnd.tier);
-  renderOfferings();
+  renderOfferings(); persistState();
 }
 /* ---------- CONTENT STUDIO ---------- */
 function renderContent(){
@@ -1758,9 +2005,9 @@ function toggleOfferComment(oid){
 }
 function saveOfferComment(oid,val){
   DATA.offerComments[oid]=val;
-  // update the ✎ marker without full re-render (keep focus)
   const card=document.querySelector(`.offer-card[data-oid="${oid}"] .oc-comment-btn`);
   if(card){ card.classList.toggle('has', val.trim().length>0); card.innerHTML = '✎'+(val.trim().length>0?' •':''); }
+  persistState();
 }
 function offerDragStart(e,oid){ draggedOffering=oid; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed='copy'; }
 function offerDragEnd(e){ e.currentTarget.classList.remove('dragging'); draggedOffering=null; document.querySelectorAll('.offer-section').forEach(s=>s.classList.remove('dragover')); }
@@ -1773,11 +2020,13 @@ function offerDrop(e,secName,el){
   const oid = draggedOffering;
   renderOfferSections();
   refreshCardStatus(oid);
+  persistState();
 }
 function unassign(secName,oid){
   DATA.assignments[secName] = (DATA.assignments[secName]||[]).filter(x=>x!==oid);
   renderOfferSections();
   refreshCardStatus(oid);
+  persistState();
 }
 function refreshCardStatus(oid){
   // update the status line on the palette card in place (keeps groups open + scroll)
@@ -1800,9 +2049,12 @@ function exportOfferings(){
 }
 
 /* =================== INIT =================== */
+/* Render immediately with built-in defaults, then pull shared state from cloud. */
 renderFilters();
 renderMachine();
+renderOfferings();
 updatePublishBar();
+initState();   // async: shows local instantly, adopts cloud if newer, re-renders
 </script>
 </body>
 </html>
