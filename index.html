@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Intake Machine · [The Platform]</title>
+<title>The Intake Machine · Boulder Careers</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -525,13 +525,28 @@
   .chk-src{font-family:var(--mono);font-size:8.5px;color:var(--ink-faint);letter-spacing:0.04em;margin-top:3px;}
   .chk-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600;padding:3px 8px;border-radius:5px;white-space:nowrap;flex-shrink:0;margin-top:2px;color:white;}
   .chk-tag-done{background:var(--free);} .chk-tag-pending{background:#b8860b;} .chk-tag-blocked{background:#b83a3a;} .chk-tag-decision{background:var(--premium);}
+  /* ---- next steps switcher ---- */
+  .ns-wrap{margin-top:34px;padding-top:26px;border-top:2px solid var(--rule);}
+  .ns-head{font-family:var(--serif);font-size:22px;font-weight:600;margin-bottom:14px;}
+  .ns-tabs{display:flex;gap:6px;background:var(--paper-warm);padding:4px;border-radius:12px;border:1px solid var(--rule);width:fit-content;margin-bottom:16px;}
+  .ns-tab{font-family:var(--sans);font-size:13.5px;font-weight:600;padding:8px 20px;border-radius:9px;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;transition:all .15s;}
+  .ns-tab:hover{color:var(--ink);}
+  .ns-tab.active{background:white;color:var(--orange);box-shadow:0 2px 8px rgba(26,29,46,0.08);}
+  .ns-count{font-family:var(--mono);font-size:10px;letter-spacing:0.06em;color:var(--ink-faint);text-transform:uppercase;margin-bottom:10px;}
+  .ns-item{display:flex;align-items:flex-start;gap:12px;background:var(--paper);border:1px solid var(--rule);border-radius:11px;padding:12px 15px;margin-bottom:8px;cursor:pointer;transition:all .13s;}
+  .ns-item:hover{border-color:var(--ink-faint);}
+  .ns-item.ns-done{background:var(--free-soft);border-color:var(--free);}
+  .ns-box{width:23px;height:23px;border-radius:7px;border:2px solid var(--rule);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:white;transition:all .13s;}
+  .ns-box.on{background:var(--free);border-color:var(--free);}
+  .ns-text{font-size:14px;line-height:1.4;padding-top:1px;}
+  .ns-done .ns-text{color:var(--ink-soft);}
 </style>
 </head>
 <body>
 <!-- ===== TOP BAR ===== -->
 <div class="topbar">
   <div class="topbar-inner">
-    <div class="brand"><span class="brand-dot"></span>[The Platform]</div>
+    <div class="brand"><span class="brand-dot"></span>Boulder Careers</div>
     <div class="tabs">
       <button class="tab active" data-view="machine" onclick="switchView('machine',this)"><span class="tnum">01</span> Machine</button>
       <button class="tab" data-view="form" onclick="switchView('form',this)"><span class="tnum">02</span> Form</button>
@@ -666,6 +681,15 @@
       <span class="chk-legkey"><span class="chk-legdot ld-decision"></span>Decision / needs a session</span>
     </div>
     <div id="checklistBody"></div>
+    <div class="ns-wrap">
+      <div class="ns-head">Who's tackling what next</div>
+      <div class="ns-tabs">
+        <button class="ns-tab active" data-ns="bruno" onclick="switchNS('bruno',this)">Bruno</button>
+        <button class="ns-tab" data-ns="michelle" onclick="switchNS('michelle',this)">Michelle</button>
+        <button class="ns-tab" data-ns="together" onclick="switchNS('together',this)">Together</button>
+      </div>
+      <div id="nsBody"></div>
+    </div>
   </div>
 </div>
 <script>
@@ -1112,17 +1136,55 @@ const DATA = {
     {sec:"Bigger builds — next", sub:"Real work that needs its own build cycle", items:[
       {ask:"Build the 'five outputs side by side' tab for output refinement", delivered:"NEXT. The tool for refining output before assigning offerings.", tag:"pending", src:"V13 §5.2", auto:false},
       {ask:"Refine the output copy/logic using all the Aug 24 context (before assigning offerings)", delivered:"NEXT. Agreed sequence: output first, then offerings.", tag:"pending", src:"V13 §5.1", auto:false},
-      {ask:"To-do list as the logged-in hero — each item links to a tool", delivered:"NEXT. The core of the real backend.", tag:"pending", src:"V13 §3", auto:false},
-      {ask:"Build the real backend with ~10 capabilities + login (pilot needs real value)", delivered:"NEXT. Target mid-September; ~a week once the 10 are chosen.", tag:"pending", src:"V12 §3", auto:false}
+      {ask:"To-do list as the logged-in hero — each item links to a tool", delivered:"NEXT. The core of the back office (weekend build).", tag:"pending", src:"V13 §3", auto:false},
+      {ask:"Build the real backend + shared database", delivered:"DONE. Backend built; Supabase database live and syncing across both founders.", tag:"blocked", src:"V12 §3 → V14", auto:true},
+      {ask:"Build the back office where the tools actually live", delivered:"NEXT — the biggest remaining build. Uses the new database.", tag:"pending", src:"V14 §6.1", auto:false},
+      {ask:"Persona × offerings mapping tab (Claude first-pass + draggable cards + comments)", delivered:"NEXT — requested this session. Assigns tools to personas/tiers.", tag:"pending", src:"V14 §3.4", auto:false},
+      {ask:"Five-outputs-side-by-side comparison tab", delivered:"NEXT — see each persona's output to judge balance before assigning tools.", tag:"pending", src:"V14 §3.4", auto:false}
     ]},
     {sec:"Decisions & sessions", sub:"Not build items — things to decide together", items:[
-      {ask:"Pick the final name (Boulder/Bolder vs NavCareer)", delivered:"Sep 4 brand session. Boulder/Bolder front-runner; bolder.ai available.", tag:"decision", src:"V13 §8", auto:false},
-      {ask:"Choose the ~10 pilot capabilities", delivered:"After output is refined — the drag-and-drop picks the 10.", tag:"decision", src:"V12 §3", auto:false},
-      {ask:"Progress UI pattern (checklist vs. path vs. %) — A/B test", delivered:"Test in the UI phase; may vary by persona.", tag:"decision", src:"V13 §3.2", auto:false},
-      {ask:"Persona metaphor → crawl / walk / run / fly", delivered:"Direction agreed; final naming ties to brand (Sep 4).", tag:"decision", src:"V13 §8.5", auto:false},
+      {ask:"Pick the final name", delivered:"DECIDED → Boulder Careers (bold + lowercase r). bouldercareers.com available; @boldrcareers social.", tag:"done", src:"V14 §1", auto:true},
+      {ask:"Confidence positioning — is it the primary product?", delivered:"DECIDED → confidence is threaded through the journey (3 moments), not a block. Tools/strategy primary.", tag:"done", src:"V14 §2", auto:true},
+      {ask:"Choose the ~10 pilot capabilities", delivered:"After the mapping tab — the drag-and-drop picks the 10.", tag:"decision", src:"V12 §3", auto:false},
+      {ask:"Tier structure + per-tool credit/run limits", delivered:"Free → 2 paid → credits for extra runs. Finalize after offerings map.", tag:"decision", src:"V14 §4", auto:false},
+      {ask:"Tokens/credits from day one, or pure tiers first?", delivered:"Open — Michelle leans 'not tokens to start'; Bruno wants run-limits for margin.", tag:"decision", src:"V14 §4.3", auto:false},
+      {ask:"Progress UI pattern (checklist vs. path vs. %)", delivered:"Next block — may vary by persona.", tag:"decision", src:"V13 §3.2", auto:false},
+      {ask:"Persona names in the Boulder theme", delivered:"Michelle — with the brand toolkit.", tag:"decision", src:"V14 §7", auto:false},
+      {ask:"MVP-vs-later scope for the 50+ capabilities", delivered:"Next block — what ships for the pilot vs. later.", tag:"decision", src:"V14 §7", auto:false},
+      {ask:"Pilot parameters — when is it 'MVP, start testing'?", delivered:"Open — Michelle has warm testers (2 colleagues + Laura) ready.", tag:"decision", src:"V14 §5.3", auto:false},
       {ask:"Marathoner cutoff: 3+ or 6+ months (open since V8)", delivered:"Still open — decide in a session.", tag:"decision", src:"carried", auto:false}
     ]}
   ],
+
+  /* ===== WHO'S TACKLING WHAT NEXT — Bruno / Michelle / Together ===== */
+  nextSteps: {
+    bruno: [
+      {t:"Update the name to Boulder Careers across the app/platform", done:true},
+      {t:"Secure bouldercareers.com (+ bolder variant to redirect)", done:false},
+      {t:"Secure @boldrcareers social handles (IG / YouTube)", done:false},
+      {t:"Build the persona × offerings mapping tab (Claude first-pass + drag-drop + comments)", done:false},
+      {t:"Build the five-outputs-side-by-side comparison tab", done:false},
+      {t:"Ship remaining questionnaire UI fixes (manage-people conditional, 'other' opens field, grammar)", done:true},
+      {t:"Build the back office where the tools live (biggest remaining build)", done:false},
+      {t:"Continue social experiments (content generator, paid-media test audiences)", done:false}
+    ],
+    michelle: [
+      {t:"Iterate the logo + taglines for Boulder Careers", done:false},
+      {t:"Finalize the brand voice and full brand toolkit", done:false},
+      {t:"Bring the visual identity/brand into the platform (after toolkit)", done:false},
+      {t:"Set up the warm intro call with Phae's founder (with Bruno)", done:false},
+      {t:"Persona names in the Boulder theme", done:false},
+      {t:"Help with social strategy; keep surfacing warm pilot testers", done:false}
+    ],
+    together: [
+      {t:"Walk the persona × offerings mapping — validate Claude's first pass, drag/drop, comment", done:false},
+      {t:"Review the five-outputs-side-by-side — judge each persona's output for balance", done:false},
+      {t:"Decide the ~10 pilot capabilities and MVP-vs-later scope", done:false},
+      {t:"Work the progress UI pattern (checklist / path / %)", done:false},
+      {t:"Set the tier structure + credit/run limits", done:false},
+      {t:"Research 3–5 similar orgs (incl. Phae); ask Claude for others", done:false}
+    ]
+  },
 
   /* ===== CATEGORY META — descriptions for the bundle-style group headers ===== */
   categoryMeta: {
@@ -1570,7 +1632,7 @@ function renderForm(){
   let inner='';
   if(screen.type==='welcome'){
     inner=`<div class="form-glass form-welcome">
-      <div class="form-brand"><span class="brand-dot"></span>[The Platform]</div>
+      <div class="form-brand"><span class="brand-dot"></span>Boulder Careers</div>
       <div class="form-wtag">The tools, the strategy, and the confidence to find your next job.</div>
       <div class="form-wtitle">Let's find <em>your</em> next move.</div>
       <div class="form-wlede">A few quick questions. At the end, you'll get a customized read on where you stand — and the clarity to move forward.</div>
@@ -1602,7 +1664,7 @@ function renderQuestionScreen(q, step, total){
   else if(q.fieldType==='file') body=renderFile(q);
   const canNext = isAnswered(q);
   return `<div class="form-glass">
-    <div class="form-brandbar"><div class="form-brand"><span class="brand-dot"></span>[The Platform]</div><div class="form-topright"><button class="form-reset" onclick="resetForm()" title="Reset the form">↺ reset</button><span class="form-stepind">Step ${step} of ${total-2}</span></div></div>
+    <div class="form-brandbar"><div class="form-brand"><span class="brand-dot"></span>Boulder Careers</div><div class="form-topright"><button class="form-reset" onclick="resetForm()" title="Reset the form">↺ reset</button><span class="form-stepind">Step ${step} of ${total-2}</span></div></div>
     <div class="form-progress">${Array.from({length:total-2},(_, i)=>`<div class="form-pstep ${i<step?'done':''}"></div>`).join('')}</div>
     ${premiumBadge}
     <div class="form-eyebrow">${q.tag}</div>
@@ -2086,6 +2148,31 @@ function renderChecklist(){
   });
   wrap.innerHTML=html;
   updateChkProgress();
+  renderNS(currentNS);
+}
+let currentNS = 'bruno';
+function switchNS(who, btn){
+  currentNS = who;
+  document.querySelectorAll('.ns-tab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderNS(who);
+}
+function renderNS(who){
+  const wrap=document.getElementById('nsBody'); if(!wrap) return;
+  const list = (DATA.nextSteps && DATA.nextSteps[who]) || [];
+  const doneCount = list.filter(x=>x.done).length;
+  let html = `<div class="ns-count">${doneCount} of ${list.length} done</div>`;
+  list.forEach((it,i)=>{
+    html += `<div class="ns-item ${it.done?'ns-done':''}" onclick="toggleNS('${who}',${i})">
+      <span class="ns-box ${it.done?'on':''}">${it.done?'✓':''}</span>
+      <span class="ns-text">${it.t}</span>
+    </div>`;
+  });
+  wrap.innerHTML = html;
+}
+function toggleNS(who,i){
+  DATA.nextSteps[who][i].done = !DATA.nextSteps[who][i].done;
+  renderNS(who); persistState();
 }
 function toggleCheck(gi,ii){
   if(!DATA.checklistChecked) DATA.checklistChecked={};
