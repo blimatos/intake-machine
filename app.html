@@ -430,23 +430,27 @@ textarea{max-width:100%}
 .plan li .ck{color:var(--ok);font-weight:800;flex-shrink:0}
 .plan li .no{color:var(--ink-4);flex-shrink:0}
 .credit{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(255,217,168,.15);color:var(--accent);display:inline-block;margin-top:4px}
-.compare{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px;display:block;overflow-x:auto}
+.compare-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:10px}
+.compare{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
 .compare th,.compare td{padding:9px 10px;border-bottom:1px solid var(--line-2);text-align:left;white-space:nowrap}
 .compare th{font-weight:700;background:var(--glass-2)}
 .compare td.y{color:var(--ok);font-weight:700}.compare td.n{color:var(--ink-4)}
 
 /* auth / forms */
-.auth{max-width:460px;margin:20px auto}
+.auth{max-width:540px;margin:20px auto}
 .f{margin-bottom:14px}.f label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
 .in,.sel{width:100%;min-height:var(--tap);border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;background:var(--glass-2);color:var(--ink);font-size:15px}
 .in::placeholder{color:var(--ink-4)}.in:focus,.sel:focus{border-color:var(--accent);outline:none}
 .sel{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink-2) 50%),linear-gradient(135deg,var(--ink-2) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat;padding-right:38px}
 .sel option{background:#1e1d35;color:#fff}
-.planpick{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
-.planpick label{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;background:var(--glass-2)}
+.planpick{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.planpick label{display:grid;grid-template-columns:22px 1fr auto;grid-template-areas:"r name price" "r desc desc";column-gap:12px;row-gap:2px;align-items:center;border:1.5px solid var(--line);border-radius:13px;padding:12px 14px;cursor:pointer;background:var(--glass-2);transition:border-color .12s,background .12s}
+.planpick label:hover{border-color:rgba(255,217,168,.5)}
 .planpick label.on{border-color:var(--accent);background:rgba(255,217,168,.12)}
-.planpick input{accent-color:var(--accent-2);width:18px;height:18px}
-.planpick b{display:block;font-size:15px}.planpick span{font-size:12.5px;color:var(--ink-3)}
+.planpick input{grid-area:r;accent-color:var(--accent-2);width:18px;height:18px;margin:0}
+.planpick .pn{grid-area:name;font-weight:700;font-size:15px}
+.planpick .pp{grid-area:price;font-family:var(--serif);font-size:17px;font-weight:600;white-space:nowrap;color:var(--accent)}
+.planpick .pd{grid-area:desc;font-size:13px;color:var(--ink-3)}
 .msg{border-radius:12px;padding:12px 14px;font-size:14px;margin:10px 0;border-left:3px solid var(--accent);background:var(--glass-2)}
 .msg.ok{border-left-color:var(--ok)}.msg.warn{border-left-color:var(--warn)}
 
@@ -474,7 +478,8 @@ textarea{max-width:100%}
 .todo .wk{font-family:var(--mono);font-size:10px;color:var(--ink-4)}
 .todo .go{font-size:12.5px;color:var(--accent);text-decoration:none;font-weight:600;white-space:nowrap;min-height:var(--tap);display:inline-flex;align-items:center}
 .quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.quick a{border-radius:14px;padding:14px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:4px}
+.quick a{border-radius:14px;padding:14px 16px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:4px;background:var(--glass-2);border:1px solid var(--line-2);transition:border-color .12s,transform .12s}
+.quick a:hover{border-color:rgba(255,217,168,.5);transform:translateY(-1px)}
 .quick a b{font-family:var(--serif);font-size:16px}.quick a span{font-size:12px;color:var(--ink-3)}
 
 /* tools gating */
@@ -498,7 +503,7 @@ textarea{max-width:100%}
 @media(min-width:900px){
   .nav-links{display:flex}.tabbar{display:none}.page{padding:28px 28px 60px}
   .pillars{grid-template-columns:repeat(3,1fr)}.plans{grid-template-columns:repeat(3,1fr)}.stats{grid-template-columns:repeat(4,1fr)}
-  .planpick{grid-template-columns:repeat(3,1fr)}.quick{grid-template-columns:repeat(3,1fr)}
+  .quick{grid-template-columns:repeat(3,1fr)}
   .adminbar{top:64px}
 }
 </style>
@@ -1418,6 +1423,13 @@ const BANK=(()=>{
       if(s&&s.expires_at*1000>Date.now()){ session=s; }
       else if(s?.refresh_token){ await refresh(s.refresh_token); }
     }catch(e){}
+    // PKCE-style callback (?code=...) → exchange for a session
+    const qp=new URLSearchParams(location.search);
+    if(qp.get('code')){
+      try{ const r=await fetch(URL_+'/auth/v1/token?grant_type=pkce',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({auth_code:qp.get('code')})});
+        if(r.ok){ const d=await r.json(); session={access_token:d.access_token,refresh_token:d.refresh_token,expires_at:Math.floor(Date.now()/1000)+(d.expires_in||3600),user:d.user}; persist(); history.replaceState(null,'',location.pathname); }
+      }catch(e){}
+    }
     // magic-link callback lands with tokens in the hash
     if(location.hash.includes('access_token')){
       const p=new URLSearchParams(location.hash.slice(1));
@@ -2053,10 +2065,6 @@ const mq=matchMedia('(min-width:1024px)'); const syncDrawer=()=>{ if(mq.matches)
    BOULDER CAREERS — website shell: auth, profile, plans, credits, routes
    (sits on top of the tool engine from the Workbench)
    ===================================================================== */
-/* =====================================================================
-   BOULDER CAREERS — website shell: auth, profile, plans, credits, routes
-   (sits on top of the tool engine from the Workbench)
-   ===================================================================== */
 const SITE=(()=>{
   const URL_='https://zwscajqkqjwywqwylhnp.supabase.co';
   const KEY='sb_publishable_NnHD4SNB-l9Naoa1SOomnw_SVo4fFKb';
@@ -2152,7 +2160,7 @@ const SITE=(()=>{
   async function sendLink(em,planChoice){
     if(planChoice) localStorage.setItem('bc.pendingPlan',planChoice);
     const r=await fetch(URL_+'/auth/v1/otp',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},
-      body:JSON.stringify({email:em,create_user:true,options:{email_redirect_to:location.href.split('#')[0]+'#/dashboard'}})});
+      body:JSON.stringify({email:em,create_user:true,options:{email_redirect_to:location.href.split('#')[0]}})});
     if(!r.ok) throw new Error((await r.text()).slice(0,160)); return true;
   }
   function signOut(){ BANK.signOut(); session=null; profile=null; viewAs={plan:null,persona:null}; go('/'); }
@@ -2206,13 +2214,13 @@ const SITE=(()=>{
     const rows=[['One-page Career Report','y','y','y'],['Basic tools (ATS template, keyword matcher, title translation, Trifecta…)','y','y','y'],['AI runs per month','5','50','150'],['Resume ↔ JD Match Scanner','n','y','y'],['STAR Story System + private Stories Bank','n','y','y'],['12-week roadmap + personal to-do list','n','y','y'],['Job tracker, target list, mock interview AI','n','y','y'],['Interview Mastery (performance agent, predictor, briefs)','n','n','y'],['Live intake with a founder · vetted coach match','n','n','y'],['Insider referrals · weekly check-ins','n','n','y'],['Community · monthly group call','y','y','y']];
     P.innerHTML=`<h1>Pick the plan that matches <em>your</em> situation.</h1><p class="lede">Every plan gets unlimited use of the tools that don't cost us anything to run. AI runs are metered so we can keep the free tier free — buy more any time.</p>
       <div class="plans">${planCard('basic')}${planCard('paid',true)}${planCard('premium')}</div>
-      <h2>Compare</h2><div class="card glass"><table class="compare"><tr><th>What you get</th><th>Basic</th><th>Paid</th><th>Premium</th></tr>${rows.map(r=>`<tr><td>${r[0]}</td>${r.slice(1).map(c=>`<td class="${c==='y'?'y':c==='n'?'n':''}">${c==='y'?'✓':c==='n'?'—':c}</td>`).join('')}</tr>`).join('')}</table></div>
+      <h2>Compare</h2><div class="card glass"><div class="compare-wrap"><table class="compare"><tr><th>What you get</th><th>Basic</th><th>Paid</th><th>Premium</th></tr>${rows.map(r=>`<tr><td>${r[0]}</td>${r.slice(1).map(c=>`<td class="${c==='y'?'y':c==='n'?'n':''}">${c==='y'?'✓':c==='n'?'—':c}</td>`).join('')}</tr>`).join('')}</table></div></div>
       <p class="lede" style="font-size:13px;color:var(--ink-3)">Prices are launch-period placeholders. Credits reset on the 1st. Cancel any time.</p>`;
   }
   function pageSignup(P,pre,signin){
     const chosen=pre||'basic';
     P.innerHTML=`<div class="auth"><div class="card glass"><h1 style="font-size:32px">${signin?'Welcome back.':'Create your account.'}</h1><p class="lede" style="font-size:14px">${signin?'We’ll email you a sign-in link — no password to remember.':'Pick a plan, enter your email, and we’ll send a link. No card needed to start.'}</p>
-      ${signin?'':`<div class="planpick" id="pp">${Object.keys(PLANS).map(k=>`<label class="${k===chosen?'on':''}"><input type="radio" name="plan" value="${k}" ${k===chosen?'checked':''}><span><b>${PLANS[k].name} · ${PLANS[k].price?'$'+PLANS[k].price+PLANS[k].per:'Free'}</b><span>${PLANS[k].who}</span></span></label>`).join('')}</div>`}
+      ${signin?'':`<div class="planpick" id="pp">${Object.keys(PLANS).map(k=>`<label class="${k===chosen?'on':''}"><input type="radio" name="plan" value="${k}" ${k===chosen?'checked':''}><span class="pn">${PLANS[k].name}</span><span class="pp">${PLANS[k].price?'$'+PLANS[k].price+PLANS[k].per:'Free'}</span><span class="pd">${PLANS[k].who}</span></label>`).join('')}</div>`}
       <div class="f"><label for="em">Email</label><input class="in" id="em" type="email" placeholder="you@email.com" autocomplete="email" inputmode="email"></div>
       <button class="btn" style="width:100%" id="send">${signin?'Send my sign-in link':'Send my link'}</button>
       <div id="authmsg"></div>
@@ -2241,7 +2249,7 @@ const SITE=(()=>{
   }
   function pageOnboarding(P){
     P.innerHTML=`<div class="auth"><div class="card glass"><h1 style="font-size:30px">Sixty seconds to your <em>plan</em>.</h1><p class="lede" style="font-size:14px">Three questions. Everything on your home screen is built from them.</p>
-      <div class="f"><label>Which sounds most like you right now?</label><div class="planpick" style="grid-template-columns:1fr" id="pq">${PERSONA_Q.map(p=>`<label><input type="radio" name="pers" value="${p.id}"><span><b>${p.t}</b><span>${p.d}</span></span></label>`).join('')}</div></div>
+      <div class="f"><label>Which sounds most like you right now?</label><div class="planpick" style="grid-template-columns:1fr" id="pq">${PERSONA_Q.map(p=>`<label><input type="radio" name="pers" value="${p.id}"><span class="pn">${p.t}</span><span class="pd">${p.d}</span></label>`).join('')}</div></div>
       <div class="f"><label for="ind">Industry you're coming from</label><select class="sel" id="ind"><option value="">Choose…</option>${['Technology / Software','Consumer Goods (CPG)','Retail','Finance','Healthcare','Manufacturing','Media / Entertainment','Education / Non-profit','Other'].map(x=>`<option>${x}</option>`).join('')}</select></div>
       <div class="f"><label for="hrs">Hours a week you can invest</label><select class="sel" id="hrs"><option value="3">1–3</option><option value="8" selected>4–10</option><option value="15">10–20</option><option value="25">20+</option></select></div>
       <button class="btn" style="width:100%" id="ob">Build my plan</button></div></div>`;
@@ -2296,6 +2304,8 @@ const SITE=(()=>{
 
   /* ---------- boot ---------- */
   async function boot(){
+    // surface auth errors that come back in the URL (expired link, bad redirect)
+    if(location.hash.includes('error=')){ const p=new URLSearchParams(location.hash.slice(1)); const d=p.get('error_description')||p.get('error_code')||'sign-in failed'; history.replaceState(null,'',location.pathname); location.hash='#/signin'; setTimeout(()=>{ const m=document.getElementById('authmsg'); if(m) m.innerHTML='<div class="msg warn">That link didn\'t work ('+d.replace(/\+/g,' ')+'). Request a new one below.</div>'; },400); }
     await BANK.init(); session=getSession();
     if(session){ await loadProfile(); }
     window.addEventListener('hashchange',route); route();
