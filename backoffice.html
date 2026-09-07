@@ -297,6 +297,67 @@ mark.hit{background:rgba(127,227,168,.3);color:var(--ink);padding:1px 4px;border
 .tri-src{font-size:11.5px;color:var(--ink-4);margin-top:12px}
 @media(min-width:1024px){.tri{grid-template-columns:minmax(300px,400px) 1fr}}
 
+.st{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+.st>*{min-width:0}
+.st-in,.st-out{border-radius:var(--r);padding:var(--pad)}
+.st-sec{border:1px solid var(--line-2);border-radius:13px;margin-bottom:8px;background:var(--glass-2);overflow:hidden}
+.st-sec-h{width:100%;display:flex;align-items:center;gap:10px;min-height:var(--tap);padding:0 14px;background:transparent;border:none;color:var(--ink);text-align:left}
+.st-sec-h:hover{background:var(--glass-3)}
+.st-sec-name{font-family:var(--serif);font-size:17px;font-weight:600;flex:1}
+.st-sec-score{font-family:var(--mono);font-size:12px;font-weight:600;padding:3px 9px;border-radius:6px;background:rgba(255,255,255,.1);color:var(--ink-3)}
+.st-sec-score.g{background:rgba(127,227,168,.18);color:var(--ok)}.st-sec-score.y{background:rgba(255,209,102,.2);color:var(--warn)}.st-sec-score.r{background:rgba(255,171,154,.18);color:var(--human)}
+.st-sec-h .car{font-size:12px;color:var(--ink-3);transition:transform .15s}
+.st-sec.open .st-sec-h .car{transform:rotate(90deg)}
+.st-sec-b{display:none;padding:0 14px 14px}
+.st-sec.open .st-sec-b{display:block}
+.st-sec-desc{font-size:13px;color:var(--ink-3);margin-bottom:8px}
+.st-wc{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:5px}
+.st-q{margin-top:8px}
+.st-q summary{cursor:pointer;font-size:12.5px;color:var(--accent);min-height:36px;display:flex;align-items:center;list-style:none}
+.st-q summary::-webkit-details-marker{display:none}
+.st-q.ch summary{color:var(--human)}
+.st-q ul{padding-left:20px;margin:4px 0 0;font-size:13px;color:var(--ink-2)}
+.st-q li{margin:4px 0}
+.st-btn{width:100%;min-height:50px;background:rgba(255,255,255,.92);color:#1c1530;border:none;border-radius:13px;padding:13px;font-weight:700;font-size:15px;margin-top:10px}
+.st-btn.sec{background:var(--glass-2);color:var(--ink);border:1.5px solid var(--line)}
+.st-gauge-wrap{display:grid;grid-template-columns:1fr;gap:16px;align-items:center;justify-items:center}
+.st-gauge{width:140px;height:140px;border-radius:50%;background:conic-gradient(var(--col) calc(var(--pct)*1%),rgba(255,255,255,.12) 0);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.st-gauge::before{content:'';position:absolute;inset:13px;background:#221f3f;border-radius:50%}
+.st-gauge-n{position:relative;font-family:var(--serif);font-weight:600;font-size:42px;line-height:1;letter-spacing:-.03em}
+.st-gauge-l{position:relative;font-size:11px;color:var(--ink-3);font-weight:600}
+.st-bars{width:100%;display:flex;flex-direction:column;gap:6px}
+.st-bar{display:grid;grid-template-columns:1fr 70px 28px;gap:8px;align-items:center;font-size:12.5px}
+.st-bar-l{color:var(--ink-2)}.st-bar-l em{font-style:normal;color:var(--ink-4);font-size:11px}
+.st-bar-t{height:6px;background:rgba(255,255,255,.12);border-radius:4px;overflow:hidden}.st-bar-t i{display:block;height:100%}
+.st-bar-n{font-family:var(--mono);font-size:11px;color:var(--ink-3);text-align:right}
+.st-verdict{margin:14px 0;font-size:14px;padding:12px 14px;background:var(--glass-2);border:1px solid var(--line-2);border-radius:12px}
+.st-h{font-family:var(--serif);font-size:17px;font-weight:600;margin:16px 0 8px}
+.st-metrics{display:flex;flex-wrap:wrap;gap:6px}
+.st-metric{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:5px 10px;border-radius:8px;background:rgba(255,255,255,.08);color:var(--ink-4);border:1px solid var(--line-2)}
+.st-metric b{font-family:var(--mono);font-size:13px}
+.st-metric.on{background:rgba(127,227,168,.18);color:var(--ok);border-color:rgba(127,227,168,.4)}
+.st-flag{font-size:13.5px;padding:10px 12px;border-radius:10px;margin:6px 0;border-left:3px solid}
+.st-flag.warn{background:rgba(255,209,102,.10);border-left-color:var(--warn);color:var(--ink-2)}
+.st-flag.ok{background:rgba(127,227,168,.10);border-left-color:var(--ok);color:var(--ink-2)}
+.st-fix{margin:8px 0;font-size:13.5px;color:var(--ink-2)}.st-fix b{color:var(--accent);font-family:var(--serif);font-size:15px}
+.st-fix ul{padding-left:20px;margin-top:3px}.st-fix li{margin:3px 0}
+.st-note{font-size:13px;color:var(--ink-3);margin:8px 0}
+.st-ai{background:var(--glass-2);border:1px solid var(--line-2);border-radius:12px;padding:12px 14px;margin-top:8px;font-size:14px;line-height:1.6}
+.st-saved{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line-2);background:var(--glass-2);border-radius:12px;padding:10px 12px;margin:6px 0}
+.st-saved b{font-size:14.5px}.st-saved p{font-size:12.5px;color:var(--ink-3);margin-top:3px}
+.st-saved-a{margin-left:auto;display:flex;flex-direction:column;gap:5px}
+.st-mini{min-height:34px;padding:6px 12px;border-radius:9px;border:none;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:12.5px;white-space:nowrap}
+.st-mini.sec{background:var(--glass-2);color:var(--ink);border:1px solid var(--line)}
+.st-tag{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:5px;background:rgba(255,255,255,.1);color:var(--ink-2)}
+.st-tag.sc{background:rgba(127,227,168,.18);color:var(--ok)}
+.st-count{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+.st-cov{margin-top:10px;font-size:13px;color:var(--ink-2);padding:10px 12px;background:rgba(255,217,168,.10);border-left:3px solid var(--accent);border-radius:0 10px 10px 0}
+.st-auth{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;padding:10px 12px;border:1px solid var(--line-2);border-radius:12px;background:var(--glass-2);font-size:13px}
+.st-auth input{flex:1;min-width:160px;min-height:40px;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--glass-2);color:var(--ink)}
+.st-auth button{min-height:40px;padding:8px 14px;border-radius:10px;border:none;background:var(--accent);color:var(--accent-ink);font-weight:700}
+.st-auth .who{color:var(--ok);font-weight:600}
+@media(min-width:1024px){.st{grid-template-columns:minmax(320px,460px) 1fr}.st-gauge-wrap{grid-template-columns:140px 1fr;justify-items:stretch}}
+
 /* grid children must be allowed to shrink — prevents horizontal overflow */
 .sc>*,.split>*,.grid>*,.sc-subs>*,.sc-score-wrap>*,.frame>*,.main{min-width:0;max-width:100%}
 .sc-inp,.sc-ta,.in,.ta,.sel{min-width:0;max-width:100%}
@@ -414,18 +475,9 @@ const TOOLS=[
   <div class="callout">The base pays the bills and builds momentum; the middle is where networking pays off; the top is a plan, not an application. Spend 80% on base + middle.</div>`;
  }},
 
-{id:'star',bucket:'Frameworks',name:'STAR Story System',tier:1,personas:'all',status:'ready',
- desc:'Build a quantified STAR-L story (Situation · Task · Action · Result · Learning). Saves to your Stories Bank.',
- inputs:[{k:'title',label:'Story name',type:'text',ph:'Turned around the churning enterprise account'},{k:'comp',label:'Competency it proves',type:'chips',opts:['Leadership','Problem solving','Conflict','Failure/learning','Influence','Delivery','Customer','Data']},
-  {k:'s',label:'Situation',type:'textarea',ph:'Where were you, what was at stake?'},{k:'t',label:'Task',type:'textarea',ph:'What were you responsible for?'},{k:'a',label:'Action',type:'textarea',ph:'What did YOU do — specifically?'},{k:'r',label:'Result (with numbers)',type:'textarea',ph:'Revenue, %, time saved, people, scale…'},{k:'l',label:'Learning',type:'textarea',ph:'What you took forward'}],
- compute(v){
-  const hasNum=/\d/.test(v.r||''); const words=(v.s+v.t+v.a+v.r).split(/\s+/).filter(Boolean).length;
-  const iCount=((v.a||'').match(/\bI\b/g)||[]).length, weCount=((v.a||'').match(/\bwe\b/gi)||[]).length;
-  const checks=[[hasNum,'Result is quantified'],[words>=80&&words<=220,`Right length for a 90-second answer (${words} words)`],[iCount>=weCount,'Action uses "I" more than "we" (they\'re hiring you, not the team)'],[(v.l||'').length>10,'Has a learning']];
-  const story=`<div class="script"><b>${esc(v.title||'Untitled story')}</b>\n\nSituation: ${esc(v.s)}\nTask: ${esc(v.t)}\nAction: ${esc(v.a)}\nResult: ${esc(v.r)}\nLearning: ${esc(v.l)}</div>`;
-  return `<h4>Story check</h4>${checklist(checks)}${story}
-  <button class="run sec" onclick="saveTo('stories',{title:${JSON.stringify(v.title||'Untitled')},comp:${JSON.stringify(v.comp||'')},s:${JSON.stringify(v.s)},t:${JSON.stringify(v.t)},a:${JSON.stringify(v.a)},r:${JSON.stringify(v.r)},l:${JSON.stringify(v.l)}});toast('Saved to Stories Bank')">Save to Stories Bank</button>`;
- }},
+{id:'star',bucket:'Frameworks',name:'STAR Story System',tier:1,personas:'all',status:'ready',custom:'star',
+ desc:'Build a story across Situation · Task · Action · Results · Learnings, with the probing and challenge questions an interviewer will actually ask. Scores live as you write, shows what is weak and why, then saves to your private Stories Bank.',
+ inputs:[]},
 
 {id:'nonneg',bucket:'Frameworks',name:'Non-Negotiables Map',tier:2,personas:'all',status:'ready',
  desc:'The deeper Trifecta. Name your hard lines and turn them into target filters and interview questions.',
@@ -1238,6 +1290,287 @@ const MARKET = (() => {
 })();
 
 /* =====================================================================
+   BANK — per-user Stories Bank.
+   Signed in  → Supabase, row-level-secured to that user. Never shared.
+   Signed out → this device only, and the UI says so.
+   ===================================================================== */
+const BANK=(()=>{
+  const URL_='https://zwscajqkqjwywqwylhnp.supabase.co';
+  const KEY='sb_publishable_NnHD4SNB-l9Naoa1SOomnw_SVo4fFKb';
+  const LS='bc.stories.local';
+  let session=null;
+
+  const h=(extra={})=>({apikey:KEY,Authorization:'Bearer '+(session?.access_token||KEY),'Content-Type':'application/json',...extra});
+  const who=()=>session?.user?.email||null;
+
+  async function init(){
+    try{ const s=JSON.parse(localStorage.getItem('bc.session')||'null');
+      if(s&&s.expires_at*1000>Date.now()){ session=s; }
+      else if(s?.refresh_token){ await refresh(s.refresh_token); }
+    }catch(e){}
+    // magic-link callback lands with tokens in the hash
+    if(location.hash.includes('access_token')){
+      const p=new URLSearchParams(location.hash.slice(1));
+      if(p.get('access_token')){
+        session={access_token:p.get('access_token'),refresh_token:p.get('refresh_token'),
+          expires_at:Math.floor(Date.now()/1000)+(+p.get('expires_in')||3600),user:null};
+        await me(); persist(); history.replaceState(null,'',location.pathname);
+      }
+    }
+    return who();
+  }
+  function persist(){ try{ localStorage.setItem('bc.session',JSON.stringify(session)); }catch(e){} }
+  async function me(){ try{ const r=await fetch(URL_+'/auth/v1/user',{headers:h()}); if(r.ok) session.user=await r.json(); }catch(e){} }
+  async function refresh(rt){ try{ const r=await fetch(URL_+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:rt})});
+      if(r.ok){ const d=await r.json(); session={access_token:d.access_token,refresh_token:d.refresh_token,expires_at:Math.floor(Date.now()/1000)+d.expires_in,user:d.user}; persist(); } }catch(e){} }
+
+  /** Email magic link — no passwords to handle or store. */
+  async function signIn(email){
+    const r=await fetch(URL_+'/auth/v1/otp',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({email,create_user:true,options:{email_redirect_to:location.href.split('#')[0]}})});
+    if(!r.ok) throw new Error((await r.text()).slice(0,160));
+    return true;
+  }
+  function signOut(){ session=null; try{localStorage.removeItem('bc.session');}catch(e){} }
+
+  const local=()=>{ try{return JSON.parse(localStorage.getItem(LS)||'[]')}catch(e){return[]} };
+  const setLocal=a=>{ try{localStorage.setItem(LS,JSON.stringify(a))}catch(e){} };
+
+  async function list(){
+    if(!session) return local();
+    try{ const r=await fetch(URL_+'/rest/v1/stories?select=*&order=updated_at.desc',{headers:h()});
+      if(r.ok) return (await r.json()).map(x=>({...x.payload,__id:x.id}));
+    }catch(e){}
+    return local();
+  }
+  async function save(rec){
+    if(!session){ const a=local(); const i=a.findIndex(x=>x.title===rec.title); i>=0?a[i]=rec:a.unshift(rec); setLocal(a); return false; }
+    try{ const r=await fetch(URL_+'/rest/v1/stories',{method:'POST',headers:h({Prefer:'resolution=merge-duplicates'}),
+        body:JSON.stringify({user_id:session.user.id,title:rec.title,payload:rec,updated_at:new Date().toISOString()})});
+      if(r.ok) return true;
+    }catch(e){}
+    const a=local(); a.unshift(rec); setLocal(a); return false;
+  }
+  async function remove(i){
+    if(!session){ const a=local(); a.splice(i,1); setLocal(a); return; }
+    const all=await list(); const id=all[i]?.__id; if(!id) return;
+    try{ await fetch(URL_+`/rest/v1/stories?id=eq.${id}`,{method:'DELETE',headers:h()}); }catch(e){}
+  }
+  return {init,signIn,signOut,who,list,save,remove};
+})();
+
+/* =====================================================================
+   STAR STORY SYSTEM — five sections, live scoring, per-user Stories Bank
+   Rubric grounded in: Action ≥50% of answer, 200–250 words / 90–120s,
+   ownership ("I" over "we"), quantified results, learnings, recency.
+   ===================================================================== */
+const STARSYS=(()=>{
+  const E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const words=s=>String(s||'').trim().split(/\s+/).filter(Boolean).length;
+
+  const SECTIONS=[
+    {k:'s',name:'Situation',weight:15,
+     desc:'The context of the story. Where did this occur, when did it happen, and why is it important?',
+     probe:['Why is this important? What was the goal?','What was the initial scope? What were the challenges?','What were the risks or consequences if nothing happened?'],
+     challenge:['Why did you choose this story to illustrate this competency?','What other stories demonstrate the same thing?','Could you come up with an example that is more recent?'],
+     ideal:[25,60],ph:'Q3 2024, our checkout platform was losing customers at payment. Cart abandonment had climbed to 68% and we were bleeding ~$400K a quarter…'},
+    {k:'t',name:'Task',weight:15,
+     desc:'What you were specifically responsible for. Your remit, not the team\'s.',
+     probe:['What exactly were you accountable for?','What was the goal you were given — or set?','What constraints were you working within (time, budget, people)?'],
+     challenge:['Was this your mandate, or did you take it on?','Who else could have owned this? Why you?'],
+     ideal:[20,50],ph:'I was asked to cut abandonment by 15% in one quarter, with no extra headcount and a frozen roadmap…'},
+    {k:'a',name:'Action',weight:35,
+     desc:'What you personally did. What did you own, how did you do it, who else was involved?',
+     probe:['Were you the key driver or the project owner?','What was your biggest contribution? What unique value did you bring?','What were the most significant obstacles? How did you overcome them?'],
+     challenge:['What did you do specifically versus the team?','How did you set priorities, or get manager buy-in?','What decisions did you challenge? How did you influence the outcome?'],
+     ideal:[80,150],ph:'I ran a funnel analysis and found 3 drop-off points. I built the business case, pitched it to the VP, negotiated two engineers off another project, and led the redesign myself…'},
+    {k:'r',name:'Results',weight:25,
+     desc:'How you measured success, and what you achieved. Use numbers.',
+     probe:['Why did you focus on these results? What other results mattered?','You mentioned revenue — what percentage change is that year over year?','What trade-offs did you make to achieve this (quality, cost, time)?'],
+     challenge:['How did these results compare to your actual goal?','What would you have done differently?','I\'m concerned about the time it took — tell me more.'],
+     ideal:[30,70],ph:'Abandonment fell from 68% to 51% in 11 weeks — a 25% relative improvement, ~$1.2M annualized recovery. We shipped 3 weeks early…'},
+    {k:'l',name:'Learnings',weight:10,
+     desc:'What you took forward. This is what separates a good story from a memorable one.',
+     probe:['What did you learn that changed how you work?','What surprised you?','What would you do differently with hindsight?'],
+     challenge:['How would you apply this at our company?','If you ran it again tomorrow, what changes?'],
+     ideal:[20,50],ph:'I learned to instrument before I optimize. I now insist on funnel telemetry before any redesign — it turned a guess into a diagnosis…'}
+  ];
+
+  /* Results taxonomy — the six ways to quantify impact */
+  const METRICS=[
+    {k:'money',icon:'$',label:'Cost savings / revenue',re:/\$\s?[\d,.]+\s?(k|m|bn|billion|million|thousand)?|\b(revenue|cost savings?|saved|profit|margin|budget|arr|mrr)\b/i},
+    {k:'volume',icon:'#',label:'Volume, size, scale',re:/\b\d{2,}(,\d{3})*\b|\b\d+\s?(users?|customers?|people|accounts?|stores?|markets?|teams?|projects?|tickets?)\b/i},
+    {k:'percent',icon:'%',label:'Percentage change / YoY',re:/\d+(\.\d+)?\s?%|\bpercent|year[- ]over[- ]year|\byoy\b/i},
+    {k:'time',icon:'◷',label:'Time to market / time saved',re:/\b\d+\s?(days?|weeks?|months?|quarters?|hours?|minutes?)\b|\b(ahead of schedule|early|faster|time[- ]to[- ]market|turnaround)\b/i},
+    {k:'people',icon:'☺',label:'Customer / team impact',re:/\b(nps|csat|satisfaction|retention|churn|engagement|attrition|morale|adoption|promoted?)\b/i},
+    {k:'quality',icon:'✦',label:'Quality improvement',re:/\b(quality|defects?|errors?|bugs?|accuracy|compliance|uptime|sla|incidents?)\b/i}
+  ];
+
+  const COMPETENCIES=['Leadership','Problem solving','Conflict / difficult stakeholder','Failure & learning','Influence without authority','Delivery under pressure','Customer focus','Data & analysis','Innovation','Teamwork','Adaptability','Prioritization'];
+  const WEAK=/\b(helped|assisted|worked on|was involved|participated|supported|contributed to|responsible for|tasked with|tried to)\b/gi;
+  const STRONG=/\b(led|built|launched|drove|delivered|designed|owned|created|reduced|increased|scaled|negotiated|shipped|architected|transformed|streamlined|accelerated|generated|saved|cut|won|secured|initiated|implemented|analyzed|coordinated|influenced|persuaded|rebuilt|redesigned|established|spearheaded)\b/gi;
+
+  /* ---------------- scoring ---------------- */
+  function score(v){
+    const per={}, flags=[];
+    const total=SECTIONS.reduce((n,s)=>n+words(v[s.k]),0);
+    const aw=words(v.a), stw=words(v.s)+words(v.t);
+    const allText=SECTIONS.map(s=>v[s.k]||'').join(' ');
+
+    SECTIONS.forEach(sec=>{
+      const w=words(v[sec.k]); const [lo,hi]=sec.ideal; let pts=0, notes=[];
+      if(w===0){ per[sec.k]={pct:0,notes:['Empty — this section is required.'],w}; return; }
+      // length fit (40%)
+      let len = w<lo*0.5?0.25 : w<lo?0.6 : w<=hi?1 : w<=hi*1.5?0.7 : 0.45;
+      if(w<lo) notes.push(`Thin at ${w} words — aim for ${lo}–${hi}.`);
+      if(w>hi*1.5) notes.push(`Long at ${w} words — trim toward ${lo}–${hi}.`);
+      pts += len*0.4;
+      // section-specific quality (60%)
+      if(sec.k==='a'){
+        const I=(v.a.match(/\bI\b/g)||[]).length, We=(v.a.match(/\bwe\b/gi)||[]).length;
+        const own = I===0?0 : I>=We?1 : I/(I+We)*1.4;
+        if(I===0) notes.push('No "I" — the interviewer cannot tell what YOU did.');
+        else if(We>I) notes.push(`"We" (${We}) outnumbers "I" (${I}). Claim your specific contribution.`);
+        const verbs=(v.a.match(STRONG)||[]).length;
+        if(verbs===0) notes.push('No strong action verbs (led, built, negotiated, drove…).');
+        pts += Math.min(1,own)*0.35 + Math.min(1,verbs/3)*0.25;
+      } else if(sec.k==='r'){
+        const hits=METRICS.filter(m=>m.re.test(v.r));
+        if(!hits.length) notes.push('No measurable result. Add at least one: $ · # · % · time · customer impact · quality.');
+        else if(hits.length===1) notes.push(`Only one type of measure (${hits[0].label}). Two makes it credible.`);
+        pts += Math.min(1,hits.length/2)*0.6;
+      } else if(sec.k==='l'){
+        const reflective=/\b(learned|learnt|realized|realised|now i|since then|takeaway|differently|changed how|taught me)\b/i.test(v.l);
+        if(!reflective) notes.push('Add what changed in how you work — that is the learning.');
+        pts += (reflective?1:0.35)*0.6;
+      } else {
+        const ctx=/\b(19|20)\d{2}\b|\b(q[1-4]|last year|quarter|month|when i was|during)\b/i.test(v[sec.k]);
+        if(sec.k==='s'&&!ctx) notes.push('Add when this happened — recency matters to interviewers.');
+        const why=/\b(because|so that|goal|risk|target|needed|had to|at stake)\b/i.test(v[sec.k]);
+        if(!why) notes.push(sec.k==='s'?'Say why it mattered — the stakes.':'State the goal you were given or set.');
+        pts += (ctx?0.3:0)+(why?0.3:0);
+      }
+      per[sec.k]={pct:Math.round(Math.min(1,pts)*100),notes,w};
+    });
+
+    // whole-story checks
+    const balance = total? aw/total : 0;
+    if(total && balance<0.4) flags.push({t:'warn',m:`Action is ${Math.round(balance*100)}% of your story. Interviewers score the Action — it should be at least 50%. ${stw>aw?'Trim Situation and Task; expand what you did.':'Expand the Action.'}`});
+    else if(balance>=0.5) flags.push({t:'ok',m:`Action is ${Math.round(balance*100)}% of the story — right where interviewers want it.`});
+    if(total&&total<150) flags.push({t:'warn',m:`${total} words — short. A strong story runs 200–250 words (90–120 seconds aloud).`});
+    else if(total>320) flags.push({t:'warn',m:`${total} words — over 2.5 minutes aloud. Trim to 200–250.`});
+    else if(total>=180&&total<=300) flags.push({t:'ok',m:`${total} words — about ${Math.round(total/2.2)} seconds aloud. Good length.`});
+    const weak=(allText.match(WEAK)||[]);
+    if(weak.length) flags.push({t:'warn',m:`${weak.length} weak phrase${weak.length>1?'s':''} (${[...new Set(weak.map(x=>x.toLowerCase()))].slice(0,4).join(', ')}). Replace with what you actually did.`});
+    if(!v.title) flags.push({t:'warn',m:'Name the story so you can find it under pressure.'});
+    if(!v.comp) flags.push({t:'warn',m:'Tag a competency — that is how one story answers many questions.'});
+
+    const overall=Math.round(SECTIONS.reduce((n,s)=>n+(per[s.k]?.pct||0)*s.weight,0)/100);
+    return {overall,per,flags,total,balance,metrics:METRICS.filter(m=>m.re.test(v.r||''))};
+  }
+
+  /* ---------------- UI ---------------- */
+  let S={};
+  function mount(el,opts={}){
+    S={el,ai:opts.ai||null,open:'a'};
+    el.innerHTML=`<div class="st">
+      <div class="st-in glass">
+        <div class="f"><label for="st-title">Story name</label><input class="in" id="st-title" placeholder="Turned around the churning enterprise account"></div>
+        <div class="f"><label for="st-comp">Competency it proves</label><select class="sel" id="st-comp"><option value="">Choose…</option>${COMPETENCIES.map(c=>`<option>${c}</option>`).join('')}</select></div>
+        <div id="st-secs"></div>
+        <button class="st-btn" id="st-save">Save to my Stories Bank</button>
+        <div id="st-savemsg"></div>
+      </div>
+      <div class="st-out glass" id="st-out"></div>
+    </div>`;
+    el.querySelector('#st-secs').innerHTML=SECTIONS.map(sec=>`
+      <div class="st-sec" data-sec="${sec.k}">
+        <button class="st-sec-h" type="button" data-toggle="${sec.k}" aria-expanded="false">
+          <span class="st-sec-name">${sec.name}</span>
+          <span class="st-sec-score" id="st-sc-${sec.k}">—</span>
+          <span class="car">▸</span>
+        </button>
+        <div class="st-sec-b">
+          <p class="st-sec-desc">${sec.desc}</p>
+          <textarea class="ta" id="st-${sec.k}" placeholder="${E(sec.ph)}" aria-label="${sec.name}"></textarea>
+          <div class="st-wc"><span id="st-w-${sec.k}">0</span> words · aim ${sec.ideal[0]}–${sec.ideal[1]}</div>
+          <details class="st-q"><summary>Probing questions — answer these inside your text</summary><ul>${sec.probe.map(q=>'<li>'+q+'</li>').join('')}</ul></details>
+          <details class="st-q ch"><summary>Challenge questions — an interviewer will push here</summary><ul>${sec.challenge.map(q=>'<li>'+q+'</li>').join('')}</ul></details>
+        </div>
+      </div>`).join('');
+    el.querySelectorAll('[data-toggle]').forEach(b=>b.onclick=()=>{
+      const k=b.dataset.toggle, sec=el.querySelector(`.st-sec[data-sec="${k}"]`);
+      const open=sec.classList.toggle('open'); b.setAttribute('aria-expanded',open);
+    });
+    el.querySelector('.st-sec[data-sec="s"]').classList.add('open');
+    el.querySelectorAll('.ta,#st-title,#st-comp').forEach(i=>i.addEventListener('input',live));
+    el.querySelector('#st-comp').addEventListener('change',live);
+    el.querySelector('#st-save').onclick=save;
+    live(); renderBank();
+  }
+  const vals=()=>({title:S.el.querySelector('#st-title').value.trim(),comp:S.el.querySelector('#st-comp').value,
+    ...Object.fromEntries(SECTIONS.map(s=>[s.k,S.el.querySelector('#st-'+s.k).value]))});
+  let t=null;
+  function live(){ clearTimeout(t); t=setTimeout(()=>{const v=vals();const r=score(v);paint(v,r);},180); }
+  function paint(v,r){
+    SECTIONS.forEach(sec=>{ const p=r.per[sec.k]||{pct:0,w:0};
+      const e=S.el.querySelector('#st-sc-'+sec.k); e.textContent=p.w?p.pct+'%':'—';
+      e.className='st-sec-score '+(p.pct>=80?'g':p.pct>=50?'y':p.w?'r':'');
+      S.el.querySelector('#st-w-'+sec.k).textContent=p.w; });
+    const col=r.overall>=80?'var(--ok)':r.overall>=55?'var(--warn)':'var(--human)';
+    const verdict=r.overall>=80?'Interview-ready. This story will hold up to follow-up questions.':r.overall>=55?'Solid draft. Fix the flagged items and it becomes a story you can lean on.':r.total?'Needs work — the gaps below are the ones interviewers probe first.':'Fill in the sections and this scores live.';
+    S.el.querySelector('#st-out').innerHTML=`
+      <div class="st-gauge-wrap"><div class="st-gauge" style="--pct:${r.overall};--col:${col}"><div class="st-gauge-n">${r.overall}</div><div class="st-gauge-l">story score</div></div>
+      <div class="st-bars">${SECTIONS.map(sec=>{const p=r.per[sec.k]||{pct:0};const c=p.pct>=80?'var(--ok)':p.pct>=50?'var(--warn)':'var(--human)';
+        return `<div class="st-bar"><span class="st-bar-l">${sec.name} <em>${sec.weight}%</em></span><span class="st-bar-t"><i style="width:${p.pct}%;background:${c}"></i></span><span class="st-bar-n">${p.pct}</span></div>`;}).join('')}</div></div>
+      <p class="st-verdict">${verdict}</p>
+      <h4 class="st-h">Results measured</h4>
+      <div class="st-metrics">${METRICS.map(m=>{const on=r.metrics.some(x=>x.k===m.k);return `<span class="st-metric ${on?'on':''}" title="${m.label}"><b>${m.icon}</b> ${m.label}</span>`;}).join('')}</div>
+      ${r.metrics.length<2?'<p class="st-note">Two different measures beat one. A number plus a customer or quality outcome is the most credible pair.</p>':''}
+      ${r.flags.length?`<h4 class="st-h">Story-level check</h4>${r.flags.map(f=>`<div class="st-flag ${f.t}">${f.m}</div>`).join('')}`:''}
+      <h4 class="st-h">Fix these, section by section</h4>
+      ${SECTIONS.map(sec=>{const p=r.per[sec.k];if(!p||!p.notes.length)return '';
+        return `<div class="st-fix"><b>${sec.name}</b><ul>${p.notes.map(n=>'<li>'+n+'</li>').join('')}</ul></div>`;}).join('')||'<p class="st-note">Nothing flagged. Read it aloud once and time it.</p>'}
+      ${S.ai&&S.ai.ready&&S.ai.ready()?'<button class="st-btn sec" id="st-ai">Ask AI to tighten this story</button><div id="st-aiout"></div>':''}`;
+    const ab=S.el.querySelector('#st-ai'); if(ab) ab.onclick=aiTighten;
+  }
+  async function aiTighten(){
+    const o=S.el.querySelector('#st-aiout'); o.innerHTML='<p class="st-note"><span class="spin"></span> Tightening…</p>';
+    const v=vals();
+    try{ const txt=await S.ai.run('You improve STAR interview stories. Rules: Action must be at least 50% of the words. Use "I" not "we" for the candidate\'s own actions. Keep every fact true — never invent numbers; write [add number] where one is missing. Total 200–250 words. Return the five sections labelled Situation, Task, Action, Results, Learnings, then a short "What I changed" list.',
+      `Situation: ${v.s}\nTask: ${v.t}\nAction: ${v.a}\nResults: ${v.r}\nLearnings: ${v.l}`);
+      o.innerHTML=`<div class="st-ai">${E(txt).replace(/\n/g,'<br>')}</div>`;
+    }catch(e){ o.innerHTML=`<p class="st-note">AI call failed: ${E(e.message)}</p>`; }
+  }
+  /* ---------------- bank ---------------- */
+  async function save(){
+    const v=vals(), r=score(v), msg=S.el.querySelector('#st-savemsg');
+    if(!v.title){ msg.innerHTML='<div class="st-flag warn">Name the story first.</div>'; return; }
+    if(!v.a||!v.r){ msg.innerHTML='<div class="st-flag warn">Action and Results are required before saving.</div>'; return; }
+    msg.innerHTML='<p class="st-note"><span class="spin"></span> Saving…</p>';
+    const rec={...v,score:r.overall,updated:new Date().toISOString()};
+    const ok=await BANK.save(rec);
+    msg.innerHTML=ok?`<div class="st-flag ok">Saved to your Stories Bank at ${r.overall}%.</div>`:`<div class="st-flag warn">Saved on this device only — sign in to sync it to your profile.</div>`;
+    renderBank();
+  }
+  async function renderBank(){
+    const list=await BANK.list(); const el=S.el.querySelector('#st-out'); if(!el) return;
+    const host=document.getElementById('st-bank'); if(!host) return;
+    host.innerHTML=list.length?`<h4 class="st-h">Your Stories Bank <span class="st-count">${list.length}</span></h4>
+      <p class="st-note">${BANK.who()?'Synced to your profile — private to you.':'On this device. Sign in to sync across devices.'}</p>
+      ${list.map((s,i)=>`<div class="st-saved"><div><b>${E(s.title)}</b> ${s.comp?`<span class="st-tag">${E(s.comp)}</span>`:''} <span class="st-tag sc">${s.score||0}%</span><p>${E((s.a||'').slice(0,140))}${(s.a||'').length>140?'…':''}</p></div><div class="st-saved-a"><button class="st-mini" data-load="${i}">Load</button><button class="st-mini sec" data-del="${i}">Delete</button></div></div>`).join('')}
+      <div class="st-cov"><b>Coverage:</b> ${COMPETENCIES.filter(c=>list.some(s=>s.comp===c)).length} of ${COMPETENCIES.length} competencies. ${list.length<6?`Aim for 6–10 stories — that covers nearly any behavioral question.`:'Good depth.'}</div>`
+      :`<h4 class="st-h">Your Stories Bank</h4><p class="st-note">Empty. Build a story above and save it — aim for 6–10 covering different competencies.</p>`;
+    host.querySelectorAll('[data-load]').forEach(b=>b.onclick=async()=>{const s=(await BANK.list())[+b.dataset.load];
+      S.el.querySelector('#st-title').value=s.title||''; S.el.querySelector('#st-comp').value=s.comp||'';
+      SECTIONS.forEach(x=>S.el.querySelector('#st-'+x.k).value=s[x.k]||'');
+      S.el.querySelectorAll('.st-sec').forEach(x=>x.classList.add('open')); live(); window.scrollTo(0,0);});
+    host.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{ if(!confirm('Delete this story?'))return; await BANK.remove(+b.dataset.del); renderBank(); });
+  }
+  return {mount,score,SECTIONS,COMPETENCIES,renderBank};
+})();
+
+/* =====================================================================
    TRIFECTA — Learn / Earn / Stability priority tool (2026-aware)
    ===================================================================== */
 const TRI=(()=>{
@@ -1476,6 +1809,18 @@ function goHome(){
   renderCatalog(); window.scrollTo(0,0);
 }
 
+function renderAuth(){
+  const el=document.getElementById('starAuth'); if(!el) return;
+  const w=BANK.who();
+  el.innerHTML=w?`<div class="st-auth"><span>Stories Bank synced to <span class="who">${w}</span> — private to you.</span><button onclick="BANK.signOut();renderAuth();STARSYS.renderBank()">Sign out</button></div>`
+   :`<div class="st-auth"><span>Sign in to keep your stories private and synced across devices.</span><input id="authEmail" type="email" placeholder="you@email.com" autocomplete="email"><button onclick="doSignIn()">Send link</button></div>`;
+}
+async function doSignIn(){
+  const e=document.getElementById('authEmail').value.trim(); if(!e) return;
+  const box=document.querySelector('#starAuth .st-auth');
+  try{ await BANK.signIn(e); box.innerHTML='<span>Check your email — the sign-in link is on its way to <b>'+e+'</b>.</span>'; }
+  catch(err){ box.innerHTML='<span>Could not send the link: '+String(err.message).slice(0,120)+'</span>'; }
+}
 /* ---- tool screen ---- */
 function openTool(id){
   current=id; const t=TOOLS.find(x=>x.id===id); renderCatalog(); lastVals={};
@@ -1496,6 +1841,10 @@ function openTool(id){
     ${notice}
     <div class="split"><div class="panel glass"><h3>Inputs</h3>${form||'<p style="color:var(--ink-3)">No inputs — just run it.</p>'}<button class="run" onclick="runTool()">${t.runLabel||(t.status==='ai'?'Run with AI':'Run')}</button></div>
     <div class="panel glass result"><h3>Result</h3><div id="result"><div class="empty">Fill in the inputs and run.</div></div></div></div>`;
+  if(t.custom==='star'){
+    document.querySelector('.split').outerHTML='<div id="starAuth"></div><div id="starMount"></div><div id="st-bank" class="panel glass" style="margin-top:14px"></div>';
+    renderAuth(); STARSYS.mount(document.getElementById('starMount'),{ai:AI});
+  }
   if(t.custom==='trifecta'){
     document.querySelector('.split').outerHTML='<div id="triMount"></div>';
     TRI.mount(document.getElementById('triMount'),{persona:fPersona!=='all'?fPersona:''});
@@ -1586,6 +1935,7 @@ Deno.serve(async (req) => {
 
 /* ---- init ---- */
 renderFilterChips(); renderCatalog(); keyState(); goHome();
+BANK.init().then(()=>{ if(current==='star'){ renderAuth(); STARSYS.renderBank(); } });
 const mq=matchMedia('(min-width:1024px)'); const syncDrawer=()=>{ if(mq.matches){ document.getElementById('drawer').setAttribute('aria-hidden','false'); document.body.style.overflow=''; } else if(!document.getElementById('drawer').classList.contains('on')) document.getElementById('drawer').setAttribute('aria-hidden','true'); }; mq.addEventListener('change',syncDrawer); syncDrawer();
 </script>
 </body>
