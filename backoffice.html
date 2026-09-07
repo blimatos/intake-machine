@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#131225">
+<title>Boulder Careers — Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#131225;--glass:rgba(255,255,255,0.10);--glass-2:rgba(255,255,255,0.06);--glass-3:rgba(255,255,255,0.14);
+  --line:rgba(255,255,255,0.16);--line-2:rgba(255,255,255,0.10);
+  --ink:#ffffff;--ink-2:rgba(255,255,255,0.78);--ink-3:rgba(255,255,255,0.55);--ink-4:rgba(255,255,255,0.35);
+  --accent:#ffd9a8;--accent-2:#ff9d4d;--accent-ink:#3a2510;
+  --ok:#7fe3a8;--ai:#c7b3ff;--data:#7fd7e8;--human:#ffab9a;--warn:#ffd166;
+  --serif:'Fraunces',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;
+  --r:20px;--r2:14px;--r3:10px;--pad:18px;--tap:44px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+html,body{overflow-x:hidden;max-width:100vw}
+body{font-family:var(--sans);color:var(--ink);background:var(--bg);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;position:relative}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--warn);outline-offset:2px;border-radius:6px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.skip{position:absolute;left:-999px;top:8px;background:#fff;color:#000;padding:8px 12px;border-radius:8px;z-index:200}
+.skip:focus{left:8px}
+
+/* ===== aurora backdrop ===== */
+.aurora{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 50% 38% at 12% 18%,rgba(255,94,58,0.45)0%,transparent 70%),
+  radial-gradient(ellipse 44% 36% at 86% 12%,rgba(64,145,255,0.40)0%,transparent 70%),
+  radial-gradient(ellipse 56% 42% at 78% 82%,rgba(255,64,129,0.36)0%,transparent 70%),
+  radial-gradient(ellipse 46% 40% at 18% 84%,rgba(64,224,208,0.30)0%,transparent 70%),
+  radial-gradient(ellipse 40% 30% at 50% 48%,rgba(186,104,255,0.30)0%,transparent 70%);
+  filter:saturate(1.2);animation:drift 24s ease-in-out infinite alternate}
+@keyframes drift{0%{transform:scale(1)}100%{transform:scale(1.1) translate(-1.5%,2%)}}
+
+/* ===== glass primitive ===== */
+.glass{background:var(--glass);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);border:1px solid var(--line);box-shadow:0 8px 32px rgba(0,0,0,0.22),inset 0 1px 0 rgba(255,255,255,0.22)}
+
+/* ===== app bar ===== */
+.appbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(19,18,37,0.72);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid var(--line-2)}
+.ibtn{width:var(--tap);height:var(--tap);border-radius:12px;border:1px solid var(--line);background:var(--glass-2);display:inline-flex;align-items:center;justify-content:center;color:var(--ink);flex-shrink:0}
+.ibtn svg{width:22px;height:22px}
+.wordmark{font-family:var(--serif);font-weight:600;font-size:19px;letter-spacing:-0.01em;display:flex;align-items:baseline;gap:2px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wordmark b{font-weight:700}.wordmark i{font-style:normal;font-weight:400;color:var(--accent)}
+.wordmark small{font-family:var(--sans);font-size:12px;color:var(--ink-3);margin-left:8px;font-weight:500}
+.key-on{border-color:rgba(127,227,168,0.55);color:var(--ok)}
+
+/* ===== filter strip (mobile) ===== */
+.strip{position:sticky;top:64px;z-index:30;display:flex;gap:8px;padding:8px 12px;background:rgba(19,18,37,0.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line-2)}
+.strip input{flex:1;min-width:0;height:var(--tap);border-radius:12px;border:1px solid var(--line);background:var(--glass-2);padding:0 14px;color:var(--ink);font-size:15px}
+.strip input::placeholder{color:var(--ink-4)}
+.strip .fbtn{height:var(--tap);padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--glass-2);color:var(--ink);font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.strip .fbtn .n{background:var(--accent);color:var(--accent-ink);border-radius:999px;font-size:11px;font-weight:700;padding:1px 7px}
+
+/* ===== drawer ===== */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:min(88vw,360px);z-index:70;transform:translateX(-105%);transition:transform .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;background:rgba(19,18,37,0.86);backdrop-filter:blur(26px) saturate(1.5);-webkit-backdrop-filter:blur(26px) saturate(1.5);border-right:1px solid var(--line)}
+.drawer.on{transform:translateX(0)}
+.drawer-h{display:flex;align-items:center;gap:10px;padding:12px 12px 10px;border-bottom:1px solid var(--line-2)}
+.drawer-h .t{font-family:var(--serif);font-size:18px;font-weight:600;flex:1}
+.drawer-b{overflow-y:auto;flex:1;padding:12px 12px 90px;-webkit-overflow-scrolling:touch}
+.flabel{font-size:12px;color:var(--ink-3);font-weight:600;margin:10px 0 8px;letter-spacing:.01em}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;padding:0 13px;border-radius:999px;border:1px solid var(--line);background:var(--glass-2);color:var(--ink-2);font-size:13.5px;font-weight:600;display:inline-flex;align-items:center}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.bucket{margin:8px 0 2px}
+.bucket-h{display:flex;align-items:center;gap:8px;min-height:var(--tap);padding:0 10px;border-radius:12px;color:var(--ink);font-family:var(--serif);font-weight:600;font-size:16px;width:100%;background:transparent;border:none;text-align:left}
+.bucket-h:hover{background:var(--glass-2)}
+.bucket-h .car{width:14px;opacity:.7;transition:transform .15s;font-size:12px}
+.bucket.open .bucket-h .car{transform:rotate(90deg)}
+.bucket-h .n{margin-left:auto;font-family:var(--sans);font-size:12px;color:var(--ink-3);font-weight:500}
+.bucket-b{display:none;padding:2px 0 6px 6px}
+.bucket.open .bucket-b{display:block}
+.tool-li{display:flex;align-items:center;gap:10px;min-height:var(--tap);padding:0 10px;border-radius:12px;color:var(--ink-2);font-size:14.5px;width:100%;background:transparent;border:none;text-align:left}
+.tool-li:hover{background:var(--glass-2);color:var(--ink)}
+.tool-li.on{background:var(--glass-3);color:var(--ink);border:1px solid var(--line)}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.d-ready{background:var(--ok)}.d-ai{background:var(--ai)}.d-data{background:var(--data)}.d-human{background:var(--human)}
+.tool-li .t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tool-li .tier{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:5px;background:rgba(255,255,255,.12);color:var(--ink-2)}
+.drawer-f{position:absolute;bottom:0;left:0;right:0;padding:12px;border-top:1px solid var(--line-2);background:rgba(19,18,37,0.9);display:flex;gap:8px}
+.drawer-f .fbtn{flex:1;min-height:var(--tap);border-radius:12px;border:1px solid var(--line);background:var(--glass-2);color:var(--ink);font-weight:600}
+
+/* ===== layout ===== */
+.frame{position:relative;display:grid;grid-template-columns:1fr;min-height:100vh}
+.main{min-width:0}
+.work{padding:18px 14px 110px;max-width:1200px;margin:0 auto;width:100%}
+
+/* status strip */
+.counts{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--ink-3);margin-bottom:14px}
+.counts b{color:var(--ink);font-weight:700}
+.counts span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+
+/* home */
+.home h1{font-family:var(--serif);font-weight:500;font-size:clamp(28px,7vw,44px);letter-spacing:-0.02em;line-height:1.08;margin:6px 0 10px}
+.home h1 em{font-style:italic;color:var(--accent)}
+.home .lede{color:var(--ink-2);max-width:62ch;font-size:15px;margin-bottom:18px}
+details.need{border-radius:var(--r2);padding:0;margin-bottom:18px;background:rgba(255,217,168,0.10);border:1px solid rgba(255,217,168,0.4)}
+details.need summary{list-style:none;cursor:pointer;min-height:var(--tap);display:flex;align-items:center;gap:10px;padding:10px 16px;font-weight:700;color:var(--accent)}
+details.need summary::-webkit-details-marker{display:none}
+details.need summary .car{transition:transform .15s;font-size:12px}
+details.need[open] summary .car{transform:rotate(90deg)}
+details.need ol{padding:0 16px 14px 34px;font-size:14px;color:var(--ink-2)}
+details.need li{margin:6px 0}
+details.need b{color:var(--ink)}
+details.need code{font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.25);padding:1px 6px;border-radius:4px}
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
+.card{border-radius:var(--r2);padding:16px 16px 14px;display:flex;flex-direction:column;gap:8px;text-align:left;width:100%;color:var(--ink);cursor:pointer;transition:transform .12s,border-color .12s}
+.card:hover{border-color:rgba(255,217,168,0.5);transform:translateY(-1px)}
+.card .nm{font-family:var(--serif);font-weight:600;font-size:18px;letter-spacing:-0.01em;line-height:1.2}
+.card .ds{font-size:13.5px;color:var(--ink-2);flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card .ft{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-3);flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;letter-spacing:.02em;white-space:nowrap}
+.b-ready{background:rgba(127,227,168,.18);color:var(--ok)}.b-ai{background:rgba(199,179,255,.18);color:var(--ai)}.b-data{background:rgba(127,215,232,.18);color:var(--data)}.b-human{background:rgba(255,171,154,.18);color:var(--human)}
+.t0{background:rgba(127,227,168,.18);color:var(--ok)}.t1{background:rgba(255,217,168,.2);color:var(--accent)}.t2{background:rgba(199,179,255,.18);color:var(--ai)}
+
+/* tool screen */
+.tool-hd{margin-bottom:16px}
+.crumb{font-size:13px;color:var(--ink-3);margin-bottom:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.crumb a{color:var(--accent);text-decoration:none;cursor:pointer;font-weight:600;min-height:var(--tap);display:inline-flex;align-items:center}
+.tool-hd h1{font-family:var(--serif);font-weight:500;font-size:clamp(26px,7vw,40px);letter-spacing:-0.02em;line-height:1.05;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stamp{font-family:var(--mono);font-size:11px;font-weight:600;padding:5px 10px;border-radius:7px;border:1.5px solid currentColor;transform:rotate(-2deg);letter-spacing:.03em}
+.tool-hd .ds{font-size:15px;color:var(--ink-2);max-width:70ch}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:12.5px;color:var(--ink-2)}
+.meta .pill{border:1px solid var(--line);border-radius:999px;padding:5px 11px;background:var(--glass-2);display:inline-flex;align-items:center;gap:6px}
+.split{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+.panel{border-radius:var(--r);padding:var(--pad)}
+.panel h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;font-weight:500}
+.f{margin-bottom:14px}
+.f label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.f .hint{font-size:12.5px;color:var(--ink-3);margin-top:4px}
+.in,.ta,.sel{width:100%;min-height:var(--tap);border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;background:var(--glass-2);color:var(--ink);font-size:15px}
+.in::placeholder,.ta::placeholder{color:var(--ink-4)}
+.in:focus,.ta:focus,.sel:focus{border-color:var(--accent);outline:none}
+.sel{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink-2) 50%),linear-gradient(135deg,var(--ink-2) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat;padding-right:38px}
+.sel option{background:#1e1d35;color:#fff}
+.ta{min-height:110px;resize:vertical;font-family:var(--sans)}
+.chipset{display:flex;flex-wrap:wrap;gap:8px}
+.chipset .c{min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--glass-2);color:var(--ink-2);font-size:14px;font-weight:600;display:inline-flex;align-items:center;cursor:pointer}
+.chipset .c.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.run{width:100%;min-height:50px;background:rgba(255,255,255,0.92);color:#1c1530;border:none;border-radius:13px;padding:13px;font-weight:700;font-size:15px;margin-top:4px}
+.run:hover{background:#fff}
+.run:disabled{background:rgba(255,255,255,0.14);color:var(--ink-4);cursor:not-allowed}
+.run.sec{background:var(--glass-2);color:var(--ink);border:1.5px solid var(--line);margin-top:8px}
+.result{min-height:160px}
+.result .empty{color:var(--ink-3);font-size:14px;padding:26px 14px;text-align:center;border:1.5px dashed var(--line);border-radius:12px}
+.out{font-size:15px;line-height:1.6;color:var(--ink);word-wrap:break-word;overflow-wrap:anywhere}
+.out h4{font-family:var(--serif);font-size:18px;font-weight:600;margin:16px 0 6px}
+.out h4:first-child{margin-top:0}
+.out ul,.out ol{padding-left:20px;margin:6px 0}
+.out li{margin:5px 0}
+.out .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:8px 0}
+.out .kv b{color:var(--ink-2);font-weight:600}
+.out .score{font-family:var(--serif);font-weight:600;font-size:48px;letter-spacing:-0.03em;line-height:1;color:var(--accent)}
+.out .bar{height:10px;background:rgba(255,255,255,.12);border-radius:6px;overflow:hidden;margin:8px 0 12px}
+.out .bar i{display:block;height:100%;background:var(--accent-2)}
+.out .tag{display:inline-block;background:rgba(255,255,255,.12);border-radius:6px;padding:3px 9px;font-size:13px;margin:2px 4px 2px 0}
+.out .tag.miss{background:rgba(255,209,102,.22);color:var(--warn)}
+.out .tag.hit{background:rgba(127,227,168,.18);color:var(--ok)}
+.out .box{background:var(--glass-2);border:1px solid var(--line-2);border-radius:12px;padding:12px 14px;margin:8px 0}
+.out .script{background:var(--glass-2);border-left:4px solid var(--accent);padding:12px 14px;border-radius:0 12px 12px 0;margin:8px 0;white-space:pre-wrap}
+.out .callout{background:rgba(255,217,168,0.10);border-left:4px solid var(--accent);padding:10px 14px;border-radius:0 12px 12px 0;margin:10px 0}
+.out .tiprow{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line-2)}
+.out .tiprow:last-child{border-bottom:none}
+.out .tiprow .k{font-weight:700;min-width:60px;color:var(--accent)}
+.out table{border-collapse:collapse;width:100%;font-size:13.5px;margin:8px 0;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.out th,.out td{border:1px solid var(--line-2);padding:8px 10px;text-align:left;vertical-align:top;white-space:nowrap}
+.out th{background:var(--glass-2);font-weight:700}
+.out .week{border:1px solid var(--line-2);border-radius:12px;padding:12px 14px;margin:8px 0;background:var(--glass-2)}
+.out .week b{font-family:var(--serif);font-size:16px}
+.prompt-view{background:rgba(0,0,0,.35);color:var(--ink-2);border-radius:12px;padding:14px;font-family:var(--mono);font-size:12px;white-space:pre-wrap;line-height:1.5;max-height:340px;overflow:auto}
+.notice{border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:14px;background:var(--glass-2);border:1px solid var(--line)}
+.notice.ai{border-color:rgba(199,179,255,.5)}.notice.data{border-color:rgba(127,215,232,.5)}.notice.human{border-color:rgba(255,171,154,.5)}
+.notice b{font-weight:700}
+.notice a{color:var(--accent);font-weight:600;cursor:pointer}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+.saved{border:1px solid var(--line-2);border-radius:12px;padding:10px 12px;margin:6px 0;display:flex;gap:10px;align-items:flex-start;background:var(--glass-2)}
+.saved .x{margin-left:auto;cursor:pointer;color:var(--ink-3);font-weight:700;min-width:var(--tap);min-height:var(--tap);display:inline-flex;align-items:center;justify-content:center}
+.saved .x:hover{color:var(--human)}
+
+/* fixed bottom action bar (tool screen, mobile) */
+.actionbar{position:fixed;left:0;right:0;bottom:0;z-index:35;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(19,18,37,0.75);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line-2);display:none;gap:10px}
+.actionbar.on{display:flex}
+.actionbar .ibtn{width:var(--tap)}
+.actionbar .run{margin:0;flex:1}
+
+/* settings modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;z-index:80}
+.modal-bg.on{display:flex}
+.modal{border-radius:22px 22px 0 0;padding:20px 18px calc(22px + env(safe-area-inset-bottom));width:100%;max-height:90vh;overflow:auto;background:rgba(19,18,37,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--line)}
+.modal h2{font-family:var(--serif);font-weight:600;font-size:22px;margin-bottom:6px}
+.modal p{color:var(--ink-2);font-size:14px;margin-bottom:12px}
+.modal .row{display:flex;gap:8px;margin-top:10px}
+.modal .close{position:absolute;right:14px;top:12px;background:none;border:none;font-size:22px;color:var(--ink-3);width:var(--tap);height:var(--tap)}
+.code{background:rgba(0,0,0,.35);color:var(--ink-2);border-radius:12px;padding:12px;font-family:var(--mono);font-size:11.5px;white-space:pre;overflow:auto;max-height:240px;margin:8px 0}
+.modal h3{font-family:var(--serif);font-size:16px;font-weight:600;margin-top:18px}
+
+/* ===== scanner on glass ===== */
+.sc{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+.sc-in,.sc-out{background:var(--glass);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);border:1px solid var(--line);border-radius:var(--r);padding:var(--pad);box-shadow:0 8px 32px rgba(0,0,0,0.22),inset 0 1px 0 rgba(255,255,255,0.22)}
+.sc-f{margin-bottom:14px}.sc-f label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.sc-live{font-weight:600;font-size:11px;color:var(--ok);margin-left:8px}
+.sc-inp,.sc-ta{width:100%;min-height:var(--tap);border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;background:var(--glass-2);color:var(--ink);font-size:15px;font-family:var(--sans)}
+.sc-inp::placeholder,.sc-ta::placeholder{color:var(--ink-4)}
+.sc-ta{min-height:140px;resize:vertical}.sc-res{min-height:220px}
+.sc-inp:focus,.sc-ta:focus{outline:none;border-color:var(--accent)}
+.sc-row{display:flex;gap:8px}
+.sc-btn{flex:1;min-height:50px;background:rgba(255,255,255,0.92);color:#1c1530;border:none;border-radius:13px;padding:13px;font-weight:700;font-size:15px}
+.sc-btn.sec{background:var(--glass-2);color:var(--ink);border:1.5px solid var(--line)}.sc-btn:disabled{background:rgba(255,255,255,.14);color:var(--ink-4);cursor:not-allowed}
+.sc-empty{color:var(--ink-3);text-align:center;padding:36px 16px;border:1.5px dashed var(--line);border-radius:12px;font-size:14px}
+.sc-score-wrap{display:grid;grid-template-columns:1fr;gap:16px;align-items:center;justify-items:center}
+.sc-gauge{width:150px;height:150px;border-radius:50%;background:conic-gradient(var(--col) calc(var(--pct)*1%),rgba(255,255,255,.12) 0);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.sc-gauge::before{content:'';position:absolute;inset:14px;background:#221f3f;border-radius:50%}
+.sc-gauge-n{position:relative;font-family:var(--serif);font-weight:600;font-size:46px;letter-spacing:-0.04em;line-height:1}.sc-gauge-l{position:relative;font-size:11px;color:var(--ink-3);font-weight:600}
+.sc-subs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%}
+.sc-sub{background:var(--glass-2);border:1px solid var(--line-2);border-radius:12px;padding:10px 12px}.sc-sub-n{font-family:var(--serif);font-weight:600;font-size:26px;letter-spacing:-0.03em;line-height:1}.sc-sub-l{font-size:12px;color:var(--ink-2);font-weight:600;margin:2px 0 6px}
+.sc-sub-bar{height:6px;background:rgba(255,255,255,.12);border-radius:4px;overflow:hidden}.sc-sub-bar i{display:block;height:100%}
+.sc-verdict{margin:16px 0;font-size:14px;line-height:1.5;padding:12px 14px;background:var(--glass-2);border:1px solid var(--line-2);border-radius:12px}
+.sc-tabs{display:flex;gap:2px;border-bottom:1px solid var(--line-2);margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.sc-tabs::-webkit-scrollbar{display:none}
+.sc-tab{background:none;border:none;min-height:var(--tap);padding:0 12px;font-weight:600;font-size:13.5px;color:var(--ink-3);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.sc-tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.sc-rep{width:100%;border-collapse:collapse;font-size:14px}
+.sc-rep tr{display:block;padding:12px 0;border-bottom:1px solid var(--line-2)}
+.sc-rep th{display:block;text-align:left;padding:0 0 4px;font-weight:700;color:var(--accent);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.sc-rep td{display:block;padding:0;line-height:1.55;color:var(--ink-2)}.sc-rep td b{color:var(--ink)}
+.sc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.sc-chip{display:inline-flex;align-items:center;gap:5px;min-height:34px;background:rgba(255,255,255,.12);border-radius:8px;padding:4px 10px;font-size:13px;font-weight:600;color:var(--ink)}
+.sc-chip em{font-style:normal;font-size:11px;color:var(--ink-3)}.sc-chip.miss{background:rgba(255,209,102,.22);color:var(--warn);cursor:pointer}.sc-chip.hit{background:rgba(127,227,168,.18);color:var(--ok)}
+.sc-chip.pick{cursor:pointer}.sc-chip.pick.on{background:var(--accent);color:var(--accent-ink)}
+.sc-none{color:var(--ink-3);font-size:13px}.sc-note{font-size:13px;color:var(--ink-3);margin:10px 0}
+.sc-quotes{margin-top:6px;font-size:13px;color:var(--ink-3)}.sc-quotes div{padding:3px 0}
+.sc-h{font-family:var(--serif);font-weight:600;font-size:17px;margin:16px 0 6px}
+.sc-kw{width:100%;border-collapse:collapse;font-size:13.5px;display:block;overflow-x:auto}
+.sc-kw th{text-align:left;padding:8px;background:var(--glass-2);font-weight:700;font-size:12px;white-space:nowrap}.sc-kw td{padding:8px;border-bottom:1px solid var(--line-2);white-space:nowrap}.sc-kw tr.ex td{opacity:.4;text-decoration:line-through}.sc-kw td.z{color:var(--human);font-weight:700}
+.sc-bars{width:120px}.sc-bars i{display:block;height:5px;border-radius:3px;background:var(--accent-2);margin:2px 0}.sc-bars i.r{background:var(--ok)}
+.sc-x{cursor:pointer;color:var(--ink-3);font-weight:700;display:inline-flex;min-width:36px;min-height:36px;align-items:center;justify-content:center}.sc-x:hover{color:var(--human)}
+.sc-leg{display:inline-block;width:14px;height:5px;border-radius:3px;background:var(--accent-2);vertical-align:middle}.sc-leg.r{background:var(--ok)}
+.sc-jd{font-size:14px;line-height:1.75;background:var(--glass-2);border:1px solid var(--line-2);border-radius:12px;padding:14px;max-height:520px;overflow:auto;color:var(--ink-2)}
+mark.hit{background:rgba(127,227,168,.3);color:var(--ink);padding:1px 4px;border-radius:4px}mark.miss{background:rgba(255,209,102,.35);color:var(--ink);padding:1px 4px;border-radius:4px}
+.sc-sugg{border:1px solid var(--line-2);border-radius:12px;padding:12px 14px;margin:8px 0;background:var(--glass-2)}.sc-tpl{font-size:14px;margin-top:4px;color:var(--ink-2)}
+.sc-mini{margin-top:8px;min-height:40px;background:var(--accent);color:var(--accent-ink);border:none;border-radius:9px;padding:8px 14px;font-weight:700;font-size:13px;margin-right:6px}.sc-mini.sec{background:var(--glass-2);color:var(--ink);border:1px solid var(--line)}
+.sc-diff{display:grid;grid-template-columns:1fr;gap:10px;border:1px solid var(--line-2);border-radius:12px;padding:12px;margin:8px 0;font-size:14px;background:var(--glass-2)}.sc-diff.done{opacity:.45}
+.sc-diff-o,.sc-diff-r{line-height:1.5}.sc-diff-o span,.sc-diff-r span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:3px}.sc-diff-r{background:rgba(127,227,168,.12);border-radius:9px;padding:8px 10px}.sc-why{font-size:12.5px;color:var(--ink-3);margin-top:4px}
+.sc-diff-a{display:flex;gap:6px}
+
+.tri{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+.tri>*{min-width:0}
+.tri-in,.tri-out{border-radius:var(--r);padding:var(--pad)}
+.tri-in h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;font-weight:500}
+.tri-note{font-size:13.5px;color:var(--ink-3);margin-bottom:12px}
+.tri-list{display:flex;flex-direction:column;gap:8px;min-height:44px}
+.tri-poollabel{font-size:12px;color:var(--ink-3);margin:12px 0 6px;font-weight:600}
+.tri-slot{border:1.5px dashed var(--line);border-radius:12px;padding:14px;text-align:center;color:var(--ink-3);font-size:13.5px}
+.tri-card{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);background:var(--glass-3);border-radius:13px;padding:10px 12px;cursor:grab;transition:border-color .12s,background .12s}
+.tri-card.pool{background:var(--glass-2);border-style:dashed;cursor:pointer}
+.tri-card.dragging{opacity:.4;cursor:grabbing}.tri-card.over{border-color:var(--accent);background:rgba(255,217,168,.12)}
+.tri-num{font-family:var(--serif);font-style:italic;font-size:22px;font-weight:600;color:var(--accent);min-width:22px;text-align:center}
+.tri-name{flex:1;font-weight:600;font-size:15px}.tri-desc{display:block;font-size:12.5px;color:var(--ink-3);font-weight:400;margin-top:1px}
+.tri-ctl{display:flex;gap:4px}
+.tri-mini{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:var(--glass-2);color:var(--ink);font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+.tri-mini:disabled{opacity:.3}.tri-mini:hover:not(:disabled){border-color:var(--accent)}
+.tri-row{display:flex;gap:8px;margin-top:10px}
+.tri-btn{width:100%;min-height:50px;background:rgba(255,255,255,0.92);color:#1c1530;border:none;border-radius:13px;padding:13px;font-weight:700;font-size:15px;margin-top:8px}
+.tri-btn.sec{background:var(--glass-2);color:var(--ink);border:1.5px solid var(--line);margin-top:0;min-height:44px;font-size:14px}
+.tri-empty{color:var(--ink-3);text-align:center;padding:36px 16px;border:1.5px dashed var(--line);border-radius:12px;font-size:14px}
+.tri-profile{background:rgba(255,217,168,0.10);border:1px solid rgba(255,217,168,0.4);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.tri-profile-l{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.tri-profile-n{font-family:var(--serif);font-size:28px;font-weight:600;letter-spacing:-0.02em;line-height:1.05;margin-bottom:8px}
+.tri-profile p{font-size:14px;color:var(--ink-2)}.tri-profile b{color:var(--ink)}
+.tri-callout{border-left:4px solid var(--accent);background:var(--glass-2);padding:10px 14px;border-radius:0 12px 12px 0;margin:10px 0;font-size:14px;color:var(--ink-2)}
+.tri-callout.warn{border-left-color:var(--warn);background:rgba(255,209,102,.10)}.tri-callout b{color:var(--ink)}
+.tri-h{font-family:var(--serif);font-size:19px;font-weight:600;margin:18px 0 8px}
+.tri-pill{font-family:var(--mono);font-size:10px;background:rgba(127,227,168,.18);color:var(--ok);padding:2px 7px;border-radius:5px}
+.tri-segs{display:flex;flex-direction:column;gap:10px}
+.tri-seg{border:1px solid var(--line-2);background:var(--glass-2);border-radius:14px;padding:12px 14px}
+.tri-seg-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.tri-seg-n{font-family:var(--serif);font-style:italic;font-size:20px;font-weight:600;color:var(--accent)}
+.tri-seg-name{font-family:var(--serif);font-size:17px;font-weight:600;flex:1;min-width:0}
+.tri-fit{font-family:var(--mono);font-size:11px;color:var(--ink-2);background:rgba(255,255,255,.1);padding:3px 8px;border-radius:6px}
+.tri-seg-why{font-size:14px;color:var(--ink-2);margin-bottom:8px}
+.tri-seg-read{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.tri-lvl{font-family:var(--mono);font-size:10.5px;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.1);color:var(--ink-2)}
+.tri-lvl.l3{background:rgba(127,227,168,.18);color:var(--ok)}.tri-lvl.l1{background:rgba(255,171,154,.18);color:var(--human)}
+.tri-seg-ex,.tri-seg-watch{font-size:13px;color:var(--ink-2);margin-top:4px}.tri-seg-ex b,.tri-seg-watch b{color:var(--ink)}
+.tri-journey{display:flex;flex-direction:column;gap:8px}
+.tri-step{border:1px solid var(--line-2);background:var(--glass-2);border-radius:12px;padding:10px 14px;font-size:13.5px;color:var(--ink-2)}
+.tri-step.now{border-color:var(--accent);background:rgba(255,217,168,.10)}
+.tri-step-t{font-weight:700;color:var(--ink);margin-bottom:4px;display:flex;justify-content:space-between}.tri-step-t span{font-family:var(--mono);font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:.1em}
+.tri-step ul{padding-left:18px;margin-top:4px}.tri-step li{margin:3px 0}
+.tri-src{font-size:11.5px;color:var(--ink-4);margin-top:12px}
+@media(min-width:1024px){.tri{grid-template-columns:minmax(300px,400px) 1fr}}
+
+/* grid children must be allowed to shrink — prevents horizontal overflow */
+.sc>*,.split>*,.grid>*,.sc-subs>*,.sc-score-wrap>*,.frame>*,.main{min-width:0;max-width:100%}
+.sc-inp,.sc-ta,.in,.ta,.sel{min-width:0;max-width:100%}
+textarea{max-width:100%}
+/* ===== tablet / desktop ===== */
+@media(min-width:600px){.grid{grid-template-columns:repeat(2,1fr)}.sc-score-wrap{grid-template-columns:150px 1fr;justify-items:stretch}.sc-subs{grid-template-columns:repeat(2,1fr)}.sc-diff{grid-template-columns:1fr 1fr auto}.sc-diff-a{flex-direction:column}}
+@media(min-width:1024px){
+  .frame{grid-template-columns:320px 1fr}
+  .drawer{position:sticky;top:0;height:100vh;transform:none;width:auto;border-right:1px solid var(--line-2);background:rgba(19,18,37,0.45)}
+  .drawer-h .ibtn{display:none}
+  .scrim{display:none}
+  .appbar .menu{display:none}
+  .strip{display:none}
+  .work{padding:28px 28px 60px}
+  .grid{grid-template-columns:repeat(3,1fr)}
+  .split{grid-template-columns:minmax(300px,420px) 1fr}
+  .sc{grid-template-columns:minmax(300px,420px) 1fr}
+  .sc-rep tr{display:table-row;padding:0}.sc-rep th{display:table-cell;width:150px;padding:12px 10px 12px 0;vertical-align:top}.sc-rep td{display:table-cell;padding:12px 0}
+  .actionbar.on{display:none}
+  .modal-bg{align-items:center}.modal{border-radius:22px;width:min(640px,92vw);max-height:88vh}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#work">Skip to content</a>
+<div class="aurora" aria-hidden="true"></div>
+
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+
+
+<div class="frame">
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Tools and filters" aria-hidden="true">
+  <div class="drawer-h">
+    <div class="t">Tools</div>
+    <button class="ibtn" onclick="closeDrawer()" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="drawer-b">
+    <div class="flabel">Persona</div>
+    <div class="chips" id="pChips" role="group" aria-label="Filter by persona"></div>
+    <div class="flabel">Tier</div>
+    <div class="chips" id="tChips" role="group" aria-label="Filter by tier"></div>
+    <div class="flabel">Catalog</div>
+    <nav id="catalog" aria-label="Tool catalog"></nav>
+  </div>
+  <div class="drawer-f">
+    <button class="fbtn" onclick="goHome();closeDrawer()">All tools</button>
+    <button class="fbtn" id="keyBtn2" onclick="openSettings()">Settings</button>
+  </div>
+</aside>
+  <main class="main" id="main">
+    <header class="appbar">
+      <button class="ibtn menu" id="menuBtn" onclick="openDrawer()" aria-label="Open menu" aria-controls="drawer" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div class="wordmark"><b>bold</b><i>er</i>&nbsp;careers <small>tools</small></div>
+      <button class="ibtn" id="keyBtn" onclick="openSettings()" aria-label="Settings and AI key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </header>
+    <div class="strip">
+      <input id="search" placeholder="Search tools" oninput="renderCatalog();if(!current)goHome()" aria-label="Search tools">
+      <button class="fbtn" onclick="openDrawer()" aria-label="Open filters"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filters <span class="n" id="fCount" hidden>0</span></button>
+    </div>
+    <div class="work" id="work"></div>
+  </main>
+</div>
+
+<div class="actionbar" id="actionbar">
+  <button class="ibtn" onclick="goHome()" aria-label="Back to all tools"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <button class="run" id="abRun" onclick="runTool()">Run</button>
+</div>
+
+<div class="modal-bg" id="settings" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="modal" style="position:relative">
+    <button class="close" onclick="closeSettings()" aria-label="Close settings">×</button>
+    <h2 id="settingsTitle">Settings &amp; AI key</h2>
+    <p>AI-powered tools need an Anthropic API key. It's stored only in this browser and never written into the file. For real users, use the server-side proxy below instead.</p>
+    <div class="f"><label for="keyIn">Anthropic API key (stays in this browser)</label><input class="in" id="keyIn" type="password" placeholder="sk-ant-…" autocomplete="off"></div>
+    <div class="f"><label for="modelIn">Model</label><input class="in" id="modelIn" placeholder="claude-sonnet-4-6"></div>
+    <div class="f"><label for="epIn">Proxy endpoint (optional — production)</label><input class="in" id="epIn" placeholder="https://zwscajqkqjwywqwylhnp.supabase.co/functions/v1/ai"><div class="hint">If set, tools call this instead of Anthropic directly, and the key lives on the server.</div></div>
+    <div class="row"><button class="run" style="margin:0" onclick="saveSettings()">Save settings</button><button class="run sec" style="margin:0" onclick="clearKey()">Clear key</button></div>
+    <h3>Production setup — Supabase Edge Function</h3>
+    <p>Edge Functions → New function <code>ai</code> → paste, deploy, then <code>supabase secrets set ANTHROPIC_API_KEY=…</code> and put the function URL in the Proxy field.</p>
+    <div class="code" id="edgeCode"></div>
+  </div>
+</div>
+<script>
+/* =====================================================================
+   TOOL REGISTRY — every offering from the Boulder Careers offerings board.
+   status: 'ready' (works now) | 'ai' (needs AI key) | 'data' (needs data source) | 'human' (human/ops layer)
+   tier: 0 Basic · 1 Paid · 2 Premium  (proposed — set in the tiering session)
+   personas: 'all' or subset of scoutp, scouta, wanderer, sprinter, marathoner
+   Each tool has inputs[] and either compute(v)→HTML, or ai:{system,user(v)}, plus optional shell.
+   ===================================================================== */
+const PERSONAS=[
+  {id:'scoutp',name:'Scout · Passive'},{id:'scouta',name:'Scout · Active'},
+  {id:'wanderer',name:'Wanderer'},{id:'sprinter',name:'Sprinter'},{id:'marathoner',name:'Marathoner'}
+];
+const TIERS=['Basic','Paid','Premium'];
+
+const TOOLS=[
+
+/* ───────────────────────── FRAMEWORKS ───────────────────────── */
+{id:'trifecta',bucket:'Frameworks',name:'Trifecta Filter',tier:0,personas:'all',status:'ready',custom:'trifecta',
+ desc:'Rank Learn / Earn / Stability. Get the segments that fit your order — with an honest 2026 read on each — the 2-of-3 rule, what you\'re trading, and the two moments in your search to use it.',
+ inputs:[]},
+
+{id:'pyramid',bucket:'Frameworks',name:'Career Pyramid',tier:1,personas:'all',status:'ready',
+ desc:'Map your target roles from reachable-now to dream, ranked by the sacrifice each would take. Your targeting model.',
+ inputs:[{k:'roles',label:'Target roles (one per line, up to 8)',type:'textarea',ph:'Senior Product Manager\nHead of Product\nVP Product'},
+  {k:'reach',label:'Reach — how far each is from where you are today (1 = reachable now, 5 = dream)',type:'text',ph:'2,3,5'},
+  {k:'sac',label:'Sacrifice — what each would cost you (1 = none, 5 = big: relocation, pay cut, retraining)',type:'text',ph:'1,2,4'}],
+ compute(v){
+  const roles=lines(v.roles); const r=nums(v.reach), s=nums(v.sac);
+  if(!roles.length) return warn('Add at least one target role.');
+  const rows=roles.map((x,i)=>({role:x,reach:r[i]||3,sac:s[i]||2})).sort((a,b)=>a.reach-b.reach);
+  const tier=x=>x.reach<=2?'Base — reachable now':x.reach<=3?'Middle — a stretch':'Top — the dream';
+  return `<h4>Your pyramid</h4><table><tr><th>Level</th><th>Role</th><th>Reach</th><th>Sacrifice</th><th>Play</th></tr>${rows.map(x=>`<tr><td>${tier(x)}</td><td><b>${esc(x.role)}</b></td><td>${x.reach}/5</td><td>${x.sac}/5</td><td>${x.reach<=2?'Apply now — 80% of your effort':x.reach<=3?'Network in — 20% of effort, build the bridge':'Hold — plan the 2–3 steps that get you here'}</td></tr>`).join('')}</table>
+  <div class="callout">The base pays the bills and builds momentum; the middle is where networking pays off; the top is a plan, not an application. Spend 80% on base + middle.</div>`;
+ }},
+
+{id:'star',bucket:'Frameworks',name:'STAR Story System',tier:1,personas:'all',status:'ready',
+ desc:'Build a quantified STAR-L story (Situation · Task · Action · Result · Learning). Saves to your Stories Bank.',
+ inputs:[{k:'title',label:'Story name',type:'text',ph:'Turned around the churning enterprise account'},{k:'comp',label:'Competency it proves',type:'chips',opts:['Leadership','Problem solving','Conflict','Failure/learning','Influence','Delivery','Customer','Data']},
+  {k:'s',label:'Situation',type:'textarea',ph:'Where were you, what was at stake?'},{k:'t',label:'Task',type:'textarea',ph:'What were you responsible for?'},{k:'a',label:'Action',type:'textarea',ph:'What did YOU do — specifically?'},{k:'r',label:'Result (with numbers)',type:'textarea',ph:'Revenue, %, time saved, people, scale…'},{k:'l',label:'Learning',type:'textarea',ph:'What you took forward'}],
+ compute(v){
+  const hasNum=/\d/.test(v.r||''); const words=(v.s+v.t+v.a+v.r).split(/\s+/).filter(Boolean).length;
+  const iCount=((v.a||'').match(/\bI\b/g)||[]).length, weCount=((v.a||'').match(/\bwe\b/gi)||[]).length;
+  const checks=[[hasNum,'Result is quantified'],[words>=80&&words<=220,`Right length for a 90-second answer (${words} words)`],[iCount>=weCount,'Action uses "I" more than "we" (they\'re hiring you, not the team)'],[(v.l||'').length>10,'Has a learning']];
+  const story=`<div class="script"><b>${esc(v.title||'Untitled story')}</b>\n\nSituation: ${esc(v.s)}\nTask: ${esc(v.t)}\nAction: ${esc(v.a)}\nResult: ${esc(v.r)}\nLearning: ${esc(v.l)}</div>`;
+  return `<h4>Story check</h4>${checklist(checks)}${story}
+  <button class="run sec" onclick="saveTo('stories',{title:${JSON.stringify(v.title||'Untitled')},comp:${JSON.stringify(v.comp||'')},s:${JSON.stringify(v.s)},t:${JSON.stringify(v.t)},a:${JSON.stringify(v.a)},r:${JSON.stringify(v.r)},l:${JSON.stringify(v.l)}});toast('Saved to Stories Bank')">Save to Stories Bank</button>`;
+ }},
+
+{id:'nonneg',bucket:'Frameworks',name:'Non-Negotiables Map',tier:2,personas:'all',status:'ready',
+ desc:'The deeper Trifecta. Name your hard lines and turn them into target filters and interview questions.',
+ inputs:[{k:'n',label:'Non-negotiables',type:'chips',multi:true,opts:['Same or higher pay','Remote','Hybrid','Flexible hours','Fast-paced','Calm pace','Creative freedom','People management','No management','Clear promotion path','Mission-driven','Big brand','Small team']},{k:'floor',label:'Compensation floor (optional)',type:'text',ph:'$150k base'},{k:'notes',label:'Anything else you won\'t compromise on',type:'textarea'}],
+ compute(v){
+  const n=(v.n||'').split('|').filter(Boolean); if(!n.length) return warn('Pick at least one non-negotiable.');
+  const Q={'Remote':'Is this role fully remote, and how many people on the team are remote today?','Hybrid':'What does the hybrid rhythm actually look like week to week?','Flexible hours':'How does the team handle school pickups and appointments?','Fast-paced':'What shipped in the last 90 days?','Calm pace':'How are deadlines set, and what happens when one slips?','Creative freedom':'Can you give an example of an idea from someone in this role that changed the plan?','People management':'How many direct reports, and how is the team structured?','No management':'Is there a senior IC track, and who is on it?','Clear promotion path':'Can you share an example of someone on the team you developed and promoted?','Mission-driven':'What does the company say no to because of its mission?','Big brand':'—','Small team':'How big is the team, and how has it changed in a year?','Same or higher pay':'What is the approved range for this role?'};
+  const filters=n.map(x=>({'Remote':'remote:true','Hybrid':'hybrid','Flexible hours':'flex schedule','Fast-paced':'startup OR scale-up','Calm pace':'established OR enterprise','People management':'"manager" OR "head of"','No management':'"senior" OR "staff" OR "principal"','Clear promotion path':'"career growth"','Mission-driven':'"mission" OR nonprofit OR impact','Big brand':'Fortune 500','Small team':'seed OR series A','Same or higher pay':v.floor?('salary ≥ '+v.floor):'salary disclosed'}[x]));
+  return `<h4>Your hard lines</h4>${n.map(x=>'<span class="tag hit">'+x+'</span>').join('')}${v.notes?'<p>'+esc(v.notes)+'</p>':''}
+  <h4>Search filters to apply</h4><div class="box">${filters.join(' · ')}</div>
+  <h4>Questions to ask before you accept</h4><ul>${n.filter(x=>Q[x]&&Q[x]!=='—').map(x=>'<li><b>'+x+':</b> '+Q[x]+'</li>').join('')}</ul>
+  <div class="callout">A role that breaks one of these isn't a "maybe." Save yourself the interview loop.</div>`;
+ }},
+
+/* ───────────────────────── RESUME & PROFILE ───────────────────────── */
+{id:'ats_template',bucket:'Resume & Profile',name:'ATS Resume Template',tier:0,personas:'all',status:'ready',
+ desc:'A clean, machine-readable resume built from your details. Copy it out or download it. The free lead magnet.',
+ inputs:[{k:'name',label:'Name',type:'text'},{k:'contact',label:'Contact line',type:'text',ph:'city · email · phone · linkedin.com/in/you'},{k:'titles',label:'Two professional titles',type:'text',ph:'Senior Product Manager · Growth & Platforms'},{k:'summary',label:'Summary (3 lines)',type:'textarea'},{k:'skills',label:'Key skills (comma separated)',type:'text'},{k:'exp',label:'Experience — one job per block: Company | Title | Dates, then bullets on lines starting with -',type:'textarea',ph:'Acme | Senior PM | 2019–2024\n- Grew activation 34% by …\n- Led a team of 6 to …'},{k:'edu',label:'Education',type:'text'}],
+ compute(v){
+  const blocks=(v.exp||'').split(/\n(?=[^-\n])/).map(b=>b.trim()).filter(Boolean);
+  const expHTML=blocks.map(b=>{const [hd,...bl]=b.split('\n');const [co,ti,dt]=hd.split('|').map(x=>(x||'').trim());return `<p><b>${esc(ti)}</b> — ${esc(co)} <span style="color:var(--ink-3)">${esc(dt)}</span></p><ul>${bl.filter(x=>x.trim().startsWith('-')).map(x=>'<li>'+esc(x.replace(/^-\s*/,''))+'</li>').join('')}</ul>`;}).join('');
+  const txt=`${v.name}\n${v.contact}\n${v.titles}\n\nSUMMARY\n${v.summary}\n\nSKILLS\n${v.skills}\n\nEXPERIENCE\n${v.exp}\n\nEDUCATION\n${v.edu}`;
+  return `<div class="box" style="background:#fff"><h4 style="font-size:20px">${esc(v.name)}</h4><p style="color:var(--ink-3)">${esc(v.contact)}</p><p><b>${esc(v.titles)}</b></p><h4>Summary</h4><p>${esc(v.summary)}</p><h4>Skills</h4><p>${esc(v.skills)}</p><h4>Experience</h4>${expHTML}<h4>Education</h4><p>${esc(v.edu)}</p></div>
+  <button class="run sec" onclick="download('resume_ats.txt',${JSON.stringify(txt)})">Download as .txt</button>
+  <div class="callout">Why this passes ATS: single column, standard section names, no tables or text boxes, real text (not an image). Paste it into Word and keep the structure.</div>`;
+ }},
+
+{id:'canva_ats',bucket:'Resume & Profile',name:'Canva-to-ATS Fix',tier:0,personas:'all',status:'ready',
+ desc:'Most designed resumes don\'t parse. Check yours in 60 seconds and get the fixes.',
+ inputs:[{k:'c',label:'Which of these does your resume have?',type:'chips',multi:true,opts:['Two columns','Tables','Icons for contact info','Text in a header/footer','Skills as bars or dots','A photo','Uncommon fonts','Text boxes','Graphics or charts','Saved as an image/PNG']}],
+ compute(v){
+  const c=(v.c||'').split('|').filter(Boolean); const score=Math.max(0,100-c.length*11);
+  const fix={'Two columns':'Switch to one column — parsers read left-to-right and scramble columns.','Tables':'Replace tables with plain lines; parsers often drop table contents.','Icons for contact info':'Write "Email:" and "Phone:" as text — icons aren\'t read.','Text in a header/footer':'Move your name and contact into the body; many parsers skip headers.','Skills as bars or dots':'List skills as words — a bar has no text value.','A photo':'Remove it — some systems reject files with images, and it invites bias.','Uncommon fonts':'Use Arial, Calibri, or Georgia.','Text boxes':'Text boxes are invisible to most parsers — use normal paragraphs.','Graphics or charts':'Replace with a quantified bullet.','Saved as an image/PNG':'Export as .docx or a text-based PDF.'};
+  return `<div class="score">${score}<span style="font-size:18px">/100</span></div><div class="bar"><i style="width:${score}%"></i></div><p>${score>=89?'Your resume should parse cleanly.':score>=60?'A few things will trip parsers. Fix these:':'This resume is likely getting lost before a human sees it. Fix these first:'}</p>
+  ${c.length?'<ul>'+c.map(x=>'<li><b>'+x+':</b> '+fix[x]+'</li>').join('')+'</ul>':'<p>Nothing flagged — nice.</p>'}
+  <div class="callout">Test it: open the PDF, select all, paste into a plain text editor. If it reads top-to-bottom in order, a parser will too.</div>`;
+ }},
+
+{id:'jd_match',bucket:'Resume & Profile',name:'JD Keyword Matcher',tier:0,personas:'all',status:'ready',
+ desc:'Pull the keywords a job description is really asking for, so you can mirror the language.',
+ inputs:[{k:'jd',label:'Paste the job description',type:'textarea',ph:'Paste the full posting…'}],
+ compute(v){
+  if(!(v.jd||'').trim()) return warn('Paste a job description.');
+  const k=keywords(v.jd,28);
+  return `<h4>Top terms in this posting</h4><p>${k.map(x=>`<span class="tag">${esc(x.w)} <span style="color:var(--ink-3)">×${x.n}</span></span>`).join('')}</p>
+  <h4>Skills & tools mentioned</h4><p>${skillsIn(v.jd).map(x=>'<span class="tag hit">'+x+'</span>').join('')||'<span style="color:var(--ink-3)">None from the common list — check the terms above.</span>'}</p>
+  <div class="callout">Use the exact words (e.g. "stakeholder management" not "working with stakeholders"). Parsers match strings, not meaning.</div>`;
+ }},
+
+{id:'jd_match_rate',bucket:'Resume & Profile',name:'Resume ↔ JD Match Scanner',tier:1,personas:'all',status:'ready',custom:'scanner',
+ desc:'Paste the posting and your resume. Match score out of 100 with hard/soft/other/degree sub-scores, missing keywords with frequency, title & degree match, a full resume check, the highlighted posting, exclude-and-recalculate, live re-scoring as you edit, and AI bullets & rewrites you approve one at a time. Aim for 80+.',
+ inputs:[]},
+
+{id:'resume_review',bucket:'Resume & Profile',name:'Resume ATS Check',tier:1,personas:'all',status:'ready',
+ desc:'A rules-based readiness scan: structure, contact info, verbs, numbers, length, and red flags.',
+ inputs:[{k:'res',label:'Paste your resume text',type:'textarea'}],
+ compute(v){
+  const r=v.res||''; if(!r.trim()) return warn('Paste your resume text.');
+  const has=re=>re.test(r); const cnt=re=>(r.match(re)||[]).length;
+  const bullets=cnt(/^\s*[-•▪]/gm); const nums=cnt(/\d+%|\$\d|\d+\+|\b\d{2,}\b/g); const verbs=cnt(new RegExp('\\b('+VERBS.join('|')+')\\b','gi'));
+  const checks=[[has(/@/),'Email present'],[has(/\d{3}[-.\s]?\d{3}[-.\s]?\d{4}/),'Phone present'],[has(/linkedin\.com/i),'LinkedIn URL present'],[has(/experience/i),'"Experience" section header'],[has(/skills/i),'"Skills" section header'],[has(/education/i),'"Education" section header'],[bullets>=6,`Uses bullets (${bullets} found)`],[nums>=5,`Quantified results (${nums} numbers found — aim for one per bullet)`],[verbs>=6,`Strong action verbs (${verbs} found)`],[!has(/\bI\b|\bmy\b/),'No first-person pronouns'],[!has(/responsible for|duties included/i),'No "responsible for" (describe outcomes, not duties)'],[!has(/objective/i),'No objective statement (use a summary instead)'],[r.split(/\s+/).length<=900,'Under ~2 pages']];
+  const score=Math.round(checks.filter(c=>c[0]).length/checks.length*100);
+  return `<div class="score">${score}<span style="font-size:18px">/100</span></div><div class="bar"><i style="width:${score}%"></i></div>${checklist(checks)}
+  <div class="callout">The two that move the needle most: a number in every bullet, and an action verb to open it.</div>`;
+ }},
+
+{id:'bullet_rewriter',bucket:'Resume & Profile',name:'Resume Bullet Rewriter',tier:0,personas:'all',status:'ai',
+ desc:'Paste a bullet. Get it back as action verb + specific detail + measurable result. The most-repeated tip in every video.',
+ inputs:[{k:'b',label:'Your bullet(s) — one per line',type:'textarea',ph:'Responsible for managing the sales team and improving results'},{k:'ctx',label:'Any numbers you can add (optional)',type:'text',ph:'team of 8, $2M pipeline, 30% growth'}],
+ precheck(v){ const ls=lines(v.b); return ls.length?`<h4>Quick read</h4>${ls.map(l=>{const f=[];if(/responsible for|duties|helped|worked on/i.test(l))f.push('weak opener');if(!/\d/.test(l))f.push('no number');if(!new RegExp('^('+VERBS.join('|')+')','i').test(l.trim()))f.push('doesn\'t open with an action verb');return '<div class="tiprow"><span class="k">'+(f.length?'Fix':'OK')+'</span><span>'+esc(l)+(f.length?' <span style="color:var(--ink-3)">— '+f.join(', ')+'</span>':'')+'</span></div>'}).join('')}`:''; },
+ ai:{system:'You rewrite resume bullets. Rules: open with a strong past-tense action verb; include one specific detail; end with a measurable result. Never invent numbers — if none are given, leave a [placeholder] for the user to fill. Keep each bullet under 25 words. No first person. Output a numbered list; after each rewrite add one short line explaining what changed.',
+  user:v=>'Rewrite these resume bullets:\n'+v.b+(v.ctx?'\n\nNumbers/context I can use: '+v.ctx:'')}},
+
+{id:'leadership_bullets',bucket:'Resume & Profile',name:'Leadership Bullet Builder',tier:1,personas:'all',status:'ai',
+ desc:'For managers: turn "managed a team" into good-boss behaviors — how you grew people, not just supervised them.',
+ inputs:[{k:'team',label:'Team you led',type:'text',ph:'8 engineers across 2 squads'},{k:'did',label:'What you actually did with them',type:'textarea',ph:'weekly 1:1s, promoted 2, built onboarding, cut attrition…'},{k:'out',label:'Outcomes',type:'text',ph:'attrition 30%→8%, 2 promotions, shipped X'}],
+ ai:{system:'You write resume bullets for people managers that demonstrate "good boss behaviors": developing people, creating clarity, unblocking, and results through others — not just supervising. Open with an action verb, be specific, quantify with the numbers provided (never invent). Give 5 bullets, under 25 words each.',
+  user:v=>`Team: ${v.team}\nWhat I did: ${v.did}\nOutcomes: ${v.out}`}},
+
+{id:'resume_ai',bucket:'Resume & Profile',name:'AI Resume Tailor',tier:1,personas:'all',status:'ai',
+ desc:'Tailor your resume to a specific role: reorder, mirror the posting\'s language, sharpen the summary. Never invents experience.',
+ inputs:[{k:'res',label:'Your resume',type:'textarea'},{k:'jd',label:'Target job description',type:'textarea'},{k:'focus',label:'What to emphasize (optional)',type:'text'}],
+ ai:{system:'You are a senior resume writer. Tailor the resume to the job description: rewrite the summary to mirror the role, reorder and rephrase bullets to use the posting\'s exact terminology where truthful, and surface the most relevant experience first. NEVER invent skills, employers, dates, or numbers. Keep ATS-safe formatting (plain sections, bullets). Output the full tailored resume, then a short "What changed and why" list, then a "Missing — only add if true" list of keywords from the JD not in the resume.',
+  user:v=>`RESUME:\n${v.res}\n\nJOB DESCRIPTION:\n${v.jd}${v.focus?'\n\nEmphasize: '+v.focus:''}`}},
+
+{id:'cover_letter',bucket:'Resume & Profile',name:'Cover Letter Tool',tier:1,personas:'all',status:'ai',
+ desc:'A role-tailored cover letter in your voice — short, specific, with the closer that converts.',
+ inputs:[{k:'res',label:'Your resume or a summary of your background',type:'textarea'},{k:'jd',label:'Job description',type:'textarea'},{k:'why',label:'Why this company (one line, optional)',type:'text'}],
+ ai:{system:'Write a cover letter under 250 words: a specific opening that shows you understand the role, two short paragraphs connecting their needs to concrete evidence from the resume, and close with exactly: "Thank you very much for reading my application, and I look forward to further communication." Plain, human, no clichés ("I am writing to apply", "passionate", "hard worker"). Never invent facts.',
+  user:v=>`BACKGROUND:\n${v.res}\n\nJOB:\n${v.jd}${v.why?'\nWhy this company: '+v.why:''}`}},
+
+{id:'li_optimizer',bucket:'Resume & Profile',name:'LinkedIn Header Optimizer',tier:0,personas:'all',status:'ai',
+ desc:'Ten headline options built from your target role and keywords, so recruiters find you in search.',
+ inputs:[{k:'role',label:'Target role title',type:'text',ph:'Senior Product Manager'},{k:'kw',label:'Keywords you want to be found for',type:'text',ph:'B2B SaaS, growth, platform, AI'},{k:'proof',label:'One proof point',type:'text',ph:'Scaled a product to $20M ARR'}],
+ precheck(v){ if(!v.role) return ''; const kws=(v.kw||'').split(',').map(x=>x.trim()).filter(Boolean); return `<h4>Formula-built options (no AI needed)</h4><ul><li>${esc(v.role)} | ${esc(kws.slice(0,3).join(' · '))}</li><li>${esc(v.role)} · ${esc(v.proof||'[proof point]')}</li><li>${esc(kws[0]||'[keyword]')} ${esc(v.role)} | Helping teams ${esc(kws[1]||'[outcome]')}</li></ul>`; },
+ ai:{system:'Generate 10 LinkedIn headlines (max 220 chars each) for recruiter search: lead with the exact target title, include 2–3 searchable keywords, one proof point where it fits. Vary structure. No buzzwords like "passionate" or "guru". Then list the 8 keywords that should appear elsewhere in the profile.',
+  user:v=>`Target role: ${v.role}\nKeywords: ${v.kw}\nProof: ${v.proof}`}},
+
+{id:'li_summary_gen',bucket:'Resume & Profile',name:'LinkedIn Summary Generator',tier:1,personas:'all',status:'ai',
+ desc:'A 3-paragraph About section built from your CV and the top keywords in a target posting.',
+ inputs:[{k:'res',label:'Your CV / background',type:'textarea'},{k:'jd',label:'A target job description (for keywords)',type:'textarea'}],
+ ai:{system:'Write a LinkedIn "About" section: 3 short paragraphs, first person, warm but specific. Para 1: who you are and what you do (with the target title). Para 2: proof — 2–3 concrete results from the CV. Para 3: what you\'re looking for and how to reach you. Naturally include the top 8–10 keywords from the job description. Under 200 words. Then list the keywords used.',
+  user:v=>`CV:\n${v.res}\n\nTARGET POSTING:\n${v.jd}`}},
+
+{id:'li_profile',bucket:'Resume & Profile',name:'LinkedIn Profile Module',tier:1,personas:'all',status:'ai',
+ desc:'A full profile pass: headline, About, experience bullets, skills order, and activity signals — one plan.',
+ inputs:[{k:'res',label:'Your CV',type:'textarea'},{k:'role',label:'Target role',type:'text'},{k:'kw',label:'Keywords to rank for',type:'text'}],
+ ai:{system:'Produce a complete LinkedIn optimization plan: (1) headline, (2) About section (3 paras), (3) for each role, 2–3 rewritten bullets with results, (4) the 15 skills to list in priority order, (5) a 2-week activity plan (posts/comments) that signals expertise. Use the target keywords naturally. Never invent facts.',
+  user:v=>`CV:\n${v.res}\nTarget: ${v.role}\nKeywords: ${v.kw}`}},
+
+{id:'recruiter_view',bucket:'Resume & Profile',name:'Recruiter-View Optimizer',tier:0,personas:'all',status:'ready',
+ desc:'Recruiters filter by five things. Check that all five are set so you surface on page one.',
+ inputs:[{k:'c',label:'Which of these are done?',type:'chips',multi:true,opts:['"Open to work" is ON','Set to recruiters-only (or public if unemployed)','Headline has my target title','Headline has 2+ keywords','Location is set to where I\'ll work','Top 5 skills match my target role','Skills endorsed by 3+ people','Current company / "Open to new role" filled','About section has keywords','Custom URL (linkedin.com/in/yourname)']}],
+ compute(v){
+  const c=(v.c||'').split('|').filter(Boolean); const all=['"Open to work" is ON','Set to recruiters-only (or public if unemployed)','Headline has my target title','Headline has 2+ keywords','Location is set to where I\'ll work','Top 5 skills match my target role','Skills endorsed by 3+ people','Current company / "Open to new role" filled','About section has keywords','Custom URL (linkedin.com/in/yourname)'];
+  const miss=all.filter(x=>!c.includes(x)); const score=Math.round(c.length/all.length*100);
+  return `<div class="score">${score}%</div><div class="bar"><i style="width:${score}%"></i></div><p>Recruiter search filters on: spotlight (open-to-work), title (your headline), location, skills, and current company. ${miss.length?'Fix these to surface:':'You\'re fully findable.'}</p>${miss.length?'<ul>'+miss.map(x=>'<li>'+x+'</li>').join('')+'</ul>':''}
+  <div class="callout">Order matters: headline title first, then keywords. "Senior Product Manager | B2B SaaS · Growth · AI" beats "Passionate leader building the future."</div>`;
+ }},
+
+{id:'elevator',bucket:'Resume & Profile',name:'Elevator Pitch Template',tier:0,personas:'all',status:'ready',
+ desc:'A tight, repeatable intro for networking and the "tell me about yourself" opener.',
+ inputs:[{k:'name',label:'Name',type:'text'},{k:'role',label:'What you are (title)',type:'text',ph:'a product manager'},{k:'who',label:'Who you do it for',type:'text',ph:'B2B fintech teams'},{k:'what',label:'What you\'re known for',type:'text',ph:'turning messy data products into revenue'},{k:'proof',label:'One proof point',type:'text',ph:'grew a platform from $2M to $20M'},{k:'next',label:'What you\'re looking for',type:'text',ph:'a senior PM role in a scale-up'}],
+ compute(v){
+  return `<h4>30-second version</h4><div class="script">Hi, I'm ${esc(v.name)}. I'm ${esc(v.role)} — I work with ${esc(v.who)}, and I'm known for ${esc(v.what)}. Most recently I ${esc(v.proof)}. Right now I'm looking for ${esc(v.next)}, and I'd love to hear how that connects to what you're doing.</div>
+  <h4>10-second version</h4><div class="script">I'm ${esc(v.name)}, ${esc(v.role)} who ${esc(v.what)} — recently ${esc(v.proof)}. Looking for ${esc(v.next)}.</div>
+  <h4>Interview opener ("tell me about yourself")</h4><div class="script">Sure. The short version: I'm ${esc(v.role)}, and the thread through my career is ${esc(v.what)}. The example I'm proudest of: ${esc(v.proof)}. What drew me to this role is ${esc(v.next)} — happy to go deeper on any of it.</div>
+  <div class="callout">Say it out loud five times. If it's over 30 seconds, cut the middle, not the proof.</div>`;
+ }},
+/* ───────────────────────── INTERVIEW PREP ───────────────────────── */
+{id:'stories4',bucket:'Interview Prep',name:'4 Core Stories Builder',tier:1,personas:'all',status:'ready',bundle:'Interview Mastery',
+ desc:'The four stories that answer almost any behavioral question: biggest win, biggest lesson, toughest stakeholder, passion project.',
+ inputs:[{k:'win',label:'1 · Your most successful project',type:'textarea',ph:'What, your role, the result with numbers'},{k:'lesson',label:'2 · Your least successful — and the lesson',type:'textarea'},{k:'stake',label:'3 · Your most difficult stakeholder and how you handled it',type:'textarea'},{k:'passion',label:'4 · A passion project (done or wanted)',type:'textarea'}],
+ compute(v){
+  const items=[['Most successful project',v.win,['Tell me about a time you delivered under pressure','What are you most proud of?','Describe a project you led end to end']],['Biggest lesson',v.lesson,['Tell me about a failure','A time you missed a deadline','What would you do differently?']],['Difficult stakeholder',v.stake,['Tell me about a conflict','A time you disagreed with your manager','How do you handle difficult people?']],['Passion project',v.passion,['What energizes you?','What would you work on if you could choose?','Tell me about something you built for yourself']]];
+  return items.map(([t,x,qs])=>`<div class="box"><b>${t}</b>${x?'<p>'+esc(x)+'</p>':'<p style="color:var(--ink-3)">Not written yet.</p>'}<p style="font-size:12.5px;color:var(--ink-2)"><b>Answers:</b> ${qs.join(' · ')}</p>${x?`<button class="run sec" style="margin-top:6px" onclick="saveTo('stories',{title:${JSON.stringify(t)},comp:'core-4',a:${JSON.stringify(x)}});toast('Saved')">Save to Stories Bank</button>`:''}</div>`).join('')+`<div class="callout">Know these four cold and you can answer 80% of behavioral questions by reshaping, not inventing.</div>`;
+ }},
+
+{id:'stories_bank',bucket:'Interview Prep',name:'Stories Bank',tier:1,personas:'all',status:'ready',
+ desc:'Every STAR story you\'ve built, searchable by competency. Bring it to every interview.',
+ inputs:[{k:'q',label:'Search your stories',type:'text',ph:'leadership, conflict, data…'}],
+ compute(v){
+  const all=load('stories'); const q=(v.q||'').toLowerCase();
+  const rows=all.filter(s=>!q||JSON.stringify(s).toLowerCase().includes(q));
+  if(!all.length) return `<div class="empty">No stories yet. Build one in the STAR Story System or 4 Core Stories Builder — they save here.</div>`;
+  return `<p>${rows.length} of ${all.length} stories</p>`+rows.map((s,i)=>`<div class="saved"><div><b>${esc(s.title)}</b> <span class="tag">${esc(s.comp||'')}</span><p style="font-size:12.5px">${esc((s.a||'').slice(0,180))}${(s.a||'').length>180?'…':''}</p></div><span class="x" onclick="removeFrom('stories',${all.indexOf(s)});rerunTool()">✕</span></div>`).join('')+`<button class="run sec" onclick="download('stories_bank.json',JSON.stringify(load('stories'),null,2))">Export bank</button>`;
+ }},
+
+{id:'q_bank',bucket:'Interview Prep',name:'Questions to Ask Bank',tier:0,personas:'all',status:'ready',
+ desc:'Non-generic questions to ask the interviewer, grouped by what you want to learn. Never say "no questions."',
+ inputs:[{k:'lvl',label:'Role level',type:'select',opts:['Individual contributor','Manager','Senior leader']},{k:'want',label:'What do you most want to learn?',type:'chips',multi:true,opts:['Culture','Success in the role','Growth','The team','Why the role is open','The manager']}],
+ compute(v){
+  const Q={Culture:['I know one of your values is [value] — can you share an example of how it shows up day to day?','What\'s something this week that made you want to show up?'],'Success in the role':['Within 90 days, what would success look like — and how would you help me get there?','If I started tomorrow, what problem would I be solving first?','What\'s one problem that stays unresolved that this role would help solve?'],Growth:['Can you share an example of someone on the team you developed and promoted?','What does the path look like from this role?'],'The team':['Who would I be working with most, and what\'s the team like?','How has the team changed in the last year?'],'Why the role is open':['How long was the previous person in this role, and what made them successful — or not?'],'The manager':['What do you love about working here?','What gets you most excited about the company\'s future?','How do you like to give feedback?']};
+  const w=(v.want||'').split('|').filter(Boolean); const pick=w.length?w:Object.keys(Q);
+  return pick.map(k=>`<h4>${k}</h4><ul>${Q[k].map(q=>'<li>'+q+'</li>').join('')}</ul>`).join('')+`<div class="callout">${v.lvl==='Senior leader'?'At your level, ask about strategy and constraints — the more senior the role, the more questions you should have.':'Pick 3. Ask the specific ones — anything you could have asked the recruiter, skip.'}</div>`;
+ }},
+
+{id:'q_predictor',bucket:'Interview Prep',name:'Behavioral Question Predictor',tier:1,personas:'all',status:'ai',bundle:'Interview Mastery',
+ desc:'From the job description, predict the behavioral questions you\'ll likely get — and map your saved stories to each.',
+ inputs:[{k:'jd',label:'Job description',type:'textarea'},{k:'lvl',label:'Level',type:'select',opts:['IC','Manager','Director+']}],
+ ai:{system:'From a job description, predict the 8 most likely behavioral interview questions (grounded in the responsibilities and competencies it lists). For each: the question, the competency it tests, and which of the candidate\'s saved stories fits best (or "needs a new story"). Output as a table-like list.',
+  user:v=>`JOB:\n${v.jd}\nLEVEL: ${v.lvl}\n\nSAVED STORIES:\n${load('stories').map(s=>'- '+s.title+' ('+(s.comp||'')+'): '+(s.a||'').slice(0,160)).join('\n')||'(none yet)'}`}},
+
+{id:'interviewer_brief',bucket:'Interview Prep',name:'Interviewer Research Brief',tier:1,personas:'all',status:'ai',web:true,bundle:'Interview Mastery',
+ desc:'Enter who\'s interviewing you and the company. Get a pre-interview brief so you never walk in cold.',
+ inputs:[{k:'who',label:'Interviewer name + title',type:'text',ph:'Jane Doe, Director of Product'},{k:'co',label:'Company',type:'text'},{k:'role',label:'Role you\'re interviewing for',type:'text'}],
+ precheck(v){ return `<h4>Do this yourself in 10 minutes (no AI needed)</h4><ul><li>Their LinkedIn: tenure, path, what they post about, shared connections</li><li>Glassdoor → company → Interviews: real past questions</li><li>Google: "${esc(v.co||'[company]')} interview questions filetype:pdf"</li><li>Ask the recruiter: "Any skills or experience you'd recommend I highlight with ${esc(v.who||'the hiring manager')}?"</li></ul>`; },
+ ai:{system:'Build a concise pre-interview brief. Use web search to find what is public about the interviewer (role history, public posts/talks, focus areas) and the company (recent news, products, culture signals). Never speculate beyond public info; say "not found" where nothing is public. Sections: About them · About the company right now · 3 likely themes they\'ll probe · 3 questions to ask them · One thing to mention that shows you did your homework.',
+  user:v=>`Interviewer: ${v.who}\nCompany: ${v.co}\nRole: ${v.role}`}},
+
+{id:'company_research',bucket:'Interview Prep',name:'Company Research Kit',tier:0,personas:'all',status:'ready',
+ desc:'The checklist and question set to prep a company: what they do, what they test for, what to ask.',
+ inputs:[{k:'co',label:'Company',type:'text'},{k:'role',label:'Role',type:'text'}],
+ compute(v){
+  return `<h4>Research checklist for ${esc(v.co||'the company')}</h4>${checklist([[false,'Their own words: homepage, About, careers page — note the 3 values they repeat'],[false,'Last 90 days: press page + Google News — one launch, one challenge'],[false,'Glassdoor → Interviews tab: real questions for '+esc(v.role||'this role')],[false,'LinkedIn: 3 people in the same role — their titles and backgrounds'],[false,'Google: "'+esc(v.co||'company')+' interview questions filetype:pdf"'],[false,'The JD: copy each responsibility into a doc; for each, note the skill and the story you\'d tell']],true)}
+  <h4>Questions this prep lets you ask</h4><ul><li>"I saw you [recent launch/news] — how does this role connect to that?"</li><li>"Your careers page emphasizes [value]. Can you give me an example of how that shows up on this team?"</li></ul>`;
+ }},
+
+{id:'company_prep',bucket:'Interview Prep',name:'Company-Specific Prep',tier:2,personas:'all',status:'ai',web:true,
+ desc:'Tailored prep for a named company — their known interview format (bar-raiser, case, panel), what they test, how to prepare.',
+ inputs:[{k:'co',label:'Company',type:'text'},{k:'role',label:'Role',type:'text'},{k:'stage',label:'Interview stage',type:'select',opts:['Recruiter screen','Hiring manager','Panel / loop','Final / executive']}],
+ ai:{system:'Using web search, describe this company\'s known interview process for the role and stage: format, number of rounds, what they are known to test (e.g. leadership principles, case studies, take-homes), typical questions reported by candidates, and a 5-day prep plan. Be specific and cite what is commonly reported; say "not widely documented" where unknown.',
+  user:v=>`Company: ${v.co}\nRole: ${v.role}\nStage: ${v.stage}`}},
+
+{id:'mock_ai',bucket:'Interview Prep',name:'Mock Interview AI',tier:1,personas:'all',status:'ai',bundle:'Interview Mastery',
+ desc:'Practice: get 5 role-specific questions, answer them, get scored feedback on each.',
+ inputs:[{k:'role',label:'Role',type:'text'},{k:'type',label:'Question type',type:'select',opts:['Behavioral','Role-specific','Mixed']},{k:'ans',label:'Your answers (after you get the questions, paste them here numbered 1–5, then run again)',type:'textarea'}],
+ ai:{system:'You are a rigorous but kind interviewer. If no answers are provided: generate exactly 5 numbered interview questions for the role and type, no answers. If answers ARE provided: score each 1–10 on structure (STAR), specificity, and impact; quote the strongest line; give one concrete fix per answer; then an overall read and the single thing to practice next.',
+  user:v=>`Role: ${v.role}\nType: ${v.type}\n${v.ans?'ANSWERS:\n'+v.ans:'(no answers yet — give me the 5 questions)'}`}},
+
+{id:'interview_muscle',bucket:'Interview Prep',name:'Interview Performance Agent',tier:2,personas:'all',status:'ai',bundle:'Interview Mastery',
+ desc:'Record your real interview (phone on speaker), upload the transcript with your resume and the JD. Get scored on what was strong, weak, and what to improve — tied to your experience. Interviewing is a muscle.',
+ inputs:[{k:'tr',label:'Interview transcript',type:'textarea',ph:'Paste the transcript from your recording app…'},{k:'res',label:'Your resume',type:'textarea'},{k:'jd',label:'Job description',type:'textarea'}],
+ ai:{system:'You are an interview performance coach. Analyze the transcript against the resume and job description. Produce a scorecard: (1) Overall 1–10 with one-line verdict. (2) Scores 1–10 for: answer structure, specificity/evidence, relevance to the JD, confidence signals (hedging, filler, rambling), questions asked. (3) "Strongest moment" — quote it. (4) "Missed opportunities" — where the resume had evidence they didn\'t use, with the exact line they could have said. (5) Three drills for next time. Be direct and specific; this person wants to get better, not be flattered.',
+  user:v=>`TRANSCRIPT:\n${v.tr}\n\nRESUME:\n${v.res}\n\nJOB DESCRIPTION:\n${v.jd}`}},
+
+{id:'salary_negotiation',bucket:'Interview Prep',name:'Salary Negotiation Guide',tier:1,personas:'all',status:'ready',
+ desc:'Three ready scripts (modest bump · full pitch · offer too low) built from your numbers, plus the counter-beyond-base moves.',
+ inputs:[{k:'offer',label:'Their offer',type:'text',ph:'$95,000'},{k:'target',label:'Your target',type:'text',ph:'$110,000'},{k:'comp',label:'Do you have competing offers or active processes?',type:'select',opts:['No','Yes — active processes','Yes — a competing offer']},{k:'evidence',label:'Your 2 best accomplishments (for the pitch)',type:'textarea'}],
+ compute(v){
+  const lev=v.comp==='No'?'':v.comp.includes('offer')?`\n\nI'm also weighing another offer at a similar level, and I'd rather move forward with you if we can get the package right.`:`\n\nI'm in final stages elsewhere, but this is my first choice — if we can move forward with a strong package, I'm happy to wrap up the other processes.`;
+  return `<h4>Script 1 — the modest bump</h4><div class="script">Thank you so much for the offer — I'm genuinely excited about the team. To be transparent, ${esc(v.offer||'[offer]')} is a little below my expected range. For my experience and what I'd bring, I was looking for around ${esc(v.target||'[target]')}. Is there any flexibility there?${lev}</div>
+  <h4>Script 2 — the full pitch (for a larger increase)</h4><div class="script">I'd love to join, and I want to be direct about compensation. Based on the scope of this role and what I've delivered — ${esc(v.evidence||'[two accomplishments]')} — I believe ${esc(v.target||'[target]')} reflects the value I'd bring. Can we get to that number?${lev}</div>
+  <h4>Script 3 — when they hold firm</h4><div class="script">I understand there's a set budget for the role. In that case, would it be possible to look at a sign-on bonus, an extra week of PTO, a weekly work-from-home day, or a travel stipend?</div>
+  <h4>The rules</h4><ul><li>Never give your number first — you lose half your leverage.</li><li>Never accept over the phone: be grateful, ask for time, ask for it in writing (salary, PTO, start date, benefits).</li><li>On a posted range, they usually budget lower-middle. Ask what separates a candidate at the bottom from one at the top.</li><li>Two-thirds of people who simply ask get something. If you don't ask, the answer is always no.</li></ul>`;
+ }},
+
+{id:'nego_script_gen',bucket:'Interview Prep',name:'Negotiation Script Generator',tier:2,personas:'all',status:'ai',
+ desc:'A word-for-word script tailored to your exact offer, market data, and situation.',
+ inputs:[{k:'sit',label:'Describe the offer and your situation',type:'textarea',ph:'Offer $95k base + 10% bonus. Market for this role ~$105–120k. I have one other process at final stage. I want $110k.'}],
+ ai:{system:'Write a tailored salary negotiation script: an opening (grateful, excited), the ask with a specific number and one-line justification, how to use any leverage they mentioned (without bluffing), the counter if they hold (sign-on, PTO, remote day, review timeline), and the close. Then a short "what not to say" list. Keep it natural — this will be said out loud.',
+  user:v=>v.sit}},
+
+/* ───────────────────────── TARGETING & NETWORKING ───────────────────────── */
+{id:'job_tracker',bucket:'Targeting & Networking',name:'Job Tracking Dashboard',tier:1,personas:'all',status:'ready',
+ desc:'Track every application, stage, and follow-up. Feeds your interview rate.',
+ inputs:[{k:'co',label:'Company',type:'text'},{k:'role',label:'Role',type:'text'},{k:'stage',label:'Stage',type:'select',opts:['Applied','Recruiter screen','Hiring manager','Panel','Final','Offer','Rejected','Ghosted']},{k:'via',label:'How',type:'select',opts:['Cold apply','Referral','Recruiter reached out','Networked in']},{k:'note',label:'Note / next follow-up',type:'text'}],
+ runLabel:'Add application',
+ compute(v){ if(v.co&&v.role){ saveTo('apps',{co:v.co,role:v.role,stage:v.stage,via:v.via,note:v.note,d:new Date().toISOString().slice(0,10)}); }
+  const a=load('apps'); if(!a.length) return `<div class="empty">No applications tracked yet. Add one on the left.</div>`;
+  const st=s=>a.filter(x=>x.stage===s).length; const interviews=a.filter(x=>['Recruiter screen','Hiring manager','Panel','Final','Offer'].includes(x.stage)).length;
+  const rate=Math.round(interviews/a.length*100);
+  return `<div class="kv"><b>Applications</b><span>${a.length}</span><b>Reached an interview</b><span>${interviews} (${rate}%)</span><b>Offers</b><span>${st('Offer')}</span><b>Rejected / ghosted</b><span>${st('Rejected')+st('Ghosted')}</span></div>
+  <table><tr><th>Date</th><th>Company</th><th>Role</th><th>Stage</th><th>How</th><th>Note</th><th></th></tr>${a.map((x,i)=>`<tr><td>${x.d}</td><td><b>${esc(x.co)}</b></td><td>${esc(x.role)}</td><td>${x.stage}</td><td>${x.via}</td><td>${esc(x.note||'')}</td><td><span class="x" style="cursor:pointer;color:var(--ink-3)" onclick="removeFrom('apps',${i});rerunTool()">✕</span></td></tr>`).join('')}</table>
+  <button class="run sec" onclick="download('applications.csv','date,company,role,stage,how,note\\n'+load('apps').map(x=>[x.d,x.co,x.role,x.stage,x.via,(x.note||'').replace(/,/g,';')].join(',')).join('\\n'))">Export CSV</button>
+  <div class="callout">Referral and networked-in applications convert 3–5× better than cold applies. Watch the "How" column.</div>`;
+ }},
+
+{id:'interview_rate_dx',bucket:'Assessment',name:'Interview-Rate Diagnostic',tier:0,personas:'all',status:'ready',
+ desc:'Apply to ~100, wait two weeks, count interviews. 0–1 = fix positioning; 2–5 = the good zone; 5+ = stop tweaking, keep going.',
+ inputs:[{k:'apps',label:'Applications sent (last batch)',type:'number',ph:'100'},{k:'ints',label:'Interviews from that batch',type:'number',ph:'3'},{k:'via',label:'Mostly how?',type:'select',opts:['Cold applying','Mixed','Mostly referrals / networking']}],
+ compute(v){
+  const a=+v.apps||0,i=+v.ints||0; if(!a) return warn('Enter how many you applied to.');
+  const per100=Math.round(i/a*100); let zone,advice;
+  if(per100<2){zone='Fix zone';advice='Don\'t send more yet. Something upstream is broken: either the roles you\'re targeting don\'t match your resume, or the resume isn\'t saying what the market is searching for. Run the JD Match Rate on 3 postings you applied to. If you\'re below 70%, it\'s the resume. If you\'re above, it\'s the targeting — you may be applying to titles that mean something different than your background.';}
+  else if(per100<=5){zone='Good zone';advice='Your resume works. Keep applying at this pace and put the extra energy into networking and interview prep — don\'t redesign what\'s already converting.';}
+  else{zone='Strong';advice='Stop touching the resume. You\'re converting well; the constraint is now volume and interview performance. Apply more, and practice.';}
+  return `<div class="score">${per100}<span style="font-size:18px"> interviews / 100</span></div><h4>${zone}</h4><p>${advice}</p>${v.via==='Cold applying'&&per100<2?'<div class="callout">Cold applies sit at the bottom of the pile (behind interns, the manager\'s network, and referrals). Before rewriting anything, try 10 warm intros to hiring managers — it\'s a different funnel.</div>':''}`;
+ }},
+
+{id:'target_list',bucket:'Targeting & Networking',name:'Target Company List (10 + 100)',tier:1,personas:'all',status:'ai',
+ desc:'Ten target companies you network into and apply to, and a 100-company "everything else" list you apply to when the title matches. 20/80 of your time.',
+ inputs:[{k:'role',label:'Target role',type:'text'},{k:'crit',label:'Your criteria (industry, size, location, remote, culture)',type:'textarea'},{k:'have',label:'Companies already on your list (optional)',type:'textarea'}],
+ precheck(v){ const have=lines(v.have); return have.length?`<h4>Your list so far (${have.length})</h4><p>${have.map(x=>'<span class="tag">'+esc(x)+'</span>').join('')}</p><div class="callout">Rule: 10 targets get networking + application (20% of your time). Everything else gets an application if the title matches, 1–2 minutes each (80%).</div>`:''; },
+ ai:{system:'Suggest target companies for a job seeker. Output two lists: (A) 10 "target" companies that best match the criteria — for each, one line on why and the likely team/title; (B) 30 "everything else" companies that are plausible fits for the same title. Only real companies. Note where the user should verify current hiring. Do not repeat companies already on their list.',
+  user:v=>`Role: ${v.role}\nCriteria: ${v.crit}\nAlready have: ${v.have||'(none)'}`}},
+
+{id:'outreach',bucket:'Targeting & Networking',name:'Networking Outreach Scripts',tier:0,personas:'all',status:'ready',
+ desc:'Templates to reach a human at each target company — hiring manager, recruiter, alumni, and reconnecting with someone you know.',
+ inputs:[{k:'you',label:'Your name',type:'text'},{k:'role',label:'Role you\'re after',type:'text'},{k:'them',label:'Their name',type:'text'},{k:'co',label:'Their company',type:'text'},{k:'hook',label:'One specific hook (their post, a shared connection, something the company did)',type:'text'}],
+ compute(v){
+  const Y=esc(v.you||'[you]'),R=esc(v.role||'[role]'),T=esc(v.them||'[name]'),C=esc(v.co||'[company]'),H=esc(v.hook||'[your hook]');
+  return `<h4>Hiring manager (LinkedIn connection note — under 300 chars)</h4><div class="script">Hi ${T} — ${H}. I'm a ${R} exploring what's next and ${C} is on my short list. Would love to connect and learn what your team is focused on. — ${Y}</div>
+  <h4>Recruiter</h4><div class="script">Hi ${T}, I'm a ${R} and I saw ${C} is hiring. ${H}. I'd love 10 minutes to hear what you're looking for and whether my background is a fit. Happy to send my resume. — ${Y}</div>
+  <h4>Alumni / shared connection</h4><div class="script">Hi ${T} — we both [school/company/group]. I'm a ${R} looking at ${C}, and I'd value your perspective on the team and culture. Would you have 15 minutes in the next couple of weeks? — ${Y}</div>
+  <h4>Reconnect with someone you know</h4><div class="script">${T} — long time! I'm making a move toward a ${R} role and thinking about ${C}. You always had a good read on where the interesting work is. Coffee or a quick call? — ${Y}</div>
+  <h4>Timeline leverage (to a recruiter, when you're in-process elsewhere)</h4><div class="script">Hi ${T}, hope all's well. I'm in the interview process with another company expected to wrap up within [X weeks]. ${C} is my top priority — I'd like to make sure our timelines align so I can consider each opportunity fairly. — ${Y}</div>
+  <div class="callout">Connect + note beats paid InMail. Hiring managers before recruiters — recruiters serve the managers.</div>`;
+ }},
+
+{id:'hm_outreach',bucket:'Targeting & Networking',name:'Hiring-Manager Outreach Generator',tier:1,personas:'all',status:'ai',
+ desc:'A personalized connection note to the specific hiring manager — from their profile and your background.',
+ inputs:[{k:'them',label:'Their name, title, and anything from their profile/posts',type:'textarea'},{k:'you',label:'Your background in 2 lines',type:'textarea'},{k:'role',label:'The role',type:'text'}],
+ ai:{system:'Write 3 variants of a LinkedIn connection note (max 300 characters each) to a hiring manager: one warm-and-curious, one direct, one that leads with a specific observation about them. No flattery, no "I\'d love the opportunity." End with a soft ask. Then one 80-word follow-up message for after they accept.',
+  user:v=>`THEM:\n${v.them}\nME:\n${v.you}\nROLE: ${v.role}`}},
+
+{id:'email_system',bucket:'Targeting & Networking',name:'Job Search Email System',tier:0,personas:'all',status:'ready',
+ desc:'A dedicated inbox with two labels — interview and rejection — so tracking is drag-and-drop.',
+ inputs:[{k:'name',label:'Your name (for address ideas)',type:'text',ph:'bruno matos'}],
+ compute(v){
+  const n=(v.name||'yourname').toLowerCase().replace(/[^a-z ]/g,'').split(' ').filter(Boolean); const base=n.join('.')||'yourname';
+  return `<h4>Set up in 10 minutes</h4>${checklist([[false,'Create a new Gmail just for the search: '+base+'.jobs@gmail.com or '+(n[0]||'you')+'.'+(n[1]||'search')+'@gmail.com'],[false,'Create two labels: <b>Interview</b> (green) and <b>Rejection</b> (grey)'],[false,'Create a filter: from contains "no-reply" AND subject contains "application" → label "Applied"'],[false,'Every interview invite → drag onto Interview. Every rejection → drag onto Rejection.'],[false,'Every two weeks: count Interview label vs. applications sent → run the Interview-Rate Diagnostic']],true)}
+  <div class="callout">One inbox, one purpose. Your personal email stays calm, and your funnel numbers are always one click away.</div>`;
+ }},
+
+{id:'referral_reward',bucket:'Targeting & Networking',name:'Referral Reward Program',tier:1,personas:'all',status:'human',
+ desc:'Land a job → get rewarded for referring the next person. A growth mechanism, not a customer tool.',
+ need:'This is operations, not a tool: it needs a referral-code system, tracking, and a payout rule. Decide the reward (credit, month free, cash) and I\'ll build the code + tracking into the back office.',
+ inputs:[{k:'email',label:'Your email',type:'text'},{k:'friend',label:'Who are you referring? (name + email)',type:'text'}],
+ compute(v){ saveTo('referrals',{by:v.email,who:v.friend,d:new Date().toISOString().slice(0,10)}); return `<p>Referral logged for <b>${esc(v.friend)}</b>. ${load('referrals').length} referrals recorded.</p>`; }},
+
+{id:'referrals',bucket:'Targeting & Networking',name:'Insider Network Referrals',tier:2,personas:'all',status:'human',
+ desc:'Warm intros through our vetted network. A request form — the matching is human.',
+ need:'Human layer: needs the founders\' network mapped (who can intro to which companies). The request form works now; fulfilment is manual until you build the network table.',
+ inputs:[{k:'co',label:'Company you want an intro to',type:'text'},{k:'role',label:'Role',type:'text'},{k:'why',label:'Why you (2 lines)',type:'textarea'}],
+ compute(v){ saveTo('referral_requests',{co:v.co,role:v.role,why:v.why,d:new Date().toISOString().slice(0,10)}); return `<p>Request logged for <b>${esc(v.co)}</b> — ${esc(v.role)}. We'll check the network and come back to you.</p><p style="color:var(--ink-3)">${load('referral_requests').length} open requests.</p>`; }},
+/* ───────────────────────── GUIDANCE & HUMAN ───────────────────────── */
+{id:'roadmap_12wk',bucket:'Guidance & Human',name:'12-Week Search Roadmap',tier:1,personas:'all',status:'ready',
+ desc:'Your month-by-month plan: foundation → apply-and-track → interview-and-close. Calibrated to your urgency and hours.',
+ inputs:[{k:'persona',label:'Your situation',type:'select',opts:['Employed, passive','Employed, active','Laid off, open','Laid off, need it fast','Searching 3+ months']},{k:'hrs',label:'Hours per week',type:'number',ph:'10'},{k:'start',label:'Start date',type:'text',ph:'2026-09-08'}],
+ compute(v){
+  const h=+v.hrs||10; const pace=h<5?'light':h<15?'steady':'intense'; const urgent=/fast|3\+/.test(v.persona); const passive=/passive/.test(v.persona);
+  const perWeek=pace==='light'?1:pace==='steady'?3:5;
+  const d=v.start?new Date(v.start):new Date(); const wk=i=>{const x=new Date(d);x.setDate(x.getDate()+i*7);return x.toLocaleDateString('en-US',{month:'short',day:'numeric'});};
+  const W=[
+   ['Foundation','Dedicated search inbox + labels · resume in ATS template · LinkedIn headline set'],
+   ['Foundation','Target list: 10 targets + 100 everything-else · run the 10-Variables Narrower'],
+   ['Foundation','4 core stories drafted · elevator pitch out loud 5× · recruiter-view checklist done'],
+   [urgent?'Apply':'Foundation',urgent?'Begin applying — '+perWeek*8+' this week, title-matched only, no resume edits':'Resume ATS check ≥ 85 · JD match ≥ 75% on 3 target postings'],
+   ['Apply','Apply at volume — freeze the resume · 3 warm outreaches to hiring managers'],
+   ['Apply','Keep applying · track everything · 3 more outreaches · first informational calls'],
+   ['Apply','Two-week mark: run the Interview-Rate Diagnostic · adjust targeting or resume ONLY if 0–1 interviews'],
+   ['Interview','Behavioral question predictor on live roles · mock interview round 1'],
+   ['Interview','Interviewer research brief before every call · stories bank open in every interview'],
+   ['Interview','Mock round 2 · record a real interview → Interview Performance Agent'],
+   ['Close','Salary research + negotiation scripts ready before any offer'],
+   ['Close','Negotiate in writing · 30-60-90 plan for the role you take']
+  ];
+  const note=passive?'You have the rarest asset: time. Do the Foundation weeks slowly and well — it\'s the best time to build stories while you still have a job.':urgent?'Aggressive plan: Foundation compresses to 2 weeks and applying starts in week 3. Volume over polish until the Diagnostic says otherwise.':'Standard plan. Protect the Foundation weeks — everything downstream depends on them.';
+  return `<p><b>${v.persona}</b> · ${h} hrs/week (${pace}) · ~${perWeek} meaningful actions per week</p><div class="callout">${note}</div>`+W.map((w,i)=>`<div class="week"><b>Week ${i+1}</b> <span style="color:var(--ink-3)">${wk(i)}</span> · <span class="tag">${w[0]}</span><p>${w[1]}</p></div>`).join('')+`<div class="callout">No dates promised. What we promise: a box to check every week, and a reason you can feel the momentum.</div>`;
+ }},
+
+{id:'checkins',bucket:'Guidance & Human',name:'Weekly Check-in Nudge',tier:2,personas:'all',status:'ai',
+ desc:'A personalized weekly nudge from your plan and tracker — what to do next, and one honest observation.',
+ inputs:[{k:'week',label:'Which week of the plan are you in?',type:'number',ph:'5'},{k:'did',label:'What you did this week',type:'textarea'},{k:'stuck',label:'Where you\'re stuck (optional)',type:'text'}],
+ ai:{system:'Write a short weekly check-in (under 150 words) for a job seeker: acknowledge specifically what they did, one honest observation from their tracker numbers, the 3 actions for next week, and a closing line that builds momentum without cheerleading. Warm, direct, no exclamation marks.',
+  user:v=>`Week ${v.week}. Did: ${v.did}. Stuck: ${v.stuck||'—'}. Tracker: ${load('apps').length} applications, ${load('apps').filter(x=>['Recruiter screen','Hiring manager','Panel','Final','Offer'].includes(x.stage)).length} reached interview.`}},
+
+{id:'live_intake',bucket:'Guidance & Human',name:'Live Intake with a Founder',tier:2,personas:'all',status:'human',
+ desc:'A real session to set your strategy. Request form — scheduling is human.',
+ need:'Human layer: needs a calendar link (Calendly/Cal.com) and founder hours. The request form works; wire your booking link and it\'s live.',
+ inputs:[{k:'name',label:'Name',type:'text'},{k:'email',label:'Email',type:'text'},{k:'sit',label:'Your situation in 3 lines',type:'textarea'},{k:'when',label:'Best times',type:'text'}],
+ compute(v){ saveTo('intake_requests',{...v,d:new Date().toISOString().slice(0,10)}); return `<p>Request received, <b>${esc(v.name)}</b>. We'll reply to ${esc(v.email)} with times.</p><div class="callout">Add a booking link here (Calendly / Cal.com) and this becomes self-serve.</div>`; }},
+
+{id:'coach',bucket:'Guidance & Human',name:'Vetted Coach Match',tier:2,personas:'all',status:'human',
+ desc:'Matched to one of our external providers. Intake form — matching is human.',
+ need:'Human layer: needs the coach roster (Michelle\'s brother, the HR friend, others) with specialties and rates, and a rev-share agreement. Form works; matching is manual.',
+ inputs:[{k:'name',label:'Name',type:'text'},{k:'need',label:'What kind of help',type:'chips',opts:['Interview practice','Career direction','Executive presence','Resume deep-dive','Negotiation']},{k:'budget',label:'Budget per session',type:'select',opts:['Under $100','$100–200','$200+']},{k:'ctx',label:'Context',type:'textarea'}],
+ compute(v){ saveTo('coach_requests',{...v,d:new Date().toISOString().slice(0,10)}); return `<p>Got it. We'll match you with a coach for <b>${esc(v.need||'your need')}</b> in the ${esc(v.budget)} range.</p>`; }},
+
+{id:'community',bucket:'Guidance & Human',name:'Community Access',tier:1,personas:'all',status:'human',
+ desc:'A room of people running the same play.',need:'Human/ops: pick the platform (Circle / Skool / Discord) and paste the invite link. Nothing to build.',
+ inputs:[{k:'email',label:'Email for your invite',type:'text'}],compute(v){saveTo('community',{email:v.email,d:new Date().toISOString().slice(0,10)});return `<p>Invite queued for ${esc(v.email)}.</p>`;}},
+{id:'whatsapp',bucket:'Guidance & Human',name:'WhatsApp Group Access',tier:1,personas:'all',status:'human',
+ desc:'Members-only group for real-time support and accountability.',need:'Ops: create the group, paste the invite link here. Set a moderation rhythm.',
+ inputs:[{k:'phone',label:'WhatsApp number',type:'text'}],compute(v){saveTo('whatsapp',{phone:v.phone,d:new Date().toISOString().slice(0,10)});return `<p>We'll add ${esc(v.phone)} to the group.</p>`;}},
+{id:'monthly_zoom',bucket:'Guidance & Human',name:'Monthly Group Zoom',tier:1,personas:'all',status:'human',
+ desc:'Once a month, live with the founders — Q&A, hot seats, momentum.',need:'Ops: pick a recurring slot, create the Zoom link, paste it here.',
+ inputs:[{k:'email',label:'Email',type:'text'},{k:'q',label:'A question for the next call (optional)',type:'text'}],compute(v){saveTo('zoom',{...v,d:new Date().toISOString().slice(0,10)});return `<p>You're on the list. ${v.q?'We\'ll bring your question.':''}</p>`;}},
+{id:'paid_community',bucket:'Guidance & Human',name:'Paid Community (Skool model)',tier:2,personas:'all',status:'human',
+ desc:'Ongoing paid community: exclusive content, PDFs, videos, peer access.',need:'Ops: this rides on a platform (Skool / Circle) — set it up there and link. Not a build item.',
+ inputs:[],compute(){return `<p>Link the community platform here once it exists.</p>`;}},
+{id:'video_guides',bucket:'Guidance & Human',name:'Step-by-Step Video Guides',tier:1,personas:'all',status:'human',
+ desc:'Short guides walking each tool and step.',need:'Content production: record one 2–3 minute guide per tool. I can write the scripts; you record. Start with the 10 pilot tools.',
+ inputs:[{k:'tool',label:'Which tool needs a guide?',type:'text'}],compute(v){return `<h4>Script outline for "${esc(v.tool||'[tool]')}"</h4><ol><li>The problem in one sentence (0:00–0:15)</li><li>What you'll have at the end (0:15–0:30)</li><li>Screen walk-through, one input at a time (0:30–2:00)</li><li>The one mistake to avoid (2:00–2:30)</li><li>What to do next (2:30–3:00)</li></ol>`;}},
+{id:'avatar_content',bucket:'Guidance & Human',name:'AI Avatar Content Library',tier:2,personas:'all',status:'human',
+ desc:'Avatar-delivered guidance for marketing/education — clearly labelled content, not the core UX.',need:'Content production via an avatar tool (HeyGen etc.). Marketing use only, per the earlier caution. Not a product build.',
+ inputs:[],compute(){return `<p>Feed the Content Studio tips into an avatar tool for social. Keep it out of the logged-in experience.</p>`;}},
+{id:'ai_bundle',bucket:'Guidance & Human',name:'AI Tool Bundle',tier:2,personas:'all',status:'human',
+ desc:'Right-tool-right-task: AI access bundled so users don\'t have to choose.',need:'Business model, not a feature: this is the credits/tokens layer. Decide tiers + run limits, and the proxy in Settings enforces it.',
+ inputs:[],compute(){return `<p>Implemented as the AI proxy + per-tool run limits. See Settings → production setup.</p>`;}},
+{id:'biz_resources',bucket:'Entrepreneur',name:'Business-Idea Starter Kit',tier:0,personas:'all',status:'ready',
+ desc:'Light resources for the "work for myself" path. Capture-only in the pilot.',
+ inputs:[{k:'idea',label:'Your idea in one line',type:'text'},{k:'stage',label:'Where are you?',type:'select',opts:['Just an idea','Validating','Have first customers']}],
+ compute(v){ saveTo('entrepreneur',{...v,d:new Date().toISOString().slice(0,10)}); return `<div class="callout">Honest note: we don't go deep on entrepreneurship yet. Here's a solid start, and we'll come back to you when we build more.</div><h4>Three questions to answer first</h4><ol><li>Who has this problem badly enough to pay? Name 5 real people.</li><li>What's the smallest thing you could sell them in 30 days?</li><li>What would you need to earn monthly to make this your job?</li></ol><h4>Free resources</h4><ul><li>Legal: LegalZoom / your state's LLC portal (an LLC takes an afternoon)</li><li>Validation: <i>The Mom Test</i> (how to talk to customers)</li><li>Money: SCORE.org — free mentors</li></ul>`; }},
+
+/* ───────────────────────── FIND & SEEK ───────────────────────── */
+{id:'title_translation',bucket:'Find & Seek',name:'Role-Title Translation',tier:0,personas:'all',status:'ready',
+ desc:'Your internal title ("Expert IT", "Business Solutions Lead") means nothing to a recruiter. See what the market calls it.',
+ inputs:[{k:'t',label:'Your current or last title',type:'text',ph:'Expert IT Business Solutions'},{k:'do',label:'What you actually do (2 lines)',type:'textarea',ph:'Own the roadmap for the commerce platform, run a squad of 6, ship monthly…'}],
+ compute(v){
+  const t=(v.t+' '+(v.do||'')).toLowerCase(); const hits=[];
+  const M=[[/roadmap|backlog|product|feature|user stor/,'Product Manager / Senior Product Manager'],[/program|portfolio|cross-functional|initiatives/,'Program Manager'],[/project|deliver|timeline|milestone|pmo/,'Project Manager / Delivery Manager'],[/scrum|agile|sprint|ceremon/,'Scrum Master / Agile Coach'],[/data|analytics|sql|dashboard|insight/,'Data Analyst / Analytics Manager'],[/solution|architect|integrat|system/,'Solutions Architect / Technical Product Manager'],[/marketing|campaign|brand|go-to-market|gtm/,'Product Marketing Manager / Marketing Manager'],[/sales|revenue|quota|pipeline/,'Account Executive / Sales Manager'],[/operations|process|efficien|ops/,'Operations Manager / Business Operations'],[/customer|success|account|retention/,'Customer Success Manager'],[/engineer|developer|code|software/,'Software Engineer / Engineering Manager'],[/finance|budget|forecast|fp&a/,'Financial Analyst / FP&A Manager'],[/people|hr|talent|recruit/,'HR Business Partner / Talent Manager']];
+  M.forEach(([re,name])=>{ if(re.test(t)) hits.push(name); });
+  return `<h4>"${esc(v.t||'your title')}" reads to the market as…</h4>${hits.length?'<ul>'+hits.slice(0,3).map(x=>'<li><b>'+x+'</b></li>').join('')+'</ul>':'<p style="color:var(--ink-3)">Add what you actually do and I\'ll map it.</p>'}
+  <div class="callout">Put the market title on LinkedIn and your resume headline, with your official title in parentheses if you want: "Senior Product Manager (internal title: Expert IT Business Solutions)". Recruiters search the market title. Nobody searches yours.</div>
+  <h4>Verify it</h4><p>Search LinkedIn Jobs for each title above and count postings in your area. The one with hundreds of postings that match your work is your title.</p>`;
+ }},
+
+{id:'role_narrower',bucket:'Find & Seek',name:'10-Variables Role Narrower',tier:1,personas:'all',status:'ready',
+ desc:'Every extra constraint shrinks your options. Pick your 2–3 that matter most, loosen the rest, and get a search string.',
+ inputs:[{k:'role',label:'Target title',type:'text'},{k:'must',label:'Your MUST-have variables (pick 2–3 max)',type:'chips',multi:true,opts:['Brand','Culture','Function','Growth opportunity','Industry','Location','Perks','Company size','Total compensation','Work-life balance']},{k:'detail',label:'Detail for each must (e.g. "Location: NYC or remote · Comp: $150k+")',type:'textarea'}],
+ compute(v){
+  const m=(v.must||'').split('|').filter(Boolean); if(m.length>3) return warn(`You picked ${m.length}. Every constraint beyond three shrinks the pool exponentially — cut to the 3 that matter most, and loosen those as you go.`);
+  if(!m.length) return warn('Pick 2–3 must-haves.');
+  const loose=['Brand','Culture','Function','Growth opportunity','Industry','Location','Perks','Company size','Total compensation','Work-life balance'].filter(x=>!m.includes(x));
+  return `<h4>Your constraints</h4><p>${m.map(x=>'<span class="tag hit">'+x+'</span>').join('')}</p>${v.detail?'<div class="box">'+esc(v.detail)+'</div>':''}
+  <h4>Loosened (you\'ll take what comes)</h4><p>${loose.map(x=>'<span class="tag">'+x+'</span>').join('')}</p>
+  <h4>Search strings</h4><div class="box">LinkedIn Jobs: <b>"${esc(v.role||'[title]')}"</b> + filters for ${m.join(', ').toLowerCase()} only<br>Google: <code>"${esc(v.role||'[title]')}" jobs ${m.includes('Location')?'[your city]':''} -site:linkedin.com</code> → Tools → Past week</div>
+  <div class="callout">No company is your final destination. It's better to be somewhere doing something than spending all your time looking. Loosen one constraint every two weeks the search stalls.</div>`;
+ }},
+
+{id:'board_guide',bucket:'Find & Seek',name:'Job Board Strategy Guide',tier:0,personas:'all',status:'ready',
+ desc:'Where to look — mainstream, niche, and the hidden job market — with alerts set up once.',
+ inputs:[{k:'ind',label:'Industry',type:'select',opts:['Tech / Software','CPG','Retail','Finance','Healthcare','Other']},{k:'visa',label:'Need visa sponsorship?',type:'select',opts:['No','Yes']},{k:'remote',label:'Remote only?',type:'select',opts:['No','Yes']}],
+ compute(v){
+  const niche={'Tech / Software':['Wellfound (startups)','Built In (city hubs)','Otta','Hacker News "Who is hiring"'],'CPG':['LinkedIn Jobs (dominant)','company career pages (Nestlé, P&G, Unilever)','FoodInstitute jobs'],'Retail':['AllRetailJobs','company career pages','NRF job board'],'Finance':['eFinancialCareers','Wall Street Oasis','company career pages'],'Healthcare':['Health eCareers','HIMSS JobMine','hospital system pages'],'Other':['Indeed','Glassdoor','LinkedIn']}[v.ind]||[];
+  return `<h4>Mainstream (set alerts, check daily)</h4><ul><li>LinkedIn Jobs — filter "Past 24 hours"; apply within a day of posting</li><li>Indeed — same</li><li>Company career pages of your 10 targets — most roles post here first</li></ul>
+  <h4>Niche for ${esc(v.ind)}</h4><ul>${niche.map(x=>'<li>'+x+'</li>').join('')}</ul>
+  ${v.remote==='Yes'?'<h4>Remote-first boards</h4><ul><li>We Work Remotely</li><li>Remote OK</li><li>FlexJobs (paid, vetted)</li></ul>':''}
+  ${v.visa==='Yes'?'<h4>Visa-friendly</h4><ul><li>H1BGrader / MyVisaJobs — filter companies that have sponsored your role</li><li>Search "visa sponsorship" + title on LinkedIn</li></ul>':''}
+  <h4>The hidden job market</h4><div class="box">Google: <code>"${esc(v.ind==='Other'?'[your title]':'[your title]')}" site:lever.co OR site:greenhouse.io OR site:ashbyhq.com</code> → Tools → Past week. These are ATS pages that post before boards aggregate them.</div>`;
+ }},
+
+{id:'search_strategy',bucket:'Find & Seek',name:'Volume vs. Quality Playbook',tier:0,personas:'all',status:'ready',
+ desc:'Pick the right search strategy for your situation — apply-wide or tailor-deep — and get weekly targets.',
+ inputs:[{k:'urg',label:'Urgency',type:'select',opts:['Low — employed, exploring','Medium','High — need it fast']},{k:'match',label:'Your current JD match rate on target roles',type:'select',opts:['Under 60%','60–75%','Over 75%']},{k:'net',label:'Network strength in your target companies',type:'select',opts:['Weak','Some contacts','Strong']}],
+ compute(v){
+  const high=v.urg.startsWith('High'); const goodMatch=v.match==='Over 75%'; const strongNet=v.net==='Strong';
+  let strat,why,targets;
+  if(high&&goodMatch){strat='Volume';why='Your resume converts and you need speed. Apply wide, title-matched, no tailoring per role.';targets='40+ applications/week · 1–2 min each · 5 warm outreaches';}
+  else if(high&&!goodMatch){strat='Fix, then volume';why='Applying wide with a resume under 75% match just generates rejections. One focused week on the resume, then volume.';targets='Week 1: resume to 75%+ · Week 2+: 40 applications/week';}
+  else if(strongNet){strat='Quality via network';why='You have contacts where you want to be. Tailored applications through warm intros beat volume.';targets='5 tailored applications/week · 5 warm intros · 2 informational calls';}
+  else{strat='Balanced';why='Tailor for the 10 targets; apply at volume everywhere else the title matches.';targets='10 tailored/week for targets · 20 quick applies · 3 outreaches';}
+  return `<h4>Your strategy: ${strat}</h4><p>${why}</p><div class="box"><b>Weekly targets:</b> ${targets}</div><div class="callout">Whatever you pick, freeze the resume for two weeks and measure. Change one variable at a time.</div>`;
+ }},
+
+{id:'fit_score',bucket:'Find & Seek',name:'Fit Score vs. Targets',tier:1,personas:'all',status:'data',
+ desc:'How you score against your target companies and open roles. Works against a pasted posting now; needs a job-data feed to run across many.',
+ need:'Data source: a jobs API (e.g. Adzuna, JSearch/RapidAPI, or scraping your 10 targets\' career pages) to score against live postings automatically. Until then it scores one pasted posting at a time.',
+ inputs:[{k:'res',label:'Your resume',type:'textarea'},{k:'jd',label:'One target posting',type:'textarea'}],
+ compute(v){ const r=SC.analyze(v.res||'',v.jd||'',{}); return `<div class="score">${r.score}%</div><div class="bar"><i style="width:${r.score}%"></i></div><p>Hard ${r.sub.hard} · Soft ${r.sub.soft} · Other ${r.sub.other}. Open the <b>Resume ↔ JD Match Scanner</b> for the full report.</p>`; }},
+
+/* ───────────────────────── ASSESSMENT ───────────────────────── */
+{id:'career_report',bucket:'Assessment',name:'One-Page Career Report',tier:0,personas:'all',status:'ai',
+ desc:'The core deliverable — an honest one-page read of where you stand, generated from your intake answers.',
+ inputs:[{k:'persona',label:'Situation',type:'select',opts:['Employed, passive','Employed, active','Laid off, open','Laid off, need it fast','Searching 3+ months']},{k:'prof',label:'Years · industry · role · direction',type:'textarea',ph:'12 years · CPG · Senior Brand Manager · adjacent move into tech marketing'},{k:'why',label:'Why you\'re searching / where you\'re stuck',type:'textarea'},{k:'pri',label:'Priorities (Learn/Earn/Stability order)',type:'text'},{k:'conf',label:'Confidence right now',type:'select',opts:['Overwhelmed','Finding my footing','Confident']}],
+ ai:{system:'Write a one-page career report with these sections: Where You Are (factual, warm, 3 sentences) · Where to Start (if laid off: "interviewing is a muscle — first reps, not the whole plan"; if employed: "you have time to train") · How You\'re Positioned (the real talk: how the market likely reads their title/background vs. how they see it; name one gap and say it\'s fixable) · What You\'ll Do About It (the bridge) · Strongest Asset (one, specific) · First Move Today (one concrete action tuned to their confidence: gentle if overwhelmed, direct if confident). Under 400 words. No fluff, no "journey."',
+  user:v=>`Situation: ${v.persona}\nProfile: ${v.prof}\nWhy/stuck: ${v.why}\nPriorities: ${v.pri}\nConfidence: ${v.conf}`}},
+
+{id:'gap_analysis',bucket:'Assessment',name:'Gap Analysis',tier:1,personas:'all',status:'ai',
+ desc:'What needs to change for you to be competitive for the roles you want.',
+ inputs:[{k:'res',label:'Your background',type:'textarea'},{k:'target',label:'Target role (paste 1–2 postings or describe it)',type:'textarea'}],
+ ai:{system:'Compare the background to the target and produce a gap analysis: (1) Already strong — 3 things they can lead with; (2) Gaps — each with severity (blocker / fixable / cosmetic), evidence from the target, and the fastest credible way to close it (a project, a cert, reframing existing experience); (3) A 30-day plan to close the two most important fixable gaps. Honest, specific, no filler.',
+  user:v=>`BACKGROUND:\n${v.res}\n\nTARGET:\n${v.target}`}},
+
+{id:'roadmap',bucket:'Assessment',name:'Path-to-Success Roadmap',tier:1,personas:'all',status:'ai',
+ desc:'Prioritized next steps — the sequenced plan from your report and gaps. The "now I have a plan" payoff.',
+ inputs:[{k:'report',label:'Paste your career report or describe your situation',type:'textarea'},{k:'hrs',label:'Hours per week',type:'number'},{k:'horizon',label:'Horizon',type:'select',opts:['4 weeks','8 weeks','12 weeks']}],
+ ai:{system:'Turn this into a prioritized, sequenced roadmap for the horizon and hours given. Each step: what, why it comes now, the tool to use (from: ATS template, JD match rate, bullet rewriter, LinkedIn optimizer, target list, outreach scripts, 4 core stories, mock interview, salary scripts), and a checkbox-sized definition of done. Group by week. No dates promised — momentum, not deadlines.',
+  user:v=>`${v.report}\nHours/week: ${v.hrs}\nHorizon: ${v.horizon}`}},
+
+{id:'salary_check',bucket:'Assessment',name:'Salary Reality Check',tier:1,personas:'all',status:'data',
+ desc:'Your expectations vs. real market pay for your target roles. Needs a salary data source to be credible.',
+ need:'Data source: a salary API (Levels.fyi, Glassdoor, or BLS OES data) keyed by title + location. Until wired, this tool structures the manual research and compares your number.',
+ inputs:[{k:'role',label:'Target title',type:'text'},{k:'loc',label:'Location',type:'text'},{k:'expect',label:'What you expect (base)',type:'number',ph:'120000'},{k:'low',label:'Market low you found',type:'number'},{k:'high',label:'Market high you found',type:'number'}],
+ compute(v){
+  const e=+v.expect,l=+v.low,h=+v.high;
+  if(!l||!h) return `<h4>Research it in 5 minutes</h4><ol><li>glassdoor.com/salaries → "${esc(v.role)}" in ${esc(v.loc)}</li><li>levels.fyi (tech) or payscale.com</li><li>3 live postings with posted ranges (many states now require it)</li></ol><p>Enter the low and high you find and run again.</p>`;
+  const pos=e<l?'below the market':e>h?'above the market':'inside the range'; const pct=Math.round((e-l)/(h-l)*100);
+  return `<div class="score">${isFinite(pct)?Math.max(0,Math.min(100,pct)):'—'}<span style="font-size:18px"> percentile of range</span></div><div class="bar"><i style="width:${Math.max(0,Math.min(100,pct))}%"></i></div><p>Your expectation of <b>$${e.toLocaleString()}</b> is <b>${pos}</b> ($${l.toLocaleString()}–$${h.toLocaleString()}).</p><div class="callout">${e<l?'You may be underselling. Anchor at the market midpoint.':e>h?'Above the posted range — you\'ll need a strong justification or a more senior title.':'Good. In negotiation, ask what separates a candidate at the bottom of the range from one at the top.'}</div>`;
+ }},
+
+/* ───────────────────────── POST-OFFER (Phase 2) ───────────────────────── */
+{id:'plan_30_60_90',bucket:'Post-Offer [Phase 2]',name:'30-60-90 Day Plan Builder',tier:1,personas:'all',status:'ready',phase2:true,
+ desc:'Intake → understanding → application. Most companies won\'t give you a plan; make your own.',
+ inputs:[{k:'role',label:'The role',type:'text'},{k:'co',label:'Company',type:'text'},{k:'goals',label:'What you were hired to do (from the JD / interviews)',type:'textarea'}],
+ compute(v){
+  return `<h4>Days 1–30 · Intake</h4><ul><li>Meet every stakeholder for ${esc(v.role||'the role')}; ask each: "What would make my first year a success for you?"</li><li>Read everything: last 2 quarters of plans, retros, the roadmap</li><li>Set up the weekly 1:1 with your manager — mutual: ask what they're working on</li><li>Do not change anything yet</li></ul>
+  <h4>Days 31–60 · Understanding</h4><ul><li>Write your read of the situation: what's working, what isn't, why</li><li>Pick the one problem that maps to "${esc((v.goals||'').slice(0,80)||'what you were hired for')}"</li><li>Start the weekly email to your manager: done / next / stuck-on</li></ul>
+  <h4>Days 61–90 · Application</h4><ul><li>Deliver one visible win on that problem</li><li>Propose the plan for the next quarter</li><li>Ask for the 90-day feedback conversation — don't wait for it</li></ul>
+  <div class="callout">At ${esc(v.co||'the company')}, remember your employee number — deliver, but keep your boundaries.</div>`;
+ }}
+];
+
+/* =====================================================================
+   BOULDER CAREERS — Resume ↔ Job Match Scanner engine
+   Replicates the SkillSyncer report: match score + 4 sub-scores, keyword
+   tables (job count / resume count), title & degree match, resume checks,
+   highlighted JD, exclude-and-recalculate, live edit.
+   Sub-score formula (verified against SkillSyncer's sample report):
+     score = Σ min(resumeCount, jobCount) / Σ jobCount
+   ===================================================================== */
+const SC = (() => {
+  /* ---------- dictionaries ---------- */
+  const HARD = `
+sql,python,java,javascript,typescript,c#,c++,rust,scala,kotlin,swift,php,ruby,html,css,react,angular,vue,node,node.js,django,flask,spring,.net,graphql,rest api,api,microservices,kubernetes,docker,terraform,ansible,jenkins,ci/cd,continuous integration,continuous deployment,git,github,gitlab,bitbucket,linux,unix,windows,bash,powershell,aws,azure,gcp,google cloud,cloud,cloud computing,cloud technology,snowflake,databricks,redshift,bigquery,spark,hadoop,kafka,airflow,dbt,etl,data pipelines,data warehouse,data warehousing,data modeling,data engineering,data science,machine learning,deep learning,nlp,natural language processing,llm,generative ai,ai,artificial intelligence,computer vision,statistics,statistical analysis,a/b testing,experimentation,forecasting,predictive analytics,analytics,data analysis,data analytics,business intelligence,tableau,power bi,looker,qlik,excel,microsoft excel,advanced excel,pivot tables,vlookup,google sheets,sheets,powerpoint,microsoft powerpoint,microsoft word,ms office,microsoft office,microsoft,jira,confluence,asana,trello,monday.com,smartsheet,microsoft project,ms project,notion,airtable,figma,sketch,adobe,photoshop,illustrator,indesign,canva,after effects,premiere,salesforce,hubspot,marketo,pardot,mailchimp,klaviyo,braze,segment,mixpanel,amplitude,google analytics,ga4,adobe analytics,seo,sem,ppc,paid search,paid social,paid media,programmatic,display advertising,google ads,meta ads,facebook ads,linkedin ads,tiktok ads,email marketing,marketing automation,content marketing,social media,social media marketing,influencer marketing,brand marketing,brand management,brand strategy,product marketing,go-to-market,gtm,go to market,demand generation,lead generation,growth marketing,performance marketing,crm,customer segmentation,market research,competitive analysis,pricing,pricing strategy,revenue management,category management,trade marketing,shopper marketing,retail media,merchandising,assortment,planogram,inventory management,demand planning,supply chain,supply chain management,procurement,sourcing,strategic sourcing,logistics,distribution,warehouse management,s&op,erp,sap,oracle,netsuite,workday,quickbooks,financial modeling,financial analysis,financial planning,fp&a,budgeting,forecasting,p&l,p&l management,gaap,ifrs,sox,audit,accounting,tax,treasury,valuation,dcf,m&a,due diligence,investor relations,capital markets,risk management,compliance,regulatory,kyc,aml,underwriting,actuarial,product management,product strategy,product roadmap,roadmap,roadmapping,product lifecycle,product development,requirements,requirements gathering,user stories,prioritization,backlog,backlog management,agile,scrum,kanban,safe,lean,six sigma,lean six sigma,waterfall,sdlc,project management,program management,portfolio management,pmo,pmp,csm,cspo,safe agilist,prince2,itil,change management,stakeholder management,vendor management,contract management,contract negotiation,negotiation,resource management,resource planning,scheduling,capacity planning,risk assessment,earned value,ms project,gantt,okrs,kpi,metrics,dashboards,reporting,ux,ui,ux design,ui design,user research,usability testing,wireframing,prototyping,design systems,design thinking,customer journey,journey mapping,service design,customer success,customer experience,cx,customer support,account management,key account management,client management,relationship management,sales,b2b sales,enterprise sales,inside sales,outbound,prospecting,pipeline,pipeline management,quota,solution selling,consultative selling,renewals,upsell,cross-sell,partnerships,channel partnerships,business development,recruiting,talent acquisition,sourcing candidates,onboarding,performance management,compensation,benefits,hris,people operations,employee relations,learning and development,l&d,succession planning,workforce planning,dei,quality assurance,qa,test automation,selenium,cypress,manual testing,regression testing,devops,sre,site reliability,observability,monitoring,incident response,security,cybersecurity,information security,penetration testing,soc,siem,iam,identity and access management,network security,firewalls,cloud security,gdpr,hipaa,pci,iso 27001,nist,data privacy,data governance,mdm,master data,relational databases,non-relational databases,nosql,mongodb,postgresql,mysql,sql server,oracle database,redis,elasticsearch,shopify,magento,woocommerce,e-commerce,ecommerce,marketplace,retail,cpg,consumer goods,fmcg,healthcare,clinical,ehr,epic,cerner,fda,gxp,pharma,medical devices,manufacturing,operations management,process improvement,continuous improvement,kaizen,root cause analysis,5s,tpm,oee,quality control,iso 9001,automation,rpa,uipath,power automate,power apps,sharepoint,dynamics 365,servicenow,zendesk,intercom,freshdesk,coding,programming,software development,software engineering,system testing,system design,architecture,solutions architecture,solution architecture,technical documentation,documentation,source code,version control,code review,unit testing,integration testing,deployment,release management,innovation,digital transformation,strategy,strategic planning,business strategy,corporate strategy,business case,roi,cost reduction,cost savings,revenue growth,profitability,unit economics,customer acquisition,cac,ltv,churn,retention,nps,conversion rate,cro,funnel,funnel optimization,attribution,mmm,media mix modeling,copywriting,content strategy,editorial,pr,public relations,communications,internal communications,event management,trade shows,sponsorships,creative direction,video production,photography,storytelling,presentations,executive presentations,board presentations,training,facilitation,coaching,mentoring,team leadership,people management,people leadership,cross-functional leadership,matrix management,remote teams,distributed teams,offshore,outsourcing,spanish,portuguese,french,german,mandarin,bilingual,pmp certification,scrum master certification,certified scrum master,six sigma green belt,six sigma black belt,cpa,cfa,shrm,phr,sphr,google analytics certified,aws certified,azure certified,mba,bachelor's degree,master's degree
+`.trim().split(',').map(s=>s.trim()).filter(Boolean);
+
+  const SOFT = `
+communication,verbal communication,written communication,interpersonal,collaboration,collaborative,teamwork,team player,leadership,leader,organizational,organized,time management,prioritization,problem solving,problem-solving,critical thinking,analytical,attention to detail,detail oriented,detail-oriented,adaptable,adaptability,flexible,flexibility,self-starter,self-motivated,proactive,initiative,ownership,accountability,accountable,results-driven,results driven,results-oriented,goal-oriented,customer-focused,customer focused,customer-centric,empathy,empathetic,creative,creativity,innovative,innovation,strategic thinking,strategic,curious,curiosity,learning agility,growth mindset,resilient,resilience,influence,influencing,persuasion,persuasive,conflict resolution,decision making,decision-making,judgment,mentorship,coaching,facilitation,public speaking,storytelling,relationship building,stakeholder engagement,cross-functional collaboration,multitasking,multi-tasking,work independently,independent,dependable,reliable,integrity,ethical,positive attitude,enthusiastic,passionate,motivated,driven,hands-on,scheduling,planning,thoroughness,work under pressure,fast-paced,fast paced,ambiguity,emotional intelligence,humility,transparency,servant leadership,inclusive,diversity
+`.trim().split(',').map(s=>s.trim()).filter(Boolean);
+
+  const DEGREES = [['phd',5],['doctorate',5],['doctoral',5],['juris doctor',5],['md',5],['mba',4],['master\'s',4],['masters',4],['master of',4],['m.s.',4],['ms in',4],['m.a.',4],['bachelor\'s',3],['bachelors',3],['bachelor of',3],['b.s.',3],['bs in',3],['b.a.',3],['ba in',3],['bsc',3],['associate\'s',2],['associates',2],['associate degree',2],['high school',1],['ged',1]];
+  const WEAK_VERBS = ['assisted','helped','worked on','worked with','responsible for','handled','fixed','participated','supported','involved in','utilized','tasked with','duties included','was in charge of','took care of','dealt with','made sure','tried to','helped with','contributed to','attended','learned','various','served as'];
+  const BAD_WORDS = ['hard worker','hard-working','hardworking','team player','go-getter','go getter','self-starter','think outside the box','synergy','synergies','results-driven','detail-oriented','dynamic','proactive','strategic thinker','best of breed','value add','thought leader','guru','ninja','rockstar','rock star','wizard','passionate','motivated','seasoned','proven track record','track record','excellent communication skills','references available','duties included','responsible for'];
+  const PRONOUNS = ['i','me','my','mine','myself','we','our','us'];
+  const STRONG_VERBS = ['accelerated','achieved','architected','automated','built','championed','coached','consolidated','created','cut','delivered','designed','developed','directed','drove','eliminated','engineered','established','exceeded','expanded','generated','grew','hired','implemented','improved','increased','influenced','initiated','launched','led','managed','mentored','negotiated','optimized','orchestrated','overhauled','owned','partnered','pioneered','produced','reduced','redesigned','restructured','saved','scaled','secured','shipped','simplified','spearheaded','standardized','streamlined','strengthened','transformed','won'];
+  const STOP = new Set(`a an the and or but of to in for with on at by from as is are be been being this that these those we you your our their they them it its will can may must should would could able about across after all also any because before between both during each either every few further has have had here how if into more most much not now off once only other over own same since so some such than then there through too under until up upon very was were what when where whether which while who whom why within without work works working experience experienced years year strong ability skills skill required requirements requirement preferred plus bonus including include includes including etc e.g i.e via using use used role position job candidate candidates team teams company companies opportunity opportunities environment environments knowledge understanding excellent good great new well least demonstrated proven related relevant degree field equivalent minimum maximum ideal ideally responsibilities responsibility duties qualifications qualification benefits salary location remote hybrid onsite apply applying application applicants employer employers employee employees looking seeking style like join ideal ideally role roles`.split(/\s+/));
+  const GENERIC_OTHER = new Set(`ensure ensures provide provides providing support supporting supports develop developing develops maintain maintaining manage managing manages lead leading leads drive driving perform performing across various multiple daily weekly monthly annual global local regional national international internal external key core primary senior junior level levels high low large small full time part time contract permanent office based world class`.split(/\s+/));
+
+  /* ---------- helpers ---------- */
+  const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const rx=t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  function count(text,term){
+    const t=text.toLowerCase(); const w=rx(term.toLowerCase());
+    const re=new RegExp('(?<![a-z0-9+#.])'+w+'(?:s|es)?(?![a-z0-9+#])','g');
+    return (t.match(re)||[]).length;
+  }
+  const norm=t=>t.toLowerCase();
+  const titleCase=s=>s.replace(/(^|[\s\-\/])([a-z])/g,(m,p,c)=>p+c.toUpperCase()).replace(/\bAi\b/,'AI').replace(/\bSql\b/,'SQL').replace(/\bApi(s?)\b/,'API$1').replace(/\bCi\/cd\b/i,'CI/CD').replace(/\bUx\b/,'UX').replace(/\bUi\b/,'UI').replace(/\bSeo\b/,'SEO').replace(/\bCrm\b/,'CRM').replace(/\bErp\b/,'ERP').replace(/\bKpi(s?)\b/,'KPI$1').replace(/\bOkrs\b/,'OKRs').replace(/\bPmp\b/,'PMP').replace(/\bMba\b/,'MBA').replace(/\bAws\b/,'AWS').replace(/\bGcp\b/,'GCP').replace(/\bCpg\b/,'CPG').replace(/\bFmcg\b/,'FMCG').replace(/\bP&l\b/,'P&L').replace(/\bFp&a\b/,'FP&A').replace(/\bPmo\b/,'PMO').replace(/\bPower Bi\b/,'Power BI').replace(/\bSafe\b/,'SAFe').replace(/\bSdlc\b/,'SDLC').replace(/\bItil\b/,'ITIL').replace(/\bSql\b/g,'SQL').replace(/\bGa4\b/,'GA4').replace(/\bNlp\b/,'NLP').replace(/\bEtl\b/,'ETL').replace(/\bErp\b/,'ERP').replace(/\bSap\b/,'SAP').replace(/\bHris\b/,'HRIS').replace(/\bDei\b/,'DEI').replace(/\bQa\b/,'QA').replace(/\bSre\b/,'SRE').replace(/\bIam\b/,'IAM').replace(/\bGdpr\b/,'GDPR').replace(/\bHipaa\b/,'HIPAA').replace(/\bPci\b/,'PCI').replace(/\bNist\b/,'NIST').replace(/\bMdm\b/,'MDM').replace(/\bRpa\b/,'RPA').replace(/\bRoi\b/,'ROI').replace(/\bCac\b/,'CAC').replace(/\bLtv\b/,'LTV').replace(/\bNps\b/,'NPS').replace(/\bCro\b/,'CRO').replace(/\bMmm\b/,'MMM').replace(/\bPr\b/,'PR').replace(/\bCx\b/,'CX').replace(/\bB2b\b/,'B2B').replace(/\bCsm\b/,'CSM').replace(/\bCspo\b/,'CSPO').replace(/\bCpa\b/,'CPA').replace(/\bCfa\b/,'CFA').replace(/\bShrm\b/,'SHRM').replace(/\bPhr\b/,'PHR').replace(/\bSphr\b/,'SPHR').replace(/\bEhr\b/,'EHR').replace(/\bFda\b/,'FDA').replace(/\bGxp\b/,'GxP').replace(/\bOee\b/,'OEE').replace(/\bTpm\b/,'TPM').replace(/\bS&op\b/,'S&OP').replace(/\bM&a\b/,'M&A').replace(/\bDcf\b/,'DCF').replace(/\bKyc\b/,'KYC').replace(/\bAml\b/,'AML').replace(/\bSox\b/,'SOX').replace(/\bGaap\b/,'GAAP').replace(/\bIfrs\b/,'IFRS').replace(/\bMs \b/,'MS ').replace(/\bJd\b/,'JD').replace(/\bPhd\b/,'PhD').replace(/\bHtml\b/,'HTML').replace(/\bCss\b/,'CSS').replace(/\bPhp\b/,'PHP').replace(/\bAws\b/,'AWS').replace(/\bGcp\b/,'GCP').replace(/\bIos\b/,'iOS');
+
+  /* ---------- extraction ---------- */
+  function extract(jd, resume, excluded){
+    const J=norm(jd), R=norm(resume);
+    const rows=(dict)=>{ const out=[]; const seen=new Set();
+      dict.forEach(term=>{ const jc=count(J,term); if(jc>0 && !seen.has(term)){ seen.add(term); out.push({term:titleCase(term),key:term,job:jc,res:count(R,term),ex:excluded.has(term)}); } });
+      return out.sort((a,b)=>b.job-a.job||a.term.localeCompare(b.term)); };
+    const hard=rows(HARD), soft=rows(SOFT);
+    // other keywords: frequency-based single words not already covered
+    const covered=new Set([...HARD,...SOFT].flatMap(t=>t.split(/\s+/)));
+    const words=J.replace(/[^a-z0-9+#&/\-' ]/g,' ').split(/\s+/).filter(w=>w.length>=4&&!STOP.has(w)&&!GENERIC_OTHER.has(w)&&!/^\d/.test(w)&&!covered.has(w));
+    const freq={}; words.forEach(w=>freq[w]=(freq[w]||0)+1);
+    const other=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,14).map(([w,jc])=>({term:titleCase(w),key:w,job:jc,res:count(R,w),ex:excluded.has(w)})).sort((a,b)=>b.job-a.job);
+    return {hard,soft,other};
+  }
+  function catScore(rows){ const live=rows.filter(r=>!r.ex); const den=live.reduce((s,r)=>s+r.job,0); if(!den) return 100; const num=live.reduce((s,r)=>s+Math.min(r.res,r.job),0); return Math.round(num/den*100); }
+
+  /* ---------- title & degree ---------- */
+  function titleMatch(title,resume){ if(!title) return {title:'',found:null}; return {title, found: norm(resume).includes(norm(title))}; }
+  function degreeLevel(text){ const t=norm(text); let best=0,label=''; DEGREES.forEach(([k,lvl])=>{ if(t.includes(k)&&lvl>best){best=lvl;label=k;} }); return {level:best,label}; }
+  const DEG_NAME={5:'Doctorate',4:"Master's",3:"Bachelor's",2:"Associate's",1:'High school',0:'none stated'};
+  function degreeLevelMin(text){ const t=norm(text); let best=0,label=''; DEGREES.forEach(([k,lvl])=>{ if(t.includes(k)&&(best===0||lvl<best)){best=lvl;label=k;} }); return {level:best,label}; }
+  function degreeMatch(jd,resume){ const req=degreeLevelMin(jd), has=degreeLevel(resume); return {required:req.level,has:has.level,ok:has.level>=req.level,reqName:DEG_NAME[req.level],hasName:DEG_NAME[has.level]}; }
+
+  /* ---------- resume checks ---------- */
+  function checks(resume){
+    const r=resume, t=norm(r);
+    const words=r.split(/\s+/).filter(Boolean).length;
+    const email=(r.match(/[\w.+-]+@[\w-]+\.[\w.]+/)||[])[0]||null;
+    const phone=(r.match(/(\+?\d{1,2}[\s.-])?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/)||[])[0]||null;
+    const linkedin=/linkedin\.com\/in\//i.test(r);
+    const sentences=r.split(/\n|(?<=[.!])\s+/).map(s=>s.trim()).filter(s=>s.length>15);
+    const accomplishments=sentences.filter(s=>(/(\$\s?\d|\d+(\.\d+)?\s?%|\b\d+x\b)/i.test(s)||(/^\s*[-•▪◦*]/.test(s)&&/\b\d{2,}(,\d{3})*\b/.test(s)))&&/(increas|decreas|reduc|grew|grow|sav|cut|improv|deliver|generat|exceed|achiev|boost|drove|drive|lift|scal|launch|led|won|secur|expand|accelerat|optimi)/i.test(s)).slice(0,12);
+    const weak=WEAK_VERBS.filter(v=>count(t,v)>0).map(v=>({v,n:count(t,v)}));
+    const bad=BAD_WORDS.filter(v=>count(t,v)>0).map(v=>({v,n:count(t,v)}));
+    const pron=PRONOUNS.filter(p=>count(t,p)>0).map(p=>({v:p,n:count(t,p)}));
+    // dates
+    const months='(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*';
+    const fmtA=(r.match(new RegExp(months+'\\.?\\s+\\d{4}','gi'))||[]);           // Jan 2019
+    const fmtB=(r.match(/\b(0?[1-9]|1[0-2])\/\d{4}\b/g)||[]);                        // 01/2019
+    const fmtC=(r.match(/\b(19|20)\d{2}\s*[–\-—to]+\s*((19|20)\d{2}|present|current)\b/gi)||[]); // 2019 – 2024
+    const ranges=[...r.matchAll(/((?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+)?(?:(?:0?[1-9]|1[0-2])\/)?((?:19|20)\d{2})\s*[–\-—]+\s*(?:(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+)?(?:(?:0?[1-9]|1[0-2])\/)?((?:19|20)\d{2}|present|current)/gi)];
+    const starts=ranges.map(m=>+m[2]); const ends=ranges.map(m=>/present|current/i.test(m[3])?new Date().getFullYear():+m[3]);
+    const span=starts.length?Math.max(...ends)-Math.min(...starts):0;
+    const formats=[fmtA.length?'Mon YYYY':null,fmtB.length?'MM/YYYY':null,fmtC.length?'YYYY – YYYY':null].filter(Boolean);
+    const sections={experience:/\b(experience|employment|work history)\b/i.test(r),skills:/\bskills\b/i.test(r),education:/\beducation\b/i.test(r),summary:/\b(summary|profile|about)\b/i.test(r)};
+    const bullets=(r.match(/^\s*[-•▪◦*]/gm)||[]).length;
+    const strong=STRONG_VERBS.filter(v=>count(t,v)>0).length;
+    return {words,email,phone,linkedin,accomplishments,weak,bad,pron,dates:{years:span,formats,consistent:formats.length<=1},sections,bullets,strong};
+  }
+
+  /* ---------- highlight JD ---------- */
+  function highlight(jd,ex){
+    const terms=[...ex.hard,...ex.soft,...ex.other].filter(r=>!r.ex).sort((a,b)=>b.key.length-a.key.length);
+    let html=esc(jd); const hit=t=>t.res>0;
+    terms.forEach(t=>{ const re=new RegExp('(?<![a-z0-9+#.])('+rx(t.key)+'(?:s|es)?)(?![a-z0-9+#])','gi'); html=html.replace(re,(m)=>`<mark class="${hit(t)?'hit':'miss'}" title="${hit(t)?'On your resume':'Missing from your resume'}">${m}</mark>`); });
+    return html.replace(/\n/g,'<br>');
+  }
+
+  /* ---------- main ---------- */
+  function analyze(resume,jd,opts={}){
+    const excluded=opts.excluded||new Set();
+    const ex=extract(jd,resume,excluded);
+    const sub={hard:catScore(ex.hard),soft:catScore(ex.soft),other:catScore(ex.other)};
+    const title=titleMatch(opts.title||'',resume); const deg=degreeMatch(jd,resume);
+    const dt=Math.round(((title.found===null?1:(title.found?1:0))*0.5+(deg.ok?1:0)*0.5)*100);
+    sub.degTitle=dt;
+    const score=Math.round(sub.hard*0.45+sub.other*0.25+sub.soft*0.15+sub.degTitle*0.15);
+    return {score,sub,...ex,title,degree:deg,checks:checks(resume),jdHtml:highlight(jd,ex),
+      missing:{hard:ex.hard.filter(r=>r.res===0&&!r.ex),soft:ex.soft.filter(r=>r.res===0&&!r.ex),other:ex.other.filter(r=>r.res===0&&!r.ex)}};
+  }
+  return {analyze,esc,titleCase,STRONG_VERBS};
+})();
+
+const SAMPLE_JD=`Senior Program Manager – Digital Commerce
+Lockheed-style Enterprise, Remote (US)
+
+About the role
+We are looking for a Senior Program Manager to lead cross-functional programs across our digital commerce platform. You will own the program roadmap, drive stakeholder management with executives, and ensure on-time delivery of complex initiatives.
+
+Responsibilities
+- Lead and manage multiple concurrent programs from initiation through delivery using Agile and Scrum practices
+- Build and maintain program schedules, resource plans, and risk assessments; run weekly scheduling reviews
+- Drive stakeholder management across Engineering, Product, Marketing and Finance; present to senior leadership
+- Own program KPIs and dashboards; report status, risks and dependencies to executives
+- Facilitate planning ceremonies and remove blockers for delivery teams
+- Manage vendor relationships and contract negotiation for third-party services
+- Champion continuous improvement and process improvement across the PMO
+- Communicate program changes clearly to employees and partners
+
+Requirements
+- Bachelor's degree in Business, Engineering or a technical field; MBA preferred
+- 8+ years of program management or project management experience in technology
+- 3+ years managing programs in e-commerce or digital platforms
+- Proven experience with Agile, Scrum and Kanban; SAFe a plus
+- Strong stakeholder management, communication and interpersonal skills
+- Expert with Jira, Confluence and Microsoft Project; advanced Excel
+- Experience with data analysis and building dashboards in Tableau or Power BI
+- PMP certification and Scrum Master certification required
+- Demonstrated leadership, organizational skills and attention to detail
+- Comfortable with ambiguity in a fast-paced environment`;
+
+const SAMPLE_RESUME=`Bruno Test
+Seattle, WA · bruno.test@email.com · 555-201-4477 · linkedin.com/in/brunotest
+
+Senior Program Manager · Digital Platforms
+
+SUMMARY
+Program manager with 11 years leading cross-functional delivery in e-commerce and retail technology. I have a proven track record of delivering complex programs on time and under budget. Responsible for stakeholder management with executives and building high-performing teams.
+
+SKILLS
+Program Management, Project Management, Agile, Scrum, Jira, Confluence, Excel, Tableau, Stakeholder Management, Risk Management, Vendor Management, Budgeting, Leadership, Communication
+
+EXPERIENCE
+Senior Program Manager — Nestlé Digital Commerce, Seattle   Jan 2019 – Present
+- Led a portfolio of 6 concurrent programs across engineering, product and marketing, delivering the new checkout platform 2 months early and cutting cart abandonment 18%
+- Drove stakeholder management with VP-level sponsors; presented monthly program KPIs and risk dashboards to senior leadership
+- Managed vendor relationships worth $3.2M annually and renegotiated contracts, saving $410K
+- Helped teams adopt Agile and Scrum practices; facilitated planning and retrospectives for 4 squads
+- Responsible for program schedules and resource plans in Jira and Excel
+
+Project Manager — Retail Systems Inc., Chicago   06/2014 – 12/2018
+- Managed 12 projects for retail clients with budgets up to $1.5M; delivered 92% on time
+- Built KPI dashboards in Tableau that reduced status-reporting time by 40%
+- Assisted the PMO in rolling out a risk assessment process across 30 projects
+- Worked with vendors on contract negotiation and SLAs
+
+EDUCATION
+MBA, University of Washington, 2016
+Bachelor's degree in Business Administration, University of Illinois, 2012
+
+CERTIFICATIONS
+PMP (Project Management Professional)`;
+if(typeof module!=='undefined') module.exports={SAMPLE_JD,SAMPLE_RESUME};
+
+/* ===================================================================== SCANNER UI — mounts into any container ===================================================================== */
+const SCUI=(()=>{
+  const E=SC.esc; let S={};
+  function mount(el,opts={}){
+    S={el,title:'',jd:'',res:'',excluded:new Set(),tab:'match',report:null,ai:opts.ai||null,sample:opts.sample||null,timer:null,fixes:[],accepted:new Set()};
+    el.innerHTML=`<div class="sc">
+      <div class="sc-in">
+        <div class="sc-f"><label>Job title (as written in the posting)</label><input class="sc-inp" id="sc-title" placeholder="Senior Program Manager"></div>
+        <div class="sc-f"><label>Job description</label><textarea class="sc-ta" id="sc-jd" placeholder="Paste the full posting…"></textarea></div>
+        <div class="sc-f"><label>Your resume <span class="sc-live" id="sc-livetag">live — edits re-score as you type</span></label><textarea class="sc-ta sc-res" id="sc-res" placeholder="Paste your resume text…"></textarea></div>
+        <div class="sc-row"><button class="sc-btn" id="sc-scan">Scan</button>${S.sample?'<button class="sc-btn sec" id="sc-sample">Load sample</button>':''}</div>
+      </div>
+      <div class="sc-out" id="sc-out"><div class="sc-empty">Paste a posting and your resume, then scan. You'll get a match score, the exact missing keywords, and a resume check — the same report an ATS-style scanner gives.</div></div>
+    </div>`;
+    el.querySelector('#sc-scan').onclick=()=>scan();
+    if(S.sample) el.querySelector('#sc-sample').onclick=()=>{el.querySelector('#sc-title').value=S.sample.title;el.querySelector('#sc-jd').value=S.sample.jd;el.querySelector('#sc-res').value=S.sample.res;scan();};
+    el.querySelector('#sc-res').addEventListener('input',()=>{ if(!S.report) return; clearTimeout(S.timer); S.timer=setTimeout(()=>scan(true),350); });
+  }
+  function scan(live){
+    const el=S.el; S.title=el.querySelector('#sc-title').value.trim(); S.jd=el.querySelector('#sc-jd').value; S.res=el.querySelector('#sc-res').value;
+    if(!S.jd.trim()||!S.res.trim()){ el.querySelector('#sc-out').innerHTML='<div class="sc-empty">Both the job description and your resume are needed.</div>'; return; }
+    S.report=SC.analyze(S.res,S.jd,{title:S.title,excluded:S.excluded});
+    render(live);
+  }
+  function tabBtn(id,label){ return `<button class="sc-tab ${S.tab===id?'on':''}" data-t="${id}">${label}</button>`; }
+  function render(live){
+    const r=S.report, out=S.el.querySelector('#sc-out');
+    const col=r.score>=80?'var(--ok)':r.score>=60?'var(--warn)':'var(--human)';
+    const verdict=r.score>=80?'Competitive. Your resume clears the recommended 80 for this posting.':r.score>=60?"You're almost there. The computed match is below the recommended 80 — there's a good chance an ATS ranks you below other applicants. Add the relevant missing skills below to get above 80.":'Below the screen line. There is a high probability this resume is filtered before a person sees it. Work through the missing hard skills first.';
+    const head=`<div class="sc-score-wrap">
+      <div class="sc-gauge" style="--pct:${r.score};--col:${col}"><div class="sc-gauge-n">${r.score}</div><div class="sc-gauge-l">match score${live?' · live':''}</div></div>
+      <div class="sc-subs">
+        ${sub('Hard skills',r.sub.hard)}${sub('Soft skills',r.sub.soft)}${sub('Other keywords',r.sub.other)}${sub('Degree & title',r.sub.degTitle)}
+      </div></div>
+      <p class="sc-verdict">${verdict}</p>
+      <div class="sc-tabs">${tabBtn('match','Match report')}${tabBtn('resume','Resume report')}${tabBtn('kw','Keywords')}${tabBtn('jd','Job description')}${tabBtn('fix','Fix with AI')}</div>
+      <div id="sc-tabbody">${body()}</div>`;
+    out.innerHTML=head;
+    out.querySelectorAll('.sc-tab').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;out.querySelectorAll('.sc-tab').forEach(x=>x.classList.toggle('on',x===b));out.querySelector('#sc-tabbody').innerHTML=body();wire();});
+    wire();
+  }
+  function sub(l,v){ const c=v>=80?'var(--ok)':v>=60?'var(--warn)':'var(--human)'; return `<div class="sc-sub"><div class="sc-sub-n" style="color:${c}">${v}</div><div class="sc-sub-l">${l}</div><div class="sc-sub-bar"><i style="width:${v}%;background:${c}"></i></div></div>`; }
+  const chips=(rows,cls='')=>rows.length?rows.map(x=>`<span class="sc-chip ${cls}" data-k="${E(x.key)}" title="Click to exclude — the score recalculates">${E(x.term)} <em>×${x.job}</em></span>`).join(''):'<span class="sc-none">None — nice.</span>';
+  function body(){
+    const r=S.report, m=r.missing, c=r.checks;
+    if(S.tab==='match'){
+      return `<table class="sc-rep">
+        <tr><th>Hard skills</th><td>${m.hard.length?`You are missing <b>${m.hard.length}</b> important hard skill${m.hard.length>1?'s':''}. If you have experience with any of these, check the context in the posting and add them where true.<div class="sc-chips">${chips(m.hard,'miss')}</div>`:'<b>All hard skills found.</b> Every hard skill the posting names appears on your resume.'}</td></tr>
+        <tr><th>Soft skills</th><td>${m.soft.length?`You are missing <b>${m.soft.length}</b> soft skill${m.soft.length>1?'s':''}. These matter less than hard skills, but the exact words still help you rank.<div class="sc-chips">${chips(m.soft,'miss')}</div>`:'<b>All soft skills found.</b>'}</td></tr>
+        <tr><th>Other keywords</th><td>${m.other.length?`You are missing <b>${m.other.length}</b> other keyword${m.other.length>1?'s':''} the employer uses. Mirror their language where it's true for you.<div class="sc-chips">${chips(m.other,'miss')}</div>`:'<b>All other keywords found.</b>'}</td></tr>
+        <tr><th>Job title match</th><td>${r.title.found===null?'<span class="sc-none">Enter the job title above to check it.</span>':r.title.found?`<b>Great work.</b> The job title <b>${E(r.title.title)}</b> appears in your resume. Recruiters sometimes search by exact title, so this helps.`:`<b>Missing.</b> The exact title <b>${E(r.title.title)}</b> doesn't appear in your resume. Put it in your headline or summary — e.g. "${E(r.title.title)} (internal title: …)".`}</td></tr>
+        <tr><th>Degree match</th><td>${r.degree.required===0?`The posting states no degree requirement. Your resume shows <b>${r.degree.hasName}</b>.`:r.degree.ok?`<b>Congratulations.</b> Your resume shows a <b>${r.degree.hasName}</b> and the posting requires a <b>${r.degree.reqName}</b>.`:`<b>Gap.</b> The posting asks for a <b>${r.degree.reqName}</b>; your resume shows <b>${r.degree.hasName}</b>. If you have it, add it; if not, lead with equivalent experience.`}</td></tr>
+      </table><p class="sc-note">Click any missing keyword to exclude it (if it doesn't apply to you) — the score recalculates without it.</p>`;
+    }
+    if(S.tab==='resume'){
+      const wc=c.words<500?`This is below the recommended 500–700 words. Add specifics — a number in every bullet.`:c.words>700?`This is above the recommended 500–700. Fine if you have 10+ years or are applying to federal roles; otherwise trim.`:`Right in the recommended 500–700 range.`;
+      return `<table class="sc-rep">
+        <tr><th>Word count</th><td>Your resume has <b>${c.words}</b> words. ${wc}</td></tr>
+        <tr><th>Email address</th><td>${c.email?`Found: <b>${E(c.email)}</b>`:'<b>Not found.</b> Add a plain-text email (not an icon) near the top.'}</td></tr>
+        <tr><th>Phone number</th><td>${c.phone?`Found: <b>${E(c.phone)}</b>`:'<b>Not found.</b> Add a phone number in plain text.'}</td></tr>
+        <tr><th>LinkedIn</th><td>${c.linkedin?'Found.':'<b>Not found.</b> Add linkedin.com/in/yourname — recruiters cross-check it.'}</td></tr>
+        <tr><th>Sections</th><td>${['experience','skills','education','summary'].map(k=>`<span class="sc-chip ${c.sections[k]?'hit':'miss'}">${k[0].toUpperCase()+k.slice(1)}</span>`).join(' ')}</td></tr>
+        <tr><th>Accomplishments</th><td>${c.accomplishments.length?`<b>Good work.</b> Your resume has <b>${c.accomplishments.length}</b> quantifiable accomplishment${c.accomplishments.length>1?'s':''}.<div class="sc-quotes">${c.accomplishments.slice(0,4).map(a=>`<div>“${E(a.replace(/^[-•▪◦*]\s*/,'').slice(0,140))}${a.length>140?'…':''}”</div>`).join('')}</div>`:'<b>Warning.</b> No quantified accomplishments found. Add a number ($, %, count, time) to your strongest bullets.'}</td></tr>
+        <tr><th>Word choice</th><td>${c.bad.length?`<b>Warning.</b> <b>${c.bad.reduce((n,x)=>n+x.n,0)}</b> filler phrase${c.bad.length>1?'s':''} that recruiters skim past: ${c.bad.map(x=>`<span class="sc-chip miss">${E(x.v)} <em>×${x.n}</em></span>`).join(' ')}`:'<b>Good work.</b> No filler phrases found.'}</td></tr>
+        <tr><th>Verb choice</th><td>${c.weak.length?`<b>Warning.</b> <b>${c.weak.reduce((n,x)=>n+x.n,0)}</b> weak verb${c.weak.length>1?'s':''} to replace with action verbs that describe your contribution: ${c.weak.map(x=>`<span class="sc-chip miss">${E(x.v)} <em>×${x.n}</em></span>`).join(' ')}<div class="sc-quotes"><div>Try: ${SC.STRONG_VERBS.slice(0,14).join(', ')}…</div></div>`:'<b>Good work.</b> No weak verbs found.'} Strong action verbs used: <b>${c.strong}</b>.</td></tr>
+        <tr><th>Personal pronouns</th><td>${c.pron.length?`<b>Warning.</b> <b>${c.pron.reduce((n,x)=>n+x.n,0)}</b> personal pronoun${c.pron.reduce((n,x)=>n+x.n,0)>1?'s':''}. A resume is about you, so they're redundant: instead of "I increased revenue 20%" write "Increased revenue 20%". ${c.pron.map(x=>`<span class="sc-chip miss">${E(x.v)} <em>×${x.n}</em></span>`).join(' ')}`:'<b>Good work.</b> No personal pronouns.'}</td></tr>
+        <tr><th>Date formatting</th><td>${c.dates.years?`Your resume shows <b>${c.dates.years} years</b> of experience. `:'No date ranges detected. '}${c.dates.consistent?'<b>Date formatting looks great.</b>':`<b>Warning.</b> Mixed date formats (${c.dates.formats.join(', ')}). Pick one — parsers compute tenure from dates and mixed formats break it.`}</td></tr>
+        <tr><th>Bullets</th><td>${c.bullets>=6?`<b>${c.bullets}</b> bullets found.`:`Only <b>${c.bullets}</b> bullet lines found. Use bullets (start lines with - or •) so parsers and recruiters can scan.`}</td></tr>
+      </table>`;
+    }
+    if(S.tab==='kw'){
+      const tbl=(name,rows)=>`<h4 class="sc-h">${name}</h4><table class="sc-kw"><tr><th>Skill</th><th>Job count</th><th>Resume count</th><th></th><th></th></tr>${rows.map(x=>`<tr class="${x.ex?'ex':''}"><td>${E(x.term)}</td><td>${x.job}</td><td class="${x.res===0&&!x.ex?'z':''}">${x.res}</td><td class="sc-bars"><i style="width:${Math.min(100,x.job*20)}%"></i><i class="r" style="width:${Math.min(100,x.res*20)}%"></i></td><td><span class="sc-x" data-k="${E(x.key)}" title="${x.ex?'Include again':'Exclude — doesn\'t apply to me'}">${x.ex?'↺':'✕'}</span></td></tr>`).join('')}</table>`;
+      return `<p class="sc-note">Terms are ranked by how often the employer mentions them — a skill repeated three times is what the role is really about. Exclude anything that doesn't apply; the score recalculates.</p>${tbl('Hard skills',S.report.hard)}${tbl('Soft skills',S.report.soft)}${tbl('Other keywords',S.report.other)}<p class="sc-note"><i class="sc-leg j"></i> job count &nbsp; <i class="sc-leg r"></i> resume count</p>`;
+    }
+    if(S.tab==='jd'){
+      return `<p class="sc-note"><mark class="hit">green</mark> = on your resume &nbsp; <mark class="miss">yellow</mark> = missing. Read the missing ones in context — that's how you decide whether they're true for you.</p><div class="sc-jd">${S.report.jdHtml}</div>`;
+    }
+    if(S.tab==='fix'){
+      const miss=[...m.hard,...m.soft].slice(0,12);
+      const aiOn=!!(S.ai&&S.ai.ready&&S.ai.ready());
+      return `<h4 class="sc-h">Turn missing keywords into achievement bullets</h4>
+        <p class="sc-note">Pick the keywords you actually have experience with. ${aiOn?'AI writes a bullet around each one, in your voice, for you to accept or skip.':'Add an AI key in Settings to generate bullets; without it you get a fill-in template for each.'}</p>
+        <div class="sc-chips" id="sc-pick">${miss.map(x=>`<span class="sc-chip pick" data-k="${E(x.key)}" data-t="${E(x.term)}">${E(x.term)}</span>`).join('')||'<span class="sc-none">No missing hard or soft skills.</span>'}</div>
+        <div class="sc-f"><label>Context for these (optional — what you did, any numbers)</label><textarea class="sc-ta" id="sc-ctx" style="min-height:60px"></textarea></div>
+        <button class="sc-btn" id="sc-gen">${aiOn?'Generate bullets':'Build templates'}</button>
+        <div id="sc-gen-out"></div>
+        <h4 class="sc-h" style="margin-top:22px">Auto-optimize: rewrite my bullets around this posting</h4>
+        <p class="sc-note">${aiOn?'AI rewrites each bullet to mirror the posting where it\'s true, and shows it next to your original. Nothing changes until you accept.':'Needs an AI key.'}</p>
+        <button class="sc-btn sec" id="sc-auto" ${aiOn?'':'disabled'}>Suggest rewrites</button>
+        <div id="sc-auto-out"></div>`;
+    }
+  }
+  function wire(){
+    const out=S.el.querySelector('#sc-out');
+    out.querySelectorAll('.sc-chip.miss[data-k],.sc-x[data-k]').forEach(x=>x.onclick=()=>{const k=x.dataset.k; S.excluded.has(k)?S.excluded.delete(k):S.excluded.add(k); scan();});
+    out.querySelectorAll('.sc-chip.pick').forEach(x=>x.onclick=()=>x.classList.toggle('on'));
+    const gen=out.querySelector('#sc-gen'); if(gen) gen.onclick=genBullets;
+    const auto=out.querySelector('#sc-auto'); if(auto) auto.onclick=autoOpt;
+  }
+  async function genBullets(){
+    const picked=[...S.el.querySelectorAll('.sc-chip.pick.on')].map(x=>x.dataset.t); const ctx=S.el.querySelector('#sc-ctx').value; const O=S.el.querySelector('#sc-gen-out');
+    if(!picked.length){O.innerHTML='<p class="sc-note">Pick at least one keyword.</p>';return;}
+    if(!(S.ai&&S.ai.ready&&S.ai.ready())){ O.innerHTML=picked.map(k=>`<div class="sc-sugg"><b>${E(k)}</b><div class="sc-tpl">[Action verb] [what you did using ${E(k)}] for [scope], [result with a number]</div><div class="sc-tpl">e.g. "Applied ${E(k)} across [N] [projects/teams], [cutting/raising] [metric] [X%]"</div></div>`).join(''); return; }
+    O.innerHTML='<p class="sc-note">Writing…</p>';
+    try{ const txt=await S.ai.run('You write resume bullets. For each keyword, write ONE bullet (under 25 words) that opens with a strong past-tense action verb, uses the keyword naturally, and ends with a measurable result. Use only the context provided; where a number is missing write [add number]. Never invent employers or facts. Output as: KEYWORD: bullet',`Keywords: ${picked.join(', ')}\nContext: ${ctx||'(none given)'}\nResume excerpt for voice:\n${S.res.slice(0,1500)}`);
+      O.innerHTML=txt.split('\n').filter(l=>l.includes(':')).map(l=>{const i=l.indexOf(':');return `<div class="sc-sugg"><b>${E(l.slice(0,i).replace(/^[-*\d.\s]+/,''))}</b><div class="sc-tpl">${E(l.slice(i+1).trim())}</div><button class="sc-mini" onclick="SCUI.append(${JSON.stringify(l.slice(i+1).trim())})">Add to resume</button></div>`;}).join('');
+    }catch(e){ O.innerHTML=`<p class="sc-note">AI call failed: ${E(e.message)}</p>`; }
+  }
+  function append(line){ const ta=S.el.querySelector('#sc-res'); ta.value=ta.value.trimEnd()+'\n- '+line; scan(true); if(S.tab!=='fix'){} }
+  async function autoOpt(){
+    const O=S.el.querySelector('#sc-auto-out'); O.innerHTML='<p class="sc-note">Rewriting…</p>';
+    const bullets=S.res.split('\n').filter(l=>/^\s*[-•▪◦*]/.test(l)).map(l=>l.replace(/^\s*[-•▪◦*]\s*/,''));
+    const miss=[...S.report.missing.hard,...S.report.missing.soft].map(x=>x.term).join(', ');
+    try{ const txt=await S.ai.run('Rewrite resume bullets to better match a job posting. For each original bullet, return a rewrite that keeps every fact true, opens with a strong action verb, keeps or adds the number, and works in posting keywords ONLY where the original already implies that experience. Return STRICT JSON: [{"o":"original","r":"rewrite","why":"one short line"}] and nothing else.',`POSTING KEYWORDS TO MIRROR (only if true): ${miss}\n\nBULLETS:\n${bullets.map(b=>'- '+b).join('\n')}`);
+      const arr=JSON.parse(txt.replace(/```json|```/g,'').trim()); S.fixes=arr;
+      O.innerHTML=arr.map((p,i)=>`<div class="sc-diff"><div class="sc-diff-o"><span>Original</span>${E(p.o)}</div><div class="sc-diff-r"><span>Suggested</span>${E(p.r)}<div class="sc-why">${E(p.why||'')}</div></div><div class="sc-diff-a"><button class="sc-mini" onclick="SCUI.accept(${i})">Accept</button><button class="sc-mini sec" onclick="this.closest('.sc-diff').remove()">Skip</button></div></div>`).join('')||'<p class="sc-note">No bullets found to rewrite (start lines with - or •).</p>';
+    }catch(e){ O.innerHTML=`<p class="sc-note">Could not parse AI output: ${E(e.message)}</p>`; }
+  }
+  function accept(i){ const p=S.fixes[i]; if(!p) return; const ta=S.el.querySelector('#sc-res'); ta.value=ta.value.replace(p.o,p.r); const d=S.el.querySelectorAll('.sc-diff')[i]; if(d){d.classList.add('done');} scan(true); }
+  return {mount,append,accept};
+})();
+
+/* ============================================================
+   MARKET — client-side reader.
+   Drop into the app. Reads the approved snapshot, caches it,
+   and falls back to the built-in defaults if anything is off.
+   ============================================================ */
+const MARKET = (() => {
+  const URL_ = 'https://zwscajqkqjwywqwylhnp.supabase.co';
+  const KEY  = 'sb_publishable_NnHD4SNB-l9Naoa1SOomnw_SVo4fFKb';
+  const CACHE_KEY = 'bc.market';
+  const MAX_AGE_MS = 24 * 60 * 60 * 1000;   // re-check once a day
+  const STALE_DAYS = 75;                     // warn if the pipeline stopped
+
+  let data = null, period = null, stale = false;
+
+  async function load(fallback) {
+    // 1) cache first, so the UI paints instantly
+    try {
+      const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+      if (c && Date.now() - c.at < MAX_AGE_MS) { apply(c.payload); return summary(); }
+    } catch (e) { /* ignore */ }
+
+    // 2) fetch the approved snapshot
+    try {
+      const res = await fetch(
+        `${URL_}/rest/v1/market_data?dataset=eq.segments&status=eq.live&select=payload,period,created_at&order=created_at.desc&limit=1`,
+        { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } }
+      );
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const rows = await res.json();
+      if (rows?.[0]?.payload) {
+        apply(rows[0].payload, rows[0].created_at);
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), payload: rows[0].payload }));
+        return summary();
+      }
+    } catch (e) { /* offline or not set up yet — fall through */ }
+
+    // 3) built-in defaults ship with the app, so it always works
+    if (fallback) { data = fallback; period = 'built-in'; }
+    return summary();
+  }
+
+  function apply(payload, createdAt) {
+    data = payload.segments || null;
+    period = payload.period || null;
+    if (createdAt) stale = (Date.now() - new Date(createdAt)) > STALE_DAYS * 864e5;
+  }
+
+  const levels = id => (data && data[id]) || null;
+  const headlineFor = () => (data && data.__headline) || null;
+  const summary = () => ({ period, stale, ok: !!data });
+
+  /** "Market read: September 2026" — always show this in the UI. */
+  function stamp() {
+    if (!period) return '';
+    if (period === 'built-in') return 'Market read: built-in defaults';
+    const [y, m] = period.split('-');
+    const name = ['January','February','March','April','May','June','July','August','September','October','November','December'][+m - 1];
+    return `Market read: ${name || m} ${y}${stale ? ' · may be out of date' : ''}`;
+  }
+
+  return { load, levels, stamp, summary, headlineFor };
+})();
+
+/* =====================================================================
+   TRIFECTA — Learn / Earn / Stability priority tool (2026-aware)
+   ===================================================================== */
+const TRI=(()=>{
+  const E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const P={learn:{name:'Learn',desc:'Growth, new skills, a bigger challenge'},earn:{name:'Earn',desc:'Compensation, title, financial upside'},stability:{name:'Stability',desc:'Security, balance, a steady footing'}};
+  /* Segment library — levels 1–3. 2026 reads are grounded in H1-2026 layoff data + BLS growth projections. */
+  const SEG=[
+   {id:'health',name:'Healthcare systems & payers',learn:2,earn:2,stab:3,hire:3,
+    why:'Demand is demographic, not cyclical — the largest job-adder in the economy through 2034.',read:'Stability high · Earn medium · Learn medium · Hiring strong',
+    ex:'Hospital systems, health insurers, digital-health platforms, medical-device makers',watch:'Clinical roles need credentials; non-clinical roles (ops, product, analytics, program management) are where corporate skills transfer. Cuts exist but are smaller and local.'},
+   {id:'gov',name:'Government, public sector & quasi-gov',learn:1,earn:1,stab:3,hire:2,
+    why:'Lowest layoff rate of any sector in 2026 (~0.4%). The "bulletproof" assumption is weaker than it was, but it is still the most stable floor available.',read:'Stability highest · Earn low–medium · Learn lower · Hiring steady',
+    ex:'Federal/state/city agencies, public utilities commissions, transit authorities, public universities',watch:'Slow hiring cycles (months, not weeks), rigid pay bands, and less learning velocity. Great fit for Stability-first; wrong fit for Learn-first.'},
+   {id:'defense',name:'Defense, aerospace & security',learn:2,earn:2,stab:3,hire:3,
+    why:'Multi-year government contracts insulate headcount from quarterly swings.',read:'Stability high · Earn medium–high · Learn medium · Hiring strong',
+    ex:'Lockheed, RTX, Northrop, Anduril-style newcomers, cybersecurity firms',watch:'Clearance requirements and location constraints. Program/project managers and engineers move in easily; marketing less so.'},
+   {id:'energy',name:'Energy, utilities & clean-energy infrastructure',learn:2,earn:2,stab:3,hire:3,
+    why:'Regulated utilities are structurally stable; clean energy is the fastest-growing industry by percentage (solar +180%, wind +81%).',read:'Stability high · Earn medium · Learn medium–high (clean) · Hiring strong',
+    ex:'Regulated utilities, grid operators, solar/wind developers, battery & EV supply chain',watch:'Two different animals: utilities are stable-and-slow; clean-energy developers are fast-and-policy-exposed. Pick deliberately.'},
+   {id:'pharma',name:'Large pharma & life sciences',learn:2,earn:3,stab:2,hire:2,
+    why:'Big pharma pays like tech with less volatility; biotech is the opposite — high learning, fragile funding.',read:'Stability medium (big) / low (biotech) · Earn high · Learn medium · Hiring steady',
+    ex:'Pfizer, J&J, Novartis, Amgen; CROs; med-tech',watch:'Regulated and slower than tech. Biotech startups had steady cuts in 2026 — treat them as a Learn/Earn bet, not a Stability one.'},
+   {id:'bigtech',name:'Big tech',learn:3,earn:3,stab:1,hire:1,
+    why:'Still the highest cash comp and steepest learning — but 2026 stability is the worst of any segment: ~140–150k tech cuts in H1 alone, half citing AI, with Amazon and Oracle each cutting ~30k.',read:'Stability LOW · Earn highest · Learn high · Hiring selective',
+    ex:'Amazon, Google, Microsoft, Meta, Oracle, Apple',watch:'If Stability is in your top two, this is not your segment right now. If Earn+Learn lead, go in eyes open: negotiate severance terms and keep your network warm from day one.'},
+   {id:'aistart',name:'AI-native startups & scale-ups',learn:3,earn:2,stab:1,hire:2,
+    why:'The fastest learning curve in the market and real equity upside — with real failure risk.',read:'Stability low · Earn variable (equity) · Learn highest · Hiring active but narrow',
+    ex:'Series A–D AI companies, applied-AI vertical startups',watch:'Equity is a lottery ticket, not salary. Ask about runway (months of cash) in the interview — it is a fair question in 2026.'},
+   {id:'finance',name:'Banking, insurance & asset management',learn:2,earn:3,stab:2,hire:2,
+    why:'High pay and strong bonuses; the regulated core is stable while operations roles are being automated.',read:'Stability medium · Earn high · Learn medium · Hiring steady in front-office, shrinking in ops',
+    ex:'JPMorgan, Goldman, insurers, asset managers, regional banks',watch:'Know which side of the AI line your role sits on: client-facing, risk, and product are safer than back-office processing.'},
+   {id:'cpg',name:'Consumer goods (CPG) & food',learn:2,earn:2,stab:2,hire:2,
+    why:'Essential categories keep demand steady; brand and category roles are a strong home for marketers and commercial leaders.',read:'Stability medium · Earn medium · Learn medium · Hiring steady',
+    ex:'P&G, Nestlé, Unilever, PepsiCo, Kraft Heinz',watch:'Big restructurings do happen (e.g. Heineken cut ~6,000 in 2026). Pick brands with growth categories, not declining ones.'},
+   {id:'retail',name:'Retail HQ & e-commerce',learn:2,earn:2,stab:1,hire:1,
+    why:'Digital and omnichannel roles are still needed, but retail as a sector is under automation and consumer pressure.',read:'Stability low–medium · Earn medium · Learn medium · Hiring cautious',
+    ex:'Walmart, Target, Costco corporate; large e-commerce',watch:'Favor the winners with scale (Walmart, Costco) over squeezed department-store chains. Corporate roles turn over fast.'},
+   {id:'consult',name:'Consulting, agencies & professional services',learn:3,earn:2,stab:1,hire:2,
+    why:'Maximum exposure and learning; billable models mean headcount follows demand.',read:'Stability low–medium · Earn medium–high · Learn high · Hiring varies with client budgets',
+    ex:'Big 4, MBB, boutique consultancies, agencies',watch:'Professional services ran one of the higher layoff rates in 2026 (~1.8%). Great Learn-first move; weak Stability move.'},
+   {id:'edu',name:'Education, non-profits & foundations',learn:2,earn:1,stab:2,hire:2,
+    why:'Mission-driven and slower to cut, with real management and program roles.',read:'Stability medium–high · Earn low · Learn medium · Hiring steady',
+    ex:'Universities, foundations, large non-profits, ed-tech (less stable)',watch:'Pay is the trade. If Earn is in your top two, this will frustrate you.'},
+   {id:'infra',name:'Infrastructure, construction & advanced manufacturing',learn:2,earn:2,stab:2,hire:3,
+    why:'Federal infrastructure and semiconductor investment are driving hiring in project delivery, operations, and supply chain.',read:'Stability medium (cyclical) · Earn medium · Learn medium · Hiring strong',
+    ex:'EPC firms, semiconductor fabs, industrial manufacturers, logistics',watch:'Cyclical by nature (construction had the highest monthly layoff rate in mid-2026), but 2026 demand is strong. Project and program managers transfer well.'}
+  ];
+  const LVL={1:'low',2:'medium',3:'high'};
+
+  let S={}, MK={period:null,stale:false,ok:false};
+  /* Overlay the approved monthly snapshot onto the built-in defaults. */
+  function applyMarket(){
+    SEG.forEach(s=>{ const L=MARKET.levels(s.id); if(!L) return;
+      if(Number.isInteger(L.stab)) s.stab=L.stab;
+      if(Number.isInteger(L.earn)) s.earn=L.earn;
+      if(Number.isInteger(L.learn)) s.learn=L.learn;
+      if(Number.isInteger(L.hire)) s.hire=L.hire;
+      if(L.why) s.why=L.why; if(L.watch) s.watch=L.watch; });
+  }
+  function mount(el,opts={}){
+    S={el,order:[],persona:opts.persona||'',from:'',saved:null};
+    MARKET.load().then(sum=>{ MK=sum; if(sum.ok) applyMarket();
+      const b=S.el&&S.el.querySelector('#tri-stamp'); if(b) b.textContent=MARKET.stamp(); });
+    try{ S.saved=JSON.parse(localStorage.getItem('bc.store.trifecta')||'null'); }catch(e){}
+    if(S.saved&&S.saved.order) S.order=S.saved.order.slice();
+    el.innerHTML=`<div class="tri">
+      <div class="tri-in glass">
+        <h3>Rank what matters most right now</h3>
+        <p class="tri-note">Drag the cards into order, or use the arrows. Your #1 shapes where we point you first.</p>
+        <div class="tri-rank" id="tri-rank"></div>
+        <div class="tri-row"><button class="tri-btn sec" id="tri-clear">Clear ranking</button></div>
+        <div class="f" style="margin-top:14px"><label for="tri-sit">Your situation</label><select class="sel" id="tri-sit"><option value="">Choose…</option><option value="scoutp">Employed, exploring passively</option><option value="scouta">Employed, actively looking</option><option value="wanderer">Laid off, open to a new direction</option><option value="sprinter">Laid off, need it fast</option><option value="marathoner">Searching 3+ months</option></select></div>
+        <div class="f"><label for="tri-from">Industry you're coming from (optional)</label><select class="sel" id="tri-from"><option value="">Choose…</option><option>Technology / Software</option><option>Consumer Goods (CPG)</option><option>Retail</option><option>Finance</option><option>Healthcare</option><option>Manufacturing</option><option>Media / Entertainment</option><option>Education / Non-profit</option><option>Other</option></select></div>
+        <button class="tri-btn" id="tri-run">Show where this points me</button>
+      </div>
+      <div class="tri-out glass" id="tri-out"><div class="tri-empty">Rank the three cards and pick your situation. You'll get the segments that fit your order — with an honest 2026 read on each — and when in your search to use this.</div></div>
+    </div>`;
+    if(S.persona) el.querySelector('#tri-sit').value=S.persona;
+    renderRank(); wire();
+    if(S.saved&&S.saved.order&&S.saved.order.length===3){ el.querySelector('#tri-sit').value=S.saved.sit||S.persona||''; el.querySelector('#tri-from').value=S.saved.from||''; run(); }
+  }
+  function renderRank(){
+    const wrap=S.el.querySelector('#tri-rank');
+    const ranked=S.order, pool=Object.keys(P).filter(k=>!ranked.includes(k));
+    const card=(k,i,inPool)=>`<div class="tri-card ${inPool?'pool':''}" draggable="true" data-k="${k}" role="listitem" aria-label="${P[k].name}${inPool?'':', rank '+(i+1)}">
+        <span class="tri-num">${inPool?'·':i+1}</span>
+        <span class="tri-name">${P[k].name}<span class="tri-desc">${P[k].desc}</span></span>
+        <span class="tri-ctl">${inPool?`<button class="tri-mini" data-add="${k}" aria-label="Add ${P[k].name} next">＋</button>`:`<button class="tri-mini" data-up="${k}" aria-label="Move up" ${i===0?'disabled':''}>▲</button><button class="tri-mini" data-down="${k}" aria-label="Move down" ${i===ranked.length-1?'disabled':''}>▼</button><button class="tri-mini" data-rm="${k}" aria-label="Remove">✕</button>`}</span>
+      </div>`;
+    wrap.innerHTML=`<div class="tri-list" role="list" aria-label="Your ranking">${ranked.map((k,i)=>card(k,i,false)).join('')||'<div class="tri-slot">Drag a card here, or tap ＋ to add it in order</div>'}</div>
+      ${pool.length?`<div class="tri-poollabel">Not ranked yet</div><div class="tri-list" role="list" aria-label="Unranked">${pool.map(k=>card(k,0,true)).join('')}</div>`:''}`;
+    // buttons
+    wrap.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{S.order.push(b.dataset.add);renderRank();});
+    wrap.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{S.order=S.order.filter(x=>x!==b.dataset.rm);renderRank();});
+    wrap.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{const i=S.order.indexOf(b.dataset.up);if(i>0){[S.order[i-1],S.order[i]]=[S.order[i],S.order[i-1]];renderRank();}});
+    wrap.querySelectorAll('[data-down]').forEach(b=>b.onclick=()=>{const i=S.order.indexOf(b.dataset.down);if(i<S.order.length-1){[S.order[i+1],S.order[i]]=[S.order[i],S.order[i+1]];renderRank();}});
+    // drag & drop (desktop)
+    let drag=null;
+    wrap.querySelectorAll('.tri-card').forEach(c=>{
+      c.addEventListener('dragstart',()=>{drag=c.dataset.k;c.classList.add('dragging');});
+      c.addEventListener('dragend',()=>c.classList.remove('dragging'));
+      c.addEventListener('dragover',e=>{e.preventDefault();c.classList.add('over');});
+      c.addEventListener('dragleave',()=>c.classList.remove('over'));
+      c.addEventListener('drop',e=>{e.preventDefault();c.classList.remove('over');const tgt=c.dataset.k;if(!drag||drag===tgt)return;
+        const o=S.order.filter(x=>x!==drag); const ti=o.indexOf(tgt); if(ti<0) o.push(drag); else o.splice(ti,0,drag); S.order=o; renderRank();});
+    });
+    const list=wrap.querySelector('.tri-list');
+    list.addEventListener('dragover',e=>e.preventDefault());
+    list.addEventListener('drop',e=>{ if(drag&&!S.order.includes(drag)){S.order.push(drag);renderRank();} });
+  }
+  function wire(){
+    S.el.querySelector('#tri-clear').onclick=()=>{S.order=[];renderRank();S.el.querySelector('#tri-out').innerHTML='<div class="tri-empty">Cleared. Rank the three cards again.</div>';try{localStorage.removeItem('bc.store.trifecta');}catch(e){}};
+    S.el.querySelector('#tri-run').onclick=run;
+  }
+  function stageFor(sit){ return {scoutp:'targeting',scouta:'targeting',wanderer:'targeting',sprinter:'screening',marathoner:'screening'}[sit]||'targeting'; }
+  function run(){
+    const out=S.el.querySelector('#tri-out');
+    if(S.order.length<3){ out.innerHTML='<div class="tri-empty">Rank all three first — the order is the whole point.</div>'; return; }
+    const sit=S.el.querySelector('#tri-sit').value, from=S.el.querySelector('#tri-from').value;
+    const [a,b,c]=S.order; const w={[a]:3,[b]:2,[c]:1};
+    const urgent=sit==='sprinter'||sit==='marathoner'; const employed=sit==='scoutp'||sit==='scouta';
+    const scored=SEG.map(s=>{ let fit=w.learn*s.learn+w.earn*s.earn+w.stability*s.stab; if(urgent) fit+=s.hire; return {...s,fit}; }).sort((x,y)=>y.fit-x.fit);
+    const top=scored.slice(0,5), max=urgent?21:18;
+    const profile={learn:'Growth-seeker',earn:'Upside-seeker',stability:'Security-first'}[a];
+    const stabRank=S.order.indexOf('stability');
+    const stabNote=stabRank<=1?`<div class="tri-callout warn"><b>Stability in 2026 is not where it used to be.</b> Big tech had the worst stability of any segment this year — roughly 140–150k cuts in the first half, about half citing AI, with Amazon and Oracle each cutting ~30,000. The stable floor moved to healthcare, government, defense, and regulated energy. Your list below reflects that, not the 2019 map.</div>`:
+      `<div class="tri-callout"><b>You ranked Stability last.</b> That opens big tech and AI startups — the highest Earn and Learn in the market — but in 2026 that comes with real layoff exposure. Go in eyes open: negotiate severance terms and keep your network warm from week one.</div>`;
+    const urgentNote=urgent?`<div class="tri-callout"><b>Your situation shapes the order.</b> Because you need a job soon, we've weighted segments that are actually hiring in 2026 (healthcare, defense, energy, infrastructure). Your #1 still leads — but a segment that's hiring beats a perfect one that isn't.</div>`:employed?`<div class="tri-callout"><b>You have the rarest asset: time.</b> You can hold out for a role that delivers your top two. Use this ranking to say no to roles that only deliver one.</div>`:'';
+    const fromNote=from?`<p class="tri-note">Coming from <b>${E(from)}</b>: segments where your function transfers directly are marked <span class="tri-pill">transfers</span>.</p>`:'';
+    const transfers=s=>{ if(!from) return false; const m={'Technology / Software':['bigtech','aistart','finance','health','defense','consult'],'Consumer Goods (CPG)':['cpg','retail','pharma','health'],'Retail':['retail','cpg','health'],'Finance':['finance','pharma','consult','gov'],'Healthcare':['health','pharma','gov'],'Manufacturing':['infra','energy','defense','cpg'],'Media / Entertainment':['consult','retail','cpg'],'Education / Non-profit':['edu','gov','health']}; return (m[from]||[]).includes(s.id); };
+    const segCards=top.map((s,i)=>`<div class="tri-seg">
+        <div class="tri-seg-h"><span class="tri-seg-n">${i+1}</span><span class="tri-seg-name">${E(s.name)}</span>${transfers(s)?'<span class="tri-pill">transfers</span>':''}<span class="tri-fit" title="Fit with your order">${Math.round(s.fit/max*100)}% fit</span></div>
+        <div class="tri-seg-why">${s.why}</div>
+        <div class="tri-seg-read"><span class="tri-lvl l${s.stab}">Stability ${LVL[s.stab]}</span><span class="tri-lvl l${s.earn}">Earn ${LVL[s.earn]}</span><span class="tri-lvl l${s.learn}">Learn ${LVL[s.learn]}</span><span class="tri-lvl l${s.hire}">Hiring ${LVL[s.hire]}</span></div>
+        <div class="tri-seg-ex"><b>Where to look:</b> ${E(s.ex)}</div>
+        <div class="tri-seg-watch"><b>Watch out:</b> ${s.watch}</div>
+      </div>`).join('');
+    const Q={learn:['"What will I be doing in year two that I can\'t do today?"','"Who on the team has grown into a bigger role, and how?"'],earn:['"What is the approved range, and what separates the bottom of it from the top?"','"How is the bonus actually paid out — target vs. what people got last year?"'],stability:['"How has the team\'s headcount changed in the last 12 months?"','"What happened to this team in the last round of cuts?"']};
+    const stage=stageFor(sit);
+    out.innerHTML=`
+      <div class="tri-profile"><div class="tri-profile-l">Your profile</div><div class="tri-profile-n">${profile}</div><p>You optimize for <b>${P[a].name}</b> first, then <b>${P[b].name}</b>. You'll trade <b>${P[c].name}</b> when you have to. <b>The 2-of-3 rule:</b> any role that delivers your top two is worth a serious look; a role that delivers only one is a pass.</p></div>
+      ${stabNote}${urgentNote}
+      <h4 class="tri-h">Where this points you</h4>${fromNote}
+      <div class="tri-segs">${segCards}</div>
+      <h4 class="tri-h">What you're trading</h4>
+      <p>By ranking <b>${P[c].name}</b> last you're saying: ${c==='stability'?'you\'ll accept layoff risk for growth or pay — so build a 6-month cushion and never stop networking.':c==='earn'?'you\'ll take less money for growth or security — so know your floor (the number you can\'t go under) before any offer.':'you\'ll take a flatter learning curve for pay or security — so plan your own growth (courses, side projects) because the job won\'t hand it to you.'}</p>
+      <h4 class="tri-h">Use this at two moments</h4>
+      <div class="tri-journey">
+        <div class="tri-step ${stage==='targeting'?'now':''}"><div class="tri-step-t">1 · Targeting <span>${stage==='targeting'?'you are here':''}</span></div><div>Build your target list from the segments above. Filter every posting by your top two — if it can't deliver both, don't apply.</div></div>
+        <div class="tri-step ${stage==='screening'?'now':''}"><div class="tri-step-t">2 · Screening <span>${stage==='screening'?'you are here':''}</span></div><div>Verify your priorities in the recruiter and hiring-manager calls. Ask:<ul><li>${Q[a][0]}</li><li>${Q[b][0]}</li></ul></div></div>
+        <div class="tri-step"><div class="tri-step-t">3 · Offer</div><div>Score the offer against your order: does it deliver #1? #2? If it only delivers #3, that's the trade you said you wouldn't make. Come back to this tool then.</div></div>
+      </div>
+      <button class="tri-btn sec" id="tri-save">Save my priorities (feeds Target List & Non-Negotiables)</button>
+      <p class="tri-src"><span id="tri-stamp">${MARKET.stamp()||''}</span> ${MK.stale?'<b style="color:var(--warn)">· refresh overdue</b>':''}<br>Reads draw on Challenger, Gray &amp; Christmas monthly cut reports, layoff trackers (H1 2026), and BLS 2024–34 employment projections. Segment-level; verify any specific company before you apply.</p>`;
+    out.querySelector('#tri-save').onclick=()=>{ try{ localStorage.setItem('bc.store.trifecta',JSON.stringify({order:S.order,sit,from,top:top.map(s=>s.name),savedAt:Date.now()})); }catch(e){} out.querySelector('#tri-save').textContent='Saved ✓'; };
+  }
+  return {mount};
+})();
+
+/* =====================================================================
+   ENGINE
+   ===================================================================== */
+/* ---- text helpers ---- */
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const lines=s=>String(s||'').split('\n').map(x=>x.trim()).filter(Boolean);
+const nums=s=>String(s||'').split(/[,\s]+/).map(Number).filter(n=>!isNaN(n));
+const warn=m=>`<div class="notice" style="background:var(--warn-soft);border:1px solid #f0d47a"><b>Heads up:</b> ${m}</div>`;
+function checklist(items,plain){ return `<ul style="list-style:none;padding:0">${items.map(([ok,t])=>`<li style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--stone-2)"><span style="width:20px;font-weight:800;color:${plain?'var(--ink-3)':ok?'var(--ok)':'var(--human)'}">${plain?'☐':ok?'✓':'✕'}</span><span>${t}</span></li>`).join('')}</ul>`; }
+const STOP=new Set('the a an and or of to in for with on at by from as is are be this that we you your our their will can able about across after all also any been but has have into its more most not only other over such than then there these they through under up use used using was were what when which who while work'.split(' '));
+const SKILLS=['sql','python','excel','tableau','power bi','looker','salesforce','hubspot','jira','confluence','figma','sketch','notion','asana','aws','azure','gcp','snowflake','dbt','airflow','javascript','typescript','react','node','java','kotlin','swift','go','rust','c++','r','sas','spss','google analytics','ga4','seo','sem','paid media','crm','erp','sap','oracle','workday','netsuite','agile','scrum','kanban','okrs','a/b testing','experimentation','roadmap','product strategy','go-to-market','gtm','pricing','forecasting','budgeting','p&l','fp&a','stakeholder management','cross-functional','data analysis','machine learning','ai','llm','api','microservices','kubernetes','docker','ci/cd','terraform','shopify','marketo','pardot','mailchimp','photoshop','illustrator','canva','power point','powerpoint','project management','program management','change management','six sigma','lean','supply chain','procurement','logistics','merchandising','category management','brand management','trade marketing','shopper marketing','retail media'];
+const SOFT=['communication','leadership','collaboration','stakeholder','influence','presentation','negotiation','problem solving','problem-solving','prioritization','ownership','mentoring','coaching','strategic','analytical','customer','cross-functional','adaptab','curious','detail'];
+const VERBS=['led','built','launched','grew','drove','delivered','designed','owned','created','reduced','increased','scaled','managed','improved','negotiated','shipped','architected','transformed','streamlined','accelerated','generated','saved','cut','won','secured','partnered','coached','hired','mentored','implemented','optimized','established','spearheaded','directed','developed'];
+function keywords(text,n){
+  const t=String(text||'').toLowerCase().replace(/[^a-z0-9+#&/\- ]/g,' ');
+  const words=t.split(/\s+/).filter(w=>w.length>2&&!STOP.has(w)&&!/^\d+$/.test(w));
+  const c={}; words.forEach(w=>c[w]=(c[w]||0)+1);
+  // bigrams
+  for(let i=0;i<words.length-1;i++){const b=words[i]+' '+words[i+1]; if(SKILLS.includes(b)||SOFT.includes(b)) c[b]=(c[b]||0)+2;}
+  return Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,n).map(([w,n])=>({w,n}));
+}
+function skillsIn(text){ const t=String(text||'').toLowerCase(); return SKILLS.filter(s=>t.includes(s)).map(s=>s.replace(/\b\w/g,c=>c.toUpperCase())); }
+
+/* ---- storage (this browser; export to move) ---- */
+const load=k=>{try{return JSON.parse(localStorage.getItem('bc.store.'+k)||'[]')}catch(e){return[]}};
+const saveTo=(k,item)=>{const a=load(k);a.unshift(item);localStorage.setItem('bc.store.'+k,JSON.stringify(a));};
+const removeFrom=(k,i)=>{const a=load(k);a.splice(i,1);localStorage.setItem('bc.store.'+k,JSON.stringify(a));};
+function download(name,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));a.download=name;a.click();}
+function toast(m){const t=document.createElement('div');t.textContent=m;t.style.cssText='position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--slate);color:#fff;padding:10px 16px;border-radius:8px;font-weight:700;z-index:99';document.body.appendChild(t);setTimeout(()=>t.remove(),1800);}
+
+/* ---- state ---- */
+let fPersona='all', fTier='all', current=null, lastVals={};
+const openBuckets=new Set();
+
+/* ---- catalog ---- */
+function renderFilterChips(){
+  document.getElementById('pChips').innerHTML=`<button class="chip ${fPersona==='all'?'on':''}" aria-pressed="${fPersona==='all'}" onclick="setP('all')">All</button>`+PERSONAS.map(p=>`<button class="chip ${fPersona===p.id?'on':''}" aria-pressed="${fPersona===p.id}" onclick="setP('${p.id}')">${p.name}</button>`).join('');
+  document.getElementById('tChips').innerHTML=`<button class="chip ${fTier==='all'?'on':''}" aria-pressed="${fTier==='all'}" onclick="setT('all')">All</button>`+TIERS.map((t,i)=>`<button class="chip ${fTier===i?'on':''}" aria-pressed="${fTier===i}" onclick="setT(${i})">${t}</button>`).join('');
+}
+function setP(p){fPersona=p;renderFilterChips();renderCatalog();if(!current)goHome();}
+function setT(t){fTier=t;renderFilterChips();renderCatalog();if(!current)goHome();}
+function visible(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  return TOOLS.filter(t=>(fPersona==='all'||t.personas==='all'||t.personas.includes(fPersona))&&(fTier==='all'||t.tier===fTier)&&(!q||(t.name+' '+t.desc+' '+t.bucket).toLowerCase().includes(q)));
+}
+function renderCatalog(){
+  const vis=visible(); const buckets=[...new Set(TOOLS.map(t=>t.bucket))];
+  if(!openBuckets.size) buckets.slice(0,2).forEach(b=>openBuckets.add(b));
+  document.getElementById('catalog').innerHTML=buckets.map(b=>{
+    const items=vis.filter(t=>t.bucket===b); if(!items.length) return '';
+    return `<div class="bucket ${openBuckets.has(b)?'open':''}"><button class="bucket-h" aria-expanded="${openBuckets.has(b)}" onclick="toggleBucket('${b.replace(/'/g,"\\'")}')"><span class="car">▸</span>${b}<span class="n">${items.length}</span></button><div class="bucket-b">${items.map(t=>`<button class="tool-li ${current===t.id?'on':''}" onclick="openTool('${t.id}')" ${current===t.id?'aria-current="page"':''}><span class="dot d-${t.status}" aria-hidden="true"></span><span class="t">${t.name}</span><span class="tier" aria-label="${TIERS[t.tier]}">${TIERS[t.tier][0]}</span></button>`).join('')}</div></div>`;
+  }).join('');
+  const c={ready:0,ai:0,data:0,human:0}; vis.forEach(t=>c[t.status]++);
+  const ce=document.getElementById('counts'); if(ce) ce.innerHTML=`<span><b>${vis.length}</b> tools</span><span><i class="dot d-ready"></i><b>${c.ready}</b> working</span><span><i class="dot d-ai"></i><b>${c.ai}</b> need AI key</span><span><i class="dot d-data"></i><b>${c.data}</b> need data</span><span><i class="dot d-human"></i><b>${c.human}</b> human</span>`;
+  const fc=document.getElementById('fCount'); if(fc){ const n=(fPersona!=='all'?1:0)+(fTier!=='all'?1:0); fc.hidden=!n; fc.textContent=n; }
+}
+function toggleBucket(b){openBuckets.has(b)?openBuckets.delete(b):openBuckets.add(b);renderCatalog();}
+
+/* ---- home ---- */
+function goHome(){
+  current=null; renderCatalog(); document.getElementById('actionbar').classList.remove('on');
+  const vis=visible(); const keyOn=!!(AI.key||AI.endpoint);
+  const needAI=vis.filter(t=>t.status==='ai').length;
+  document.getElementById('work').innerHTML=`<div class="home">
+    <div class="counts" id="counts"></div>
+    <h1>Every tool, built and <em>working</em>.</h1>
+    <p class="lede">Filter by persona and tier from the menu. Green tools run right now. Purple ones run the moment you add an AI key. Blue and red ones say exactly what they need.</p>
+    <details class="need"><summary><span class="car">▸</span> What I need from you</summary><ol>
+      <li><b>${keyOn?'AI key is set ✓':'An Anthropic API key'}</b> — ${keyOn?'the '+needAI+' AI tools are live in this browser.':'unlocks '+needAI+' AI tools. Settings → paste your key (stays in this browser). For real users, deploy the Supabase Edge Function in Settings.'}</li>
+      <li><b>A jobs data feed</b> — for Fit Score across live postings (Adzuna / JSearch). Until then it scores one posting at a time.</li>
+      <li><b>A salary data source</b> — for Salary Reality Check (Levels.fyi / Glassdoor / BLS).</li>
+      <li><b>Links for the human layer</b> — booking, community, WhatsApp, Zoom, the coach roster. The request forms already store submissions.</li>
+    </ol></details>
+    <div class="grid">${vis.map(t=>`<button class="card glass" onclick="openTool('${t.id}')"><div class="nm">${t.name}</div><div class="ds">${t.desc}</div><div class="ft"><span class="badge b-${t.status}">${({ready:'Working',ai:'Needs AI key',data:'Needs data',human:'Human layer'})[t.status]}</span><span class="badge t${t.tier}">${TIERS[t.tier]}</span><span>${t.bucket}</span></div></button>`).join('')}</div>
+    ${vis.length?'':'<p class="lede">No tools match these filters. Clear a filter from the menu.</p>'}
+  </div>`;
+  renderCatalog(); window.scrollTo(0,0);
+}
+
+/* ---- tool screen ---- */
+function openTool(id){
+  current=id; const t=TOOLS.find(x=>x.id===id); renderCatalog(); lastVals={};
+  const form=t.inputs.map(f=>{
+    if(f.type==='textarea') return `<div class="f"><label>${f.label}</label><textarea class="ta" data-k="${f.k}" placeholder="${esc(f.ph||'')}"></textarea>${f.hint?'<div class="hint">'+f.hint+'</div>':''}</div>`;
+    if(f.type==='select') return `<div class="f"><label>${f.label}</label><select class="sel" data-k="${f.k}">${f.opts.map(o=>`<option>${o}</option>`).join('')}</select></div>`;
+    if(f.type==='number') return `<div class="f"><label>${f.label}</label><input class="in" type="number" data-k="${f.k}" placeholder="${esc(f.ph||'')}"></div>`;
+    if(f.type==='chips') return `<div class="f"><label>${f.label}</label><div class="chipset" data-k="${f.k}" data-multi="${f.multi?1:0}">${f.opts.map(o=>`<span class="c" onclick="chip(this)">${o}</span>`).join('')}</div></div>`;
+    return `<div class="f"><label>${f.label}</label><input class="in" data-k="${f.k}" placeholder="${esc(f.ph||'')}"></div>`;
+  }).join('');
+  const notice=t.status==='ai'?`<div class="notice ai"><b>AI-powered.</b> ${(AI.key||AI.endpoint)?'Key is set — this runs live.':'No key yet: Run shows the exact prompt it would send. <a onclick="openSettings()">Add your key</a> to run it for real.'}${t.web?' Uses web search.':''}</div>`
+    :t.status==='data'?`<div class="notice data"><b>Needs a data source.</b> ${t.need}</div>`
+    :t.status==='human'?`<div class="notice human"><b>Human layer.</b> ${t.need}</div>`:'';
+  closeDrawer(); const ab=document.getElementById('actionbar'); ab.classList.toggle('on', !t.custom); document.getElementById('abRun').textContent=t.runLabel||(t.status==='ai'?'Run with AI':'Run');
+  document.getElementById('work').innerHTML=`<div class="tool-hd"><div class="crumb"><a onclick="goHome()">← All tools</a><span>/ ${t.bucket}${t.bundle?' / '+t.bundle+' bundle':''}</span></div>
+    <h1>${t.name} <span class="stamp t${t.tier}">${TIERS[t.tier]}</span></h1><p class="ds">${t.desc}</p>
+    <div class="meta"><span class="pill"><span class="badge b-${t.status}">${({ready:'Working now',ai:'Needs AI key',data:'Needs data source',human:'Human layer'})[t.status]}</span></span><span class="pill">Personas: ${t.personas==='all'?'all five':t.personas.map(p=>PERSONAS.find(x=>x.id===p).name).join(', ')}</span>${t.phase2?'<span class="pill">Phase 2</span>':''}</div></div>
+    ${notice}
+    <div class="split"><div class="panel glass"><h3>Inputs</h3>${form||'<p style="color:var(--ink-3)">No inputs — just run it.</p>'}<button class="run" onclick="runTool()">${t.runLabel||(t.status==='ai'?'Run with AI':'Run')}</button></div>
+    <div class="panel glass result"><h3>Result</h3><div id="result"><div class="empty">Fill in the inputs and run.</div></div></div></div>`;
+  if(t.custom==='trifecta'){
+    document.querySelector('.split').outerHTML='<div id="triMount"></div>';
+    TRI.mount(document.getElementById('triMount'),{persona:fPersona!=='all'?fPersona:''});
+  }
+  if(t.custom==='scanner'){
+    document.querySelector('.split').outerHTML='<div id="scannerMount"></div>';
+    SCUI.mount(document.getElementById('scannerMount'),{ai:AI,sample:{title:'Senior Program Manager',jd:SAMPLE_JD,res:SAMPLE_RESUME}});
+  }
+  if(t.id==='job_tracker'||t.id==='stories_bank'){ rerunTool(); }
+  window.scrollTo(0,0);
+}
+function chip(el){const set=el.parentElement; if(set.dataset.multi==='1'){el.classList.toggle('on');} else {set.querySelectorAll('.c').forEach(c=>c.classList.remove('on'));el.classList.add('on');}}
+function readVals(){
+  const v={}; document.querySelectorAll('#work [data-k]').forEach(el=>{
+    if(el.classList.contains('chipset')) v[el.dataset.k]=[...el.querySelectorAll('.c.on')].map(c=>c.textContent).join('|');
+    else v[el.dataset.k]=el.value;
+  }); return v;
+}
+function rerunTool(){ const t=TOOLS.find(x=>x.id===current); if(!t) return; const v=readVals(); document.getElementById('result').innerHTML=`<div class="out">${t.compute?t.compute(v):''}</div>`; }
+async function runTool(){
+  const t=TOOLS.find(x=>x.id===current); const v=readVals(); lastVals=v;
+  const R=document.getElementById('result');
+  if(t.compute&&!t.ai){ R.innerHTML=`<div class="out">${t.compute(v)}</div>`; return; }
+  if(t.ai){
+    const pre=t.precheck?t.precheck(v):''; const sys=t.ai.system, usr=t.ai.user(v);
+    if(!(AI.key||AI.endpoint)){
+      R.innerHTML=`<div class="out">${pre}<h4>What this tool would send (add a key to run it)</h4><div class="prompt-view">SYSTEM:\n${esc(sys)}\n\nUSER:\n${esc(usr)}</div></div>`; return;
+    }
+    R.innerHTML=`<div class="out">${pre}<p><span class="spin"></span> Running…</p></div>`;
+    try{ const text=await AI.run(sys,usr,t.web); R.innerHTML=`<div class="out">${pre}${md(text)}</div>`; }
+    catch(e){ R.innerHTML=`<div class="out">${pre}<div class="notice human"><b>The AI call failed:</b> ${esc(e.message)}. Check the key in Settings, or use the proxy endpoint.</div></div>`; }
+  }
+}
+
+/* ---- markdown-lite ---- */
+function md(s){
+  let h=esc(s);
+  h=h.replace(/^### (.*)$/gm,'<h4>$1</h4>').replace(/^## (.*)$/gm,'<h4>$1</h4>').replace(/^# (.*)$/gm,'<h4>$1</h4>');
+  h=h.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>');
+  h=h.replace(/^(?:\d+\. .*(?:\n|$))+/gm,m=>'<ol>'+m.trim().split('\n').map(l=>'<li>'+l.replace(/^\d+\.\s*/,'')+'</li>').join('')+'</ol>');
+  h=h.replace(/^(?:[-•] .*(?:\n|$))+/gm,m=>'<ul>'+m.trim().split('\n').map(l=>'<li>'+l.replace(/^[-•]\s*/,'')+'</li>').join('')+'</ul>');
+  h=h.replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>');
+  return '<p>'+h+'</p>';
+}
+
+/* ---- AI runner: browser key (dev) or proxy (prod) ---- */
+const AI={
+  ready(){ return !!(this.key||this.endpoint); },
+  key:localStorage.getItem('bc.key')||'', model:localStorage.getItem('bc.model')||'claude-sonnet-4-6', endpoint:localStorage.getItem('bc.ep')||'',
+  async run(system,user,web){
+    const body={model:this.model,max_tokens:2000,system,messages:[{role:'user',content:user}]};
+    if(web) body.tools=[{type:'web_search_20250305',name:'web_search'}];
+    let res;
+    if(this.endpoint){
+      res=await fetch(this.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    } else {
+      res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':this.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(body)});
+    }
+    if(!res.ok){ const e=await res.text(); throw new Error(res.status+' '+e.slice(0,200)); }
+    const data=await res.json();
+    return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+  }
+};
+function openSettings(){closeDrawer();document.getElementById('keyIn').value=AI.key;document.getElementById('modelIn').value=AI.model;document.getElementById('epIn').value=AI.endpoint;document.getElementById('settings').classList.add('on');}
+function closeSettings(){document.getElementById('settings').classList.remove('on');}
+function saveSettings(){AI.key=document.getElementById('keyIn').value.trim();AI.model=document.getElementById('modelIn').value.trim()||'claude-sonnet-4-6';AI.endpoint=document.getElementById('epIn').value.trim();localStorage.setItem('bc.key',AI.key);localStorage.setItem('bc.model',AI.model);localStorage.setItem('bc.ep',AI.endpoint);keyState();closeSettings();toast(AI.key||AI.endpoint?'AI tools are live':'Saved');if(current)openTool(current);else goHome();}
+function clearKey(){AI.key='';localStorage.removeItem('bc.key');keyState();document.getElementById('keyIn').value='';toast('Key cleared');}
+function keyState(){const on=!!(AI.key||AI.endpoint);const b=document.getElementById('keyBtn');b.classList.toggle('key-on',on);b.setAttribute('aria-label',on?'Settings — AI key set':'Settings and AI key');const b2=document.getElementById('keyBtn2');if(b2)b2.textContent=on?'AI key set':'Settings';}
+function openDrawer(){document.getElementById('drawer').classList.add('on');document.getElementById('scrim').classList.add('on');document.getElementById('drawer').setAttribute('aria-hidden','false');document.getElementById('menuBtn').setAttribute('aria-expanded','true');document.body.style.overflow='hidden';setTimeout(()=>{const f=document.querySelector('#drawer .ibtn');if(f)f.focus();},50);}
+function closeDrawer(){document.getElementById('drawer').classList.remove('on');document.getElementById('scrim').classList.remove('on');document.getElementById('drawer').setAttribute('aria-hidden','true');document.getElementById('menuBtn').setAttribute('aria-expanded','false');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();closeSettings();}});
+
+document.getElementById('edgeCode').textContent=`// supabase/functions/ai/index.ts — deploy with: supabase functions deploy ai
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+const KEY = Deno.env.get("ANTHROPIC_API_KEY")!;
+const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "content-type" };
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
+  const body = await req.json();
+  // TODO: enforce per-user run limits here (tiers / credits) before forwarding.
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-api-key": KEY, "anthropic-version": "2023-06-01" },
+    body: JSON.stringify(body),
+  });
+  return new Response(await r.text(), { status: r.status, headers: { ...CORS, "content-type": "application/json" } });
+});`;
+
+/* ---- init ---- */
+renderFilterChips(); renderCatalog(); keyState(); goHome();
+const mq=matchMedia('(min-width:1024px)'); const syncDrawer=()=>{ if(mq.matches){ document.getElementById('drawer').setAttribute('aria-hidden','false'); document.body.style.overflow=''; } else if(!document.getElementById('drawer').classList.contains('on')) document.getElementById('drawer').setAttribute('aria-hidden','true'); }; mq.addEventListener('change',syncDrawer); syncDrawer();
+</script>
+</body>
+</html>
