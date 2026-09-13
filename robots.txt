@@ -1,0 +1,37 @@
+# boldrcareers.com — robots
+# AI answer engines are explicitly allowed: they are how people find us in 2026.
+
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: Bingbot
+Allow: /
+User-agent: Googlebot
+Allow: /
+
+User-agent: *
+Allow: /
+# The product itself is private — no value in indexing an app shell.
+Disallow: /app.html
+Disallow: /backoffice.html
+Disallow: /machine.html
+Disallow: /preview.html
+
+Sitemap: https://boldrcareers.com/sitemap.xml
