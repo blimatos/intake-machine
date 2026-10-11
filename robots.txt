@@ -3,9 +3,7 @@ User-agent: *
 Allow: /
 Disallow: /app.html
 Disallow: /ops.html
-Disallow: /backoffice.html
 Disallow: /machine.html
-Disallow: /archive/
 
 # answer engines are welcome on the public pages
 User-agent: GPTBot
