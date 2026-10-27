@@ -1,0 +1,34 @@
+# BOLDr Careers
+
+> BOLDr Careers is a job-search platform for mid-career professionals in the United States, employed and quietly looking or laid off and in a hurry. A short set of questions produces a free read of where the search is stuck. Then a six-step path, with tools for each step, takes every job application past the screening software, the recruiter and the interview, through to the offer. The name is written "BOLDr Careers" (b-o-l-d-r, no "e").
+
+BOLDr Careers gives you the tools, a customized strategy and the confidence to find your next job.
+
+Key facts:
+
+- Who it is for: mid-career professionals, roughly 35 to 55, in the US. Employed people who want to stay ready, and people who were laid off and need a job fast.
+- What it does: scores a resume against a real job posting and lists the exact words missing, rewrites resume bullets as results in the person's own voice, builds and rehearses interview stories, predicts interview questions, runs mock interviews, and helps decide a salary number and the words for the negotiation.
+- What it does not do: it does not auto-apply to jobs, it never invents experience, it does not pass resumes to recruiters or sell introductions, and nobody's data is used to train AI models.
+- How it is organized: six steps. 1 Your read (once, free). 2 Your foundation (built once, reused on every job). 3 The applications, 4 The recruiters and 5 The room (repeated for every job). 6 The offer (at the end).
+- Plans: Free ($0, five AI runs a month, enough for one full job application, with scoring and every guide unlimited), Paid ($79 a month, 50 AI runs) and Premium ($129 a month, 150 AI runs, a founder intake, weekly check-ins and a vetted coach match). Six-month billing saves 20 percent ($378 or $618 every six months). Paid plans renew automatically until cancelled, and cancelling takes one click in the profile. Prices are launch-period prices.
+- Status: private preview, by invitation. During the preview the product pages ask for a preview password; this file, llms-full.txt and the legal pages are public.
+- Company: BOLDr Careers is a product of TechBiz LLC, registered in New Jersey, USA. Contact: hello@boldrcareers.com.
+
+## Product
+
+- [Homepage](https://boldrcareers.com/): the promise, the six steps and the plans on one page
+- [What you get](https://boldrcareers.com/product.html): each of the six steps, what you get there, what is inside, and what it costs
+- [Plans](https://boldrcareers.com/plans.html): Free, Paid and Premium, what a run is, monthly or six-month billing
+- [Frequently asked questions](https://boldrcareers.com/faq.html): the product, the six steps, plans and runs, your data
+- [About](https://boldrcareers.com/about.html): why BOLDr Careers exists
+- [The app](https://boldrcareers.com/app.html): sign up, take your read, follow the steps
+
+## Policies
+
+- [Privacy policy](https://boldrcareers.com/privacy.html): what is collected, who processes it (Supabase, Anthropic, Resend, GitHub Pages), deletion in one click, 18 or older
+- [Terms of service](https://boldrcareers.com/terms.html): no guarantee of outcome, AI output must be reviewed, plans, renewal and cancellation, New Jersey law
+- [Refunds and cancellation](https://boldrcareers.com/refunds.html): cancel any time, full refund within 14 days of a first payment
+
+## Optional
+
+- [llms-full.txt](https://boldrcareers.com/llms-full.txt): the full description in one file: every step, the tools, plans and runs, data handling and the frequently asked questions

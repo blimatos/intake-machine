@@ -2,8 +2,6 @@
 User-agent: *
 Allow: /
 Disallow: /app.html
-Disallow: /ops.html
-Disallow: /machine.html
 
 # answer engines are welcome on the public pages
 User-agent: GPTBot
@@ -14,5 +12,8 @@ User-agent: PerplexityBot
 Allow: /
 User-agent: Google-Extended
 Allow: /
+
+# a plain-language summary for AI assistants: https://boldrcareers.com/llms.txt
+# the full description: https://boldrcareers.com/llms-full.txt
 
 Sitemap: https://boldrcareers.com/sitemap.xml

@@ -1,0 +1,176 @@
+# BOLDr Careers: the full description
+
+> BOLDr Careers is a job-search platform for mid-career professionals in the United States. A short set of questions produces a free read of where the search is stuck. Then a six-step path, with tools for each step, takes every job application past the screening software, the recruiter and the interview, through to the offer. The name is written "BOLDr Careers" (b-o-l-d-r, no "e"). Website: https://boldrcareers.com. Contact: hello@boldrcareers.com.
+
+This file describes the product in plain words for AI assistants and search tools. The short version is at https://boldrcareers.com/llms.txt. BOLDr Careers is in private preview, by invitation, so the product pages ask for a preview password; this file and the legal pages are public. Prices below are launch-period prices.
+
+## What BOLDr Careers is
+
+BOLDr Careers gives you the tools, a customized strategy and the confidence to find your next job.
+
+The problem it is built for: a mid-career professional, employed and quietly looking or laid off and in a hurry, sends application after application and hears nothing back. Most rejections arrive as silence, so there is nothing to fix and the next application goes out the same as the last. The search gets longer and confidence drops before skill does.
+
+What it does about it: it turns the search into a sequence you can follow. First it tells you where your search is stuck. Then, for every job you apply to, it helps you get past the screening software, the recruiter and the interview, and at the end it helps you decide your number and negotiate.
+
+- The tools: software that reads your resume the way screening software does, rewrites bullets in your voice, and rehearses the interview with you before it happens.
+- The strategy: a read on where your search stands, then six steps in the right order, sized to your week. Not a course. A sequence you can follow.
+- The confidence: evidence you can point to. A score that went up, stories that survived the follow-up question, a number you decided before anyone asked.
+
+## Who it is for
+
+- Mid-career professionals in the US, roughly 35 to 55 years old.
+- People who are employed and want to stay ready, or are quietly looking. Nothing in the product announces that you are looking.
+- People who were laid off and need a job fast.
+- Adults only: you must be 18 or older to create an account.
+
+## How it works
+
+A. Answer a short set of questions about where you are: employed or laid off, how long you have been searching, what has come back. No card and no upload. Free.
+
+B. Get your plan: your read, and six steps built for your situation and your hours, with your next move at the top. Free.
+
+C. Run every job through: scan it, rewrite it, rehearse it. Scoring is always free. Rewriting and rehearsal use AI runs, five a month on the free plan.
+
+## The six steps
+
+Two steps you do once. Three you repeat for every job. One at the end. It is not a calendar: you go as fast or as slow as your week allows, and some people finish the first two in an afternoon.
+
+### 1. Your read (once, free)
+
+Where your search is stuck, in plain words, and the first thing to fix.
+
+- What you get: your situation named in plain words, the step most likely stopping you right now, and one move for today with the next one after it.
+- What is inside: the Career Report and an interview-rate diagnostic.
+- Cost: free, always. Nothing here is metered. You can take the read again when things change.
+
+### 2. Your foundation (once)
+
+What you build once and reuse on every job after: some documents, some decisions, some guides you follow once.
+
+- What you get: a resume the screening software can read, in a template it accepts; your Trifecta, the three things you will not accept, decided before the first posting; four core stories, written and rehearsed; a target list of ten companies; and a headline recruiters actually search for.
+- What is inside: ATS resume template, ATS check, Story System, Trifecta filter, Career Pyramid, title translation, LinkedIn headline, target company list, resume library.
+- Cost: every guide and decision here is free. Writing tools such as the LinkedIn headline and the target list use runs. A founder to walk it with you is Premium.
+
+### 3. The applications (every job)
+
+Before a person sees your resume, software scores it against the posting. Most rejections happen here, in silence, for a word you could have added.
+
+- What you get: your score against the real posting, not a generic one; the exact words missing, ranked by how much they matter; a re-score as you edit, until you clear the line screening software uses.
+- What is inside: Match Scanner, keyword matcher, ATS check, Resume Tailor.
+- Cost: scoring is free and unlimited. Tailoring the resume uses a run.
+- Example: a Senior Program Manager posting scores 63; missing are stakeholder management, roadmap and PMP. After one rewrite it scores 81.
+
+While you wait to hear back, three paths open. Take one, or all three:
+
+- A. Apply wider: score and send more postings. More companies, same foundation.
+- B. Sharpen the knife: fine-tune your stories and materials for the role you are waiting on.
+- C. Prepare for the callback: research the company, get a brief on the interviewer, rehearse the room.
+
+### 4. The recruiters (every job)
+
+A person opens your resume and gives it about seven seconds. Duties read as noise. Results read as a hire.
+
+- What you get: every bullet checked for a weak opener, a missing number or a missing verb; rewritten as a result, in your voice, for this posting; one tailored resume per posting, with each version kept.
+- What is inside: Bullet Rewriter, Recruiter View, Resume Tailor, outreach scripts, the Command Center job tracker.
+- Cost: templates and scripts are free; anything that writes for you uses runs. One tailored application uses about three.
+- Example: "Responsible for managing the sales team" becomes "Led an 8-person sales team to 30% year-over-year growth, beating quota three quarters running."
+
+### 5. The room (every interview)
+
+The questions are predictable. The follow-ups are not, unless you have rehearsed them.
+
+- What you get: your stories, built once in the foundation, matched to what this role will ask; the probing and challenge questions they will actually ask, with your answers; a mock round before the real one.
+- What is inside: stories bank, question predictor, interviewer briefs, mock interview, company-specific prep.
+- Cost: story building and the question bank are free. Predicting questions, interviewer briefs and mock interviews use runs, about two or three per interview. Company-specific prep is Premium.
+
+### 6. The offer (at the end)
+
+The number gets decided before anyone says it out loud. If you have not decided it, they have.
+
+- What you get: your number, with the range and the walk-away, decided before the call; scripts for the call and the email, so you do not improvise money; a plan for the first ninety days.
+- What is inside: your number, negotiation scripts, a 30-60-90 day plan.
+- Cost: deciding your number is free. The scripts and a founder in your corner are Premium.
+
+### After forty to sixty applications
+
+The most valuable part of the product is a loop, not a tool. After forty to sixty applications there is enough data to measure your interview rate. If it sits near the untargeted average, around three percent (CareerPlug's applicant-to-interview rate across ten million applications, 2025), the problem is targeting or materials, not effort, and the path sends you back to your foundation instead of to another hundred applications. Forty to sixty is BOLDr Careers' own threshold for a rate that means something, not a study figure.
+
+## Plans and AI runs
+
+- Free: $0, always. The Career Report and your plan, ATS templates, the ATS check and keyword matcher, scoring on every posting (unlimited), every guide, and five AI runs a month: enough to take one full job application through steps 3, 4 and 5. It does not expire and it is not a trial.
+- Paid: $79 a month, or $63 a month billed as $378 every six months. Everything in Free, plus the Match Scanner with live re-score, Bullet Rewriter and Resume Tailor, the Story System and stories bank, the Command Center tracker and Career Pyramid, mock interviews, and 50 AI runs a month (about ten job applications).
+- Premium: $129 a month, or $103 a month billed as $618 every six months. Everything in Paid, plus interview prep in depth and company-specific prep, negotiation scripts, a live intake with a founder, weekly check-ins, a vetted coach matched to your situation, and 150 AI runs a month.
+
+What a run is: one use of a tool that writes for you with AI, such as a rewrite, a tailored resume, a predicted question set or a mock interview. Scoring, checking and guides never use a run. Runs renew each month on the day your plan started; unused runs do not carry over.
+
+If you run out mid-job: scoring, checking and every guide keep working, so you can still send the application. Only rewriting and rehearsing pause until your plan renews or you upgrade.
+
+Renewal and cancellation: paid plans renew automatically every month or every six months until you cancel. Cancelling takes one click in your profile, with no call and no retention script. You keep paid access until the end of the period you paid for, then move to Free and keep everything you made.
+
+Refunds: a full refund if you ask within 14 days of your first payment on a plan. If you forget to cancel a six-month plan and write within 7 days of the renewal without having used it, it is refunded. Double charges, charges after cancelling, or a service that did not work as described are refunded fairly, usually in full. Details: https://boldrcareers.com/refunds.html
+
+During the private preview no payments are taken.
+
+## Your data
+
+- What is collected: your name and email, your answers to the questions and the report they produce, what you upload or write (resumes, stories, the jobs you track, a profile picture), which tools you run, feedback you send, and campaign tags in the link you arrived from.
+- Who can see your resume: only you. Files sit in private storage keyed to your account, and every database table is locked to your user.
+- Never sold, never shared with recruiters, employers or data brokers, and never used to train AI models.
+- AI: when you run an AI tool, the text you submit is sent to Anthropic's API to generate the answer. Anthropic does not train on API data by default.
+- Service providers: Supabase (database, file storage and sign-in), Anthropic (AI), Resend (email), GitHub Pages (website hosting), Google (only if you choose to sign in with Google), and HaveIBeenPwned (a privacy-preserving check that a new password has not appeared in a known breach). Fonts are served from BOLDr Careers' own site.
+- No advertising trackers and no third-party analytics cookies.
+- Delete everything: one button in your profile deletes your account, your files and your sign-in. Gone means gone; provider backups expire on their normal schedule, typically within 30 days.
+- Full policy: https://boldrcareers.com/privacy.html
+
+## What BOLDr Careers is not
+
+- Not an auto-apply tool. It scores, rewrites and rehearses with you, and you approve every line.
+- Not a resume writer that invents things. It never claims experience you do not have.
+- Not a recruiting agency. It does not apply for jobs on your behalf, pass your resume to recruiters or sell introductions.
+- Not a guarantee. Hiring decisions are made by other people; BOLDr Careers does not promise interviews, offers or a particular salary.
+- Not legal, financial or licensed career counselling advice.
+- Not a chatbot. A general chatbot answers what you think to ask, then forgets you. BOLDr Careers scores against the real posting, knows which step is broken, and remembers you next time.
+
+## Frequently asked questions
+
+Why not just use ChatGPT?
+You could. It answers what you think to ask, then forgets you. What it lacks is not intelligence; it is memory, and an order to do things in. BOLDr Careers scores against the real posting, knows which step is broken, and remembers you next time.
+
+Is the free plan real, or a trial?
+Real. The report, the plan, the ATS templates, the keyword matcher and the Trifecta filter are free and unlimited. Only AI runs are metered, five a month, which is one full job application start to finish. It does not expire.
+
+Will it write my resume for me?
+No. It scores your resume against a real posting, shows exactly what is missing, and suggests rewrites you approve line by line. It never invents experience.
+
+I am still employed. Is this for me?
+It is the best time to start: you have time without pressure. Nothing in the product announces that you are looking.
+
+Can it just do the search for me?
+No. There is no auto-apply, and there will not be. A search you did not run is one you cannot repeat.
+
+Do I have to do all six steps?
+No, and not in a fixed time. Two you do once, three you repeat per job, one at the end.
+
+What happens if I run out of runs mid-job?
+Scoring, checking and every guide keep working, so you can still send the application. Only rewriting and rehearsing pause until your plan renews or you upgrade.
+
+Can I cancel?
+Any time, from your profile. No call and no retention script. You drop to Free at the end of the period you paid for and keep everything you built.
+
+Do I lose my work if I downgrade?
+No. Every resume version, story and note stays yours and stays visible.
+
+Is my data used to train anything?
+No. Not BOLDr Careers' models, not anyone's.
+
+How do I delete everything?
+From your profile, in one click.
+
+## Company and contact
+
+- BOLDr Careers is a product of TechBiz LLC, registered in New Jersey, USA.
+- Email: hello@boldrcareers.com. A person answers, usually the same day.
+- Website: https://boldrcareers.com
+- Terms of service: https://boldrcareers.com/terms.html
+- Privacy policy: https://boldrcareers.com/privacy.html
+- Refunds and cancellation: https://boldrcareers.com/refunds.html
