@@ -3,15 +3,20 @@ User-agent: *
 Allow: /
 Disallow: /app.html
 
-# answer engines are welcome on the public pages
+# answer engines and AI assistants are welcome on the public pages
 User-agent: GPTBot
-Allow: /
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
 User-agent: ClaudeBot
-Allow: /
+User-agent: Claude-SearchBot
+User-agent: Claude-User
 User-agent: PerplexityBot
-Allow: /
+User-agent: Perplexity-User
 User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
 Allow: /
+Disallow: /app.html
 
 # a plain-language summary for AI assistants: https://boldrcareers.com/llms.txt
 # the full description: https://boldrcareers.com/llms-full.txt
