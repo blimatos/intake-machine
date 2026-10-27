@@ -1,6 +1,8 @@
 /* BOLDr Careers fonts, served from our own site (no Google Fonts).
    Bricolage Grotesque, Instrument Sans and JetBrains Mono, SIL Open Font License 1.1 (see LICENSE-*.txt).
-   Files from Fontsource 5.3.0, same designs Google Fonts serves. Added 26 Oct 2026. */
+   Files from Fontsource 5.3.0, same designs Google Fonts serves. Added 26 Oct 2026.
+   Every weight, for new pages. The live pages use site.css, app.css, gate.css, 404.css and email.css,
+   which keep exactly the weights Google served each page. */
 
 @font-face {
   font-family: 'Bricolage Grotesque';
