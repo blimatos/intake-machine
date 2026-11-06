@@ -1,0 +1,144 @@
+{
+ "v": 1,
+ "updated": "2026-11-06",
+ "site": "https://boldrcareers.com",
+ "note": "One source for every page's title and description (Bruno agreed all on the SEO Round 1 page, 6 Nov 2026). Site pages: BOLDr Careers | ...; articles: topic first, brand last. Applied by apply_seo.py; shown in the Machine, SEO/GEO tab.",
+ "pages": [
+  {
+   "file": "index.html",
+   "title": "BOLDr Careers | Get past the screen to the interview",
+   "index": true,
+   "group": "site",
+   "description": "Find out free where your job search is stuck, then follow six steps that take each application past the software, the recruiter and the interview.",
+   "canonical": "https://boldrcareers.com/"
+  },
+  {
+   "file": "product.html",
+   "title": "BOLDr Careers | Six steps from your read to the offer",
+   "index": true,
+   "group": "site",
+   "description": "Your read, your foundation, then for every job: score it against the posting, rewrite for the recruiter, rehearse the room and decide your number.",
+   "canonical": "https://boldrcareers.com/product.html"
+  },
+  {
+   "file": "plans.html",
+   "title": "BOLDr Careers | Plans and pricing, start free",
+   "index": true,
+   "group": "site",
+   "description": "Free covers one full job application a month. Paid adds 50 AI runs, Premium 150 and a founder in your corner. Cancel any time from your profile.",
+   "canonical": "https://boldrcareers.com/plans.html"
+  },
+  {
+   "file": "about.html",
+   "title": "BOLDr Careers | Built from the hiring side of the table",
+   "index": true,
+   "group": "site",
+   "description": "Why BOLDr Careers exists: mid-career searches stall in silence. We built a sequence from the hiring side of the table, not a course or a chatbot.",
+   "canonical": "https://boldrcareers.com/about.html"
+  },
+  {
+   "file": "faq.html",
+   "title": "BOLDr Careers | Straight answers before you start",
+   "index": true,
+   "group": "site",
+   "description": "Straight answers: why not ChatGPT, whether the free plan is real, what a run is, what happens if you run out, how to cancel, and who sees your resume.",
+   "canonical": "https://boldrcareers.com/faq.html"
+  },
+  {
+   "file": "privacy.html",
+   "title": "BOLDr Careers | Privacy: what we keep and how to delete it",
+   "index": true,
+   "group": "legal",
+   "description": "What BOLDr Careers collects, why, which providers process it, how long it is kept, and how to delete your account and files in one click.",
+   "canonical": "https://boldrcareers.com/privacy.html"
+  },
+  {
+   "file": "terms.html",
+   "title": "BOLDr Careers | Terms of service, in plain words",
+   "index": true,
+   "group": "legal",
+   "description": "The agreement for using BOLDr Careers: no guarantee of outcome, AI output to review, plans, renewal and one-click cancelling, and New Jersey law.",
+   "canonical": "https://boldrcareers.com/terms.html"
+  },
+  {
+   "file": "refunds.html",
+   "title": "BOLDr Careers | Refunds and cancelling, 14-day refund",
+   "index": true,
+   "group": "legal",
+   "description": "Cancel any time from your profile. A full refund within 14 days of your first payment on a plan, and fair refunds when something went wrong.",
+   "canonical": "https://boldrcareers.com/refunds.html"
+  },
+  {
+   "file": "blog/index.html",
+   "title": "BOLDr Careers | Blog: straight answers about your career",
+   "index": true,
+   "group": "blog",
+   "description": "Hiring trends and how-to guides for experienced professionals, from the hiring side of the table. The short answer first, then the detail and sources.",
+   "canonical": "https://boldrcareers.com/blog/"
+  },
+  {
+   "file": "blog/topic-job-search.html",
+   "title": "BOLDr Careers | Job search guides",
+   "index": true,
+   "group": "blog",
+   "description": "Resumes, applications, recruiters and interviews, with a step-by-step guide for each part of a job search, the short answer first.",
+   "canonical": "https://boldrcareers.com/blog/topic-job-search.html"
+  },
+  {
+   "file": "blog/topic-layoffs-and-mergers.html",
+   "title": "BOLDr Careers | Layoffs and mergers guides",
+   "index": true,
+   "group": "blog",
+   "description": "Layoffs, acquisitions, restructuring and severance: what to do in your first 30 days, with the steps, the tools that help and the sources.",
+   "canonical": "https://boldrcareers.com/blog/topic-layoffs-and-mergers.html"
+  },
+  {
+   "file": "blog/step-3-the-applications.html",
+   "title": "BOLDr Careers | Step 3, the applications: guides",
+   "index": true,
+   "group": "blog",
+   "description": "Our guides for step 3 of a job search, the applications. Each one gives the short answer first, then the steps, the tools that help, and the sources.",
+   "canonical": "https://boldrcareers.com/blog/step-3-the-applications.html"
+  },
+  {
+   "file": "blog/how-to-get-your-resume-past-an-ats.html",
+   "title": "Get your resume past an ATS in 20 minutes | BOLDr Careers",
+   "index": true,
+   "group": "article",
+   "description": "Most resumes stall in the applicant tracking system for two reasons: missing words and a layout it cannot read. Here is the 20-minute fix, step by step.",
+   "canonical": "https://boldrcareers.com/blog/how-to-get-your-resume-past-an-ats.html"
+  },
+  {
+   "file": "blog/your-company-is-being-acquired-what-happens-to-your-job.html",
+   "title": "Company acquired? What happens to your job | BOLDr Careers",
+   "index": true,
+   "group": "article",
+   "description": "Little changes before an acquisition closes. After it, roles that exist on both sides are reviewed first. What it means for you, and your first 30 days.",
+   "canonical": "https://boldrcareers.com/blog/your-company-is-being-acquired-what-happens-to-your-job.html"
+  },
+  {
+   "file": "app.html",
+   "title": "BOLDr Careers | Your workspace",
+   "index": false,
+   "group": "private"
+  },
+  {
+   "file": "404.html",
+   "title": "BOLDr Careers | Page not found",
+   "index": false,
+   "group": "private"
+  },
+  {
+   "file": "machine.html",
+   "title": "BOLDr Careers | The Machine",
+   "index": false,
+   "group": "private"
+  },
+  {
+   "file": "ops.html",
+   "title": "BOLDr Careers | Ops",
+   "index": false,
+   "group": "private"
+  }
+ ]
+}
