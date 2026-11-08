@@ -406,3 +406,10 @@ h2{font-size:clamp(26px,7.4vw,34px)}
  .bx-tl text{font-size:20px}
 }
 @media (prefers-reduced-motion:reduce){.bx-card{transition:none}}
+
+/* card covers that are images (tool guides, 7 Nov 2026) */
+.bx-cv.bx-cvi img{display:block;width:100%;height:100%;object-fit:cover}
+.bx-row .bx-cv.bx-cvi{align-self:center;border-right:0}
+.bx-row .bx-cv.bx-cvi img{height:auto;aspect-ratio:16/9}
+.bx-empty.bx-first{display:block;border:2px dashed var(--line);border-radius:20px;padding:22px 24px;margin:0 0 30px;line-height:1.55}
+.bx-empty.bx-first b{display:block;margin-bottom:4px}
