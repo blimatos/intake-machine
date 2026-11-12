@@ -1,6 +1,6 @@
 # BOLDr Careers: the full description
 
-> BOLDr Careers is a job-search platform for mid-career professionals in the United States. A short set of questions produces a free read of where the search is stuck. Then a six-step path, with tools for each step, takes every job application past the screening software, the recruiter and the interview, through to the offer. The name is written "BOLDr Careers" (b-o-l-d-r, no "e"). Website: https://boldrcareers.com. Contact: hello@boldrcareers.com.
+> BOLDr Careers is a job-search platform for mid-career professionals in the United States. A short set of questions produces a free career report on where the search is stuck. Then a six-step path, with tools for each step, takes every job application past the screening software, the recruiter and the interview, through to the offer. The name is written "BOLDr Careers" (b-o-l-d-r, no "e"). Website: https://boldrcareers.com. Contact: hello@boldrcareers.com.
 
 This file describes the product in plain words for AI assistants and search tools. The short version is at https://boldrcareers.com/llms.txt. BOLDr Careers is in private preview, by invitation, so the product pages ask for a preview password; this file and the legal pages are public. Prices below are launch-period prices.
 
@@ -27,7 +27,7 @@ What it does about it: it turns the search into a sequence you can follow. First
 
 A. Answer a short set of questions about where you are: employed or laid off, how long you have been searching, what has come back. No card and no upload. Free.
 
-B. Get your plan: your read, and six steps built for your situation and your hours, with your next move at the top. Free.
+B. Get your plan: your career report, and six steps built for your situation and your hours, with your next move at the top. Free.
 
 C. Run every job through: scan it, rewrite it, rehearse it. Scoring is always free. Rewriting and rehearsal use AI runs, five a month on the free plan.
 
@@ -35,7 +35,7 @@ C. Run every job through: scan it, rewrite it, rehearse it. Scoring is always fr
 
 Two steps you do once. Three you repeat for every job. One at the end. It is not a calendar: you go as fast or as slow as your week allows, and some people finish the first two in an afternoon.
 
-### 1. Your read (once, free)
+### 1. Your career report (once, free)
 
 Where your search is stuck, in plain words, and the first thing to fix.
 
