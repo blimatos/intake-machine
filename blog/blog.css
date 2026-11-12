@@ -413,3 +413,19 @@ h2{font-size:clamp(26px,7.4vw,34px)}
 .bx-row .bx-cv.bx-cvi img{height:auto;aspect-ratio:16/9}
 .bx-empty.bx-first{display:block;border:2px dashed var(--line);border-radius:20px;padding:22px 24px;margin:0 0 30px;line-height:1.55}
 .bx-empty.bx-first b{display:block;margin-bottom:4px}
+/* [12 Nov 2026] button effects, decided by Bruno: A press for buttons, round controls, video and feedback; B lift then press for links, cards and choices */
+.btn{border-color:#1E100C!important}
+:is(.btn){--fx:3px;box-shadow:var(--fx) var(--fx) 0 #1E100C!important;transition:translate 60ms ease-out,box-shadow 60ms ease-out,background-color 120ms,color 120ms,border-color 120ms!important}
+:is(.btn):hover{transform:none!important}
+:is(.btn):active:not(:disabled){translate:var(--fx) var(--fx);box-shadow:0 0 0 #1E100C!important}
+.btn:not(.btn-o):not(.final .btn):not(.plan.hi .btn):hover{background:#2B4E92!important;color:#fff!important}
+:is(.btn-o,.final .btn):hover{background:#F3EEE7!important;color:#1E100C!important}
+.bx-card{transition:translate 160ms cubic-bezier(.2,.8,.3,1.25),box-shadow 160ms cubic-bezier(.2,.8,.3,1.25),scale 60ms ease-out,background-color 120ms,border-color 120ms!important}
+.bx-card:hover{transform:none!important;translate:-3px -3px;box-shadow:6px 6px 0 #1E100C!important;border-color:#1E100C!important}
+.bx-card:active{transform:none!important;translate:2px 2px;box-shadow:0 0 0 #1E100C!important;transition-duration:60ms!important}
+:is(.hdr-nav a,.fcol a){text-decoration:none!important;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:0 100%;background-size:0% 2px;padding-bottom:2px;transition:background-size 200ms ease-out,opacity 120ms!important}
+:is(.hdr-nav a,.fcol a):hover{background-size:100% 2px;opacity:1!important}
+.fcol a{width:fit-content}
+:where(a,button,[role="button"],summary,label):focus-visible{outline:3px solid #3560B0!important;outline-offset:3px!important}
+button:disabled,[aria-disabled="true"]{box-shadow:none!important;translate:none!important}
+@media (prefers-reduced-motion:reduce){*,::before,::after{translate:none!important;scale:none!important}}
