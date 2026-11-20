@@ -45,9 +45,9 @@ h1 .w{display:inline-block;background:var(--gold);border:3px solid var(--ink);bo
 .tab .d{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--ink)}
 .tab[aria-selected=true]{background:var(--ink);color:#fff;box-shadow:2px 2px 0 var(--gold)}
 .tab:hover{translate:0 -2px}
-.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
-.track::-webkit-scrollbar{display:none}
-.sl{flex:0 0 100%;scroll-snap-align:start;padding:6px 14px 14px 4px;display:flex;flex-direction:column;gap:14px}
+.track{display:grid;touch-action:pan-y}
+.sl{grid-area:1/1;padding:6px 14px 14px 4px;display:flex;flex-direction:column;gap:14px;opacity:0;visibility:hidden;transition:opacity .25s ease,visibility 0s linear .25s}
+.sl.on{opacity:1;visibility:visible;transition:opacity .4s ease .25s,visibility 0s linear .25s}
 .want{display:flex;align-items:center;gap:10px;margin:0;align-self:flex-start;background:#fff;border:2px solid var(--ink);border-radius:18px 18px 18px 4px;padding:9px 16px;font:700 17px/1.25 var(--d);letter-spacing:-.01em}
 .want .ico{color:var(--mute)}
 .out{flex:1;position:relative;background:var(--cream);border:3px solid var(--ink);border-radius:16px;box-shadow:8px 8px 0 var(--ink);padding:18px 22px 20px;min-height:262px;display:flex;flex-direction:column;gap:10px}
@@ -68,7 +68,7 @@ h1 .w{display:inline-block;background:var(--gold);border:3px solid var(--ink);bo
 .bb .sc{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:800 17px var(--d);border:2px solid var(--ink)}
 .before{opacity:.75}.before p{text-decoration:line-through;text-decoration-color:rgba(206,53,32,.6)}.before .sc{background:#F9DCD6}
 .after{box-shadow:4px 4px 0 var(--ink)}.after .sc{background:#DCF2E4}.after p{font-weight:600}
-.kb{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;flex:1}
+.kb{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.col{min-height:150px}
 .col{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;position:relative}
 .col .ch{height:8px;border-radius:999px;border:1.5px solid var(--ink)}
 .col .hd{display:flex;justify-content:space-between;align-items:baseline;gap:4px}.col b{font-size:13px}.col .ct{font:800 18px var(--d)}
@@ -93,7 +93,7 @@ h1 .w{display:inline-block;background:var(--gold);border:3px solid var(--ink);bo
 .dots{display:none}
 @container stage (max-width:760px){
  .top{padding:12px 16px}.logo{font-size:18px}.tag{font-size:10.5px;padding:4px 9px}.tag .tl{display:none}.tag .ts{display:inline}
- .main{display:flex;flex-direction:column;align-items:stretch;gap:14px;padding:14px 16px 26px}
+ .main{display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:10px 16px 22px}
  .left{display:contents}.eye{display:none}
  h1{order:1;font-size:36px}h1 .w{box-shadow:4px 4px 0 var(--ink)}
  .cvp{order:2;font-size:16px;max-width:none}
@@ -105,15 +105,40 @@ h1 .w{display:inline-block;background:var(--gold);border:3px solid var(--ink);bo
  .out{min-height:178px;padding:12px 14px 14px;box-shadow:5px 5px 0 var(--ink);gap:7px;border-width:2.5px}
  .big{font-size:18px}.sm{font-size:13.5px}.x{display:none!important}
  .ring{width:84px;height:84px}.ring b{width:56px;height:56px;font-size:19px}.ring-row{gap:12px}
- .chips span{font-size:12px}.bb{padding:7px 9px;gap:9px}.bb p{font-size:13px}.bb .sc{width:34px;height:34px;font-size:14px}
+ .chips span{font-size:12px}.bb{padding:6px 8px;gap:8px}.bb p{font-size:12.5px;line-height:1.3}.bb .sc{width:30px;height:30px;font-size:13px}
  .col{padding:5px;gap:4px}.col b{font-size:10px}.col .ct{font-size:13px}.col i{height:16px}
  .stk{font-size:10px;padding:3px 7px;top:-13px}
  .dec{padding:8px 11px;gap:9px;box-shadow:3px 3px 0 var(--ink)}.dk{font-size:10px;padding:3px 8px}.dec b{font-size:14.5px}
+ .dec{flex-direction:column;align-items:flex-start;gap:5px}.dec b{font-size:14.5px}
+ .ring-row{grid-template-columns:64px 1fr;gap:10px}.ring{width:64px;height:64px}.ring b{width:44px;height:44px;font-size:14px}
+ .chips{gap:4px}.chips span{font-size:11.5px;padding:0 7px}.ring-row .mono{margin:2px 0 1px}
+ .tg{margin-left:0;flex-wrap:wrap;gap:4px}.tg span{font-size:9.5px;padding:1px 6px;white-space:nowrap}
+ .want span{line-height:1.2}
  .dots{display:flex;justify-content:center;gap:6px;margin-top:0}.dots i{width:8px;height:8px;border-radius:50%;background:var(--soft);border:1.5px solid var(--ink)}.dots i.on{background:var(--ink)}
  .gate{padding:16px 18px;box-shadow:none;max-width:none}.gate h2{font-size:19px}.gate .gtxt p{display:none}.gate .row{margin-top:10px}
  .gate input,.btn{height:46px}.gate .msg{min-height:14px;margin-top:4px}.gate .soon{font-size:12.5px}
  .gate .dev{display:flex;gap:9px;align-items:flex-start;background:#2A1E18;border:1.5px solid var(--gold);border-radius:12px;padding:8px 11px;margin-top:8px;font-size:13px;line-height:1.35;color:#fff}.gate .dev .ico{color:var(--gold);width:18px;height:18px;margin-top:1px}
 }
+
+.fun{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.fun div{border:2px solid var(--ink);border-radius:10px;padding:7px 10px;background:#fff;font-size:13px;line-height:1.25}
+.fun b{display:block;font:700 10.5px var(--m);letter-spacing:.07em;text-transform:uppercase;margin-bottom:2px}
+.fun .ok2 b{color:#22834D}.fun .stuck{background:#F9DCD6;border-color:#CE3520;box-shadow:3px 3px 0 #CE3520}.fun .stuck b{color:#B8331F}
+.fun .nr{border-style:dashed;color:var(--mute)}
+.facts{display:flex;flex-wrap:wrap;gap:6px}.facts span{font:700 11.5px var(--m);letter-spacing:.04em;border:1.5px solid var(--ink);border-radius:999px;padding:2px 9px;background:#fff}
+.tg{display:flex;gap:6px;margin:-2px 0 0 56px}.tg span{font:700 10.5px var(--m);letter-spacing:.06em;text-transform:uppercase;background:#DCF2E4;border:1.5px solid #22834D;color:#1E7A44;border-radius:999px;padding:1px 8px}
+.kfoot{font-size:13px;color:var(--mute);margin:0}
+.rd{display:grid;gap:8px}.rd div{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:7px 11px;font-size:14.5px;line-height:1.35}
+.rd b{display:block;font:700 10.5px var(--m);letter-spacing:.07em;text-transform:uppercase;color:var(--sc);margin-bottom:2px}
+.rd .pos{background:#E3E8F4}.hl{background:#FFF4C2;padding:0 3px;border-radius:4px;font-weight:700}
+.chips.g span{border-color:#22834D;color:#1E7A44}
+.after u{text-decoration:none;padding:0 2px;border-radius:3px}.u1{background:#DCF2E4}.u2{background:#FFF4C2}.u3{background:#E3E8F4}
+.tg .t1{background:#DCF2E4}.tg .t2{background:#FFF4C2;border-color:#B45309;color:#7A4B00}.tg .t3{background:#E3E8F4;border-color:#3560B0;color:#2B4E92}
+.col em.job{font-size:10px;line-height:1.2;padding:5px}
+.match{background:#DCF2E4;border:2px solid #22834D;border-radius:10px;padding:8px 10px;font-size:14.5px;line-height:1.35}
+.match b{display:block;font:700 10.5px var(--m);letter-spacing:.07em;text-transform:uppercase;color:#1E7A44;margin-bottom:2px}
+@container stage (max-width:760px){.rd div{font-size:12.5px;padding:5px 8px}.rd b{font-size:9.5px}.fun div{padding:5px 6px;font-size:11.5px}.fun b{font-size:9.5px}.tg{margin-left:43px}.facts span{font-size:10.5px}.match{font-size:13px;padding:6px 8px}}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 body.unlocking .stage{visibility:hidden}
@@ -146,40 +171,42 @@ body.unlocking .stage{visibility:hidden}
 </div>
 <section class="car" aria-roledescription="carousel" aria-label="From your question to your decision, tool by tool">
 <div class="tabs" role="tablist"><button class="tab" role="tab" data-i="0" aria-selected="true"><span class="d" style="background:#CE3520"></span>Report</button><button class="tab" role="tab" data-i="1" aria-selected="false"><span class="d" style="background:#079EB0"></span>Job Match</button><button class="tab" role="tab" data-i="2" aria-selected="false"><span class="d" style="background:#F47F20"></span>Bullets</button><button class="tab" role="tab" data-i="3" aria-selected="false"><span class="d" style="background:#079EB0"></span>Tracker</button><button class="tab" role="tab" data-i="4" aria-selected="false"><span class="d" style="background:#3560B0"></span>Interviewer</button></div>
-<div class="track" tabindex="0"><article class="sl" id="sl-report" aria-roledescription="slide" aria-label="1 of 5: Report">
-<p class="want"><svg class="ico"><use href="#i-chat"/></svg><span>“Why is nobody calling me back?”</span></p>
-<div class="out" style="--sc:#CE3520"><span class="lab"><span class="num" style="background:#CE3520">1</span>Your career report</span><div class="strip"><i style="background:#CE3520"></i><i style="background:#FCD409"></i><i style="background:#079EB0"></i><i style="background:#F47F20" class=on></i><i style="background:#3560B0"></i><i style="background:#22834D"></i></div>
-<p class="big">Your search is breaking at step 4, the recruiters.</p>
-<p class="sm">Your resume gets past the software. Then it loses the seven-second skim, because your top bullets list duties, not results.</p>
-<p class="sm x">Where you are: 38 applications, 2 recruiter screens, no second rounds.</p>
-<span class="stk" style="background:#CE3520;color:#fff">Where you are stuck</span></div>
-<div class="dec"><span class="dk">Your decision</span><b>Stop sending. Fix the top of your resume first.</b></div>
+<div class="track" tabindex="0"><article class="sl on" id="sl-report" aria-roledescription="slide" aria-label="1 of 5: Report">
+<p class="want"><svg class="ico"><use href="#i-chat"/></svg><span>“Where do I really stand right now?”</span></p>
+<div class="out" style="--sc:#CE3520"><span class="lab"><span class="num" style="background:#CE3520">1</span>Your career report</span><p class="big">You’re a strong fit for product marketing. Your title just doesn’t say so yet.</p>
+<div class="rd"><div class="x"><b>Where you are</b>12 years in CPG brand marketing. Searching while still employed.</div>
+<div><b>How the market reads you</b>You say Senior Brand Manager. The roles you fit are posted as <span class="hl">Product Marketing Manager</span>.</div>
+<div class="x"><b>Your strongest asset</b>Growing a $40M brand 18% in two years.</div></div>
+<span class="stk" style="background:#CE3520;color:#fff">Where you stand</span></div>
+<div class="dec"><span class="dk">Your decision</span><b>Go after Product Marketing roles. That’s where your strengths count most.</b></div>
 </article><article class="sl" id="sl-match" aria-roledescription="slide" aria-label="2 of 5: Job Match">
-<p class="want"><svg class="ico"><use href="#i-chat"/></svg><span>“Is this job even worth applying to?”</span></p>
+<p class="want"><svg class="ico"><use href="#i-chat"/></svg><span>“Do I have what this role is asking for?”</span></p>
 <div class="out" style="--sc:#079EB0"><span class="lab"><span class="num" style="background:#079EB0">3</span>Job Match Score</span><div class="ring-row"><div class="ring" style="--p:78"><b>78%</b></div>
-<div><p class="mono ok x">Strong</p><p class="sm x">Brand strategy, budget ownership, agency leadership</p>
-<p class="mono no">Missing</p><div class="chips"><span>retail media</span><span>P&amp;L ownership</span><span>go-to-market</span></div></div></div>
+<div><p class="mono ok">What you already have</p><div class="chips g"><span>Brand strategy</span><span>Budget ownership</span><span>Agency leadership</span></div>
+<p class="mono no">Missing requirements</p><div class="chips"><span>Retail media</span><span>P&amp;L ownership</span><span>Go-to-market</span></div></div></div>
 <p class="sm x">Product Marketing Manager, sample posting.</p>
-<span class="stk" style="background:#FCD409;color:#1E100C">3 changes +14%</span></div>
-<div class="dec"><span class="dk">Your decision</span><b>Apply, after adding the three missing words.</b></div>
+<span class="stk" style="background:#FCD409;color:#1E100C">Strong match</span></div>
+<div class="dec"><span class="dk">Your decision</span><b>You’re a strong match. Show the three missing requirements, then apply.</b></div>
 </article><article class="sl" id="sl-bullets" aria-roledescription="slide" aria-label="3 of 5: Bullets">
-<p class="want"><svg class="ico"><use href="#i-chat"/></svg><span>“Which result do I lead with?”</span></p>
+<p class="want"><svg class="ico"><use href="#i-chat"/></svg><span>“Am I framing my experience the right way?”</span></p>
 <div class="out" style="--sc:#F47F20"><span class="lab"><span class="num" style="background:#F47F20">4</span>Resume Bullets Writer</span><div class="bb before"><span class="sc">41</span><p>Responsible for managing the brand budget and agency partners.</p></div>
-<div class="bb after"><span class="sc">88</span><p>Grew a $40M snack brand 18% in two years by moving 30% of spend into retail media.</p></div>
+<div class="bb after"><span class="sc">88</span><p><u class="u1">Grew a $40M snack brand 18%</u> <u class="u2">in two years</u> <u class="u3">by moving 30% of spend into retail media</u>.</p></div>
+<div class="tg"><span class="t1">What you achieved</span><span class="t2">How much</span><span class="t3">How you did it</span></div>
 <span class="stk" style="background:#F47F20;color:#1E100C">41 to 88</span></div>
-<div class="dec"><span class="dk">Your decision</span><b>Lead with the $40M result on every application.</b></div>
+<div class="dec"><span class="dk">Your decision</span><b>Write results, not duties: what you achieved, how much, and how.</b></div>
 </article><article class="sl" id="sl-tracker" aria-roledescription="slide" aria-label="4 of 5: Tracker">
-<p class="want"><svg class="ico"><use href="#i-chat"/></svg><span>“Where do I put my time this week?”</span></p>
-<div class="out" style="--sc:#079EB0"><span class="lab"><span class="num" style="background:#079EB0">3</span>Application Tracker</span><div class="kb"><div class="col"><span class="ch" style="background:#D9D0C8"></span><div class="hd"><b>Saved</b><span class="ct">6</span></div><i></i><i></i><i></i></div><div class="col"><span class="ch" style="background:#079EB0"></span><div class="hd"><b>Applied</b><span class="ct">9</span></div><i></i><i></i><i></i></div><div class="col"><span class="ch" style="background:#3560B0"></span><div class="hd"><b>Interview</b><span class="ct">2</span></div><i></i><i></i><em>Thu</em></div><div class="col"><span class="ch" style="background:#22834D"></span><div class="hd"><b>Offer</b><span class="ct">0</span></div></div></div>
+<p class="want"><svg class="ico"><use href="#i-chat"/></svg><span>“How do I keep my job search organized?”</span></p>
+<div class="out" style="--sc:#079EB0"><span class="lab"><span class="num" style="background:#079EB0">3</span>Application Tracker</span><div class="kb"><div class="col"><span class="ch" style="background:#D9D0C8"></span><div class="hd"><b>Saved</b><span class="ct">6</span></div><i></i><i></i><i></i></div><div class="col"><span class="ch" style="background:#079EB0"></span><div class="hd"><b>Applied</b><span class="ct">9</span></div><i></i><i></i><i></i></div><div class="col"><span class="ch" style="background:#3560B0"></span><div class="hd"><b>Interview</b><span class="ct">2</span></div><i></i><em class="job">Product Marketing · Thu</em></div><div class="col"><span class="ch" style="background:#22834D"></span><div class="hd"><b>Offer</b><span class="ct">0</span></div></div></div>
+<p class="kfoot x">3 not selected, kept for the record.</p>
 <span class="stk" style="background:#F47F20;color:#1E100C">Interview Thu</span></div>
-<div class="dec"><span class="dk">Your decision</span><b>Pause new applications. Prep for Thursday.</b></div>
+<div class="dec"><span class="dk">Your decision</span><b>Put every application on one board, so you know what to prioritize.</b></div>
 </article><article class="sl" id="sl-kyi" aria-roledescription="slide" aria-label="5 of 5: Interviewer">
-<p class="want"><svg class="ico"><use href="#i-chat"/></svg><span>“What do I even say to her?”</span></p>
-<div class="out" style="--sc:#3560B0"><span class="lab"><span class="num" style="background:#3560B0">5</span>Know Your Interviewer</span><div class="who"><span class="av">MC</span><div><b>Maya Chen</b><p class="sm">VP Marketing. Nine years there. Led the retail media launch last year.</p></div></div>
-<p class="mono no2">She will likely ask</p><p class="sm">How would you grow a brand that has stopped growing?</p>
-<p class="mono no2 x">Ask her</p><p class="sm x">What did the retail media launch teach the team?</p>
+<p class="want"><svg class="ico"><use href="#i-chat"/></svg><span>“Who’s interviewing me, and what do they care about?”</span></p>
+<div class="out" style="--sc:#3560B0"><span class="lab"><span class="num" style="background:#3560B0">5</span>Know Your Interviewer</span><div class="who"><span class="av">MC</span><div><b>Maya Chen</b><p class="sm">VP Marketing. Nine years there. Came up through brand management. Led the retail media launch last year.</p></div></div>
+<div class="rd"><div class="x"><b>What she’ll care about</b>Growing mature brands through new channels.</div>
+<div class="pos"><b>How to position yourself</b>As the brand lead who already grew a $40M brand with retail media.</div></div>
 <span class="stk" style="background:#3560B0;color:#fff">Know who you meet</span></div>
-<div class="dec"><span class="dk">Your decision</span><b>Open with your retail media story.</b></div>
+<div class="dec"><span class="dk">Your decision</span><b>Position yourself as the person who’s already done what she’s building.</b></div>
 </article></div>
 <div class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 <div class="prog" aria-hidden="true"><i></i></div>
@@ -220,22 +247,19 @@ if(matchMedia('(min-width:761px) and (pointer:fine)').matches){ try{ document.ge
     }
   }
 })();
-{const tr=document.querySelector('.track'),real=[...tr.children],n=real.length,tabs=[...document.querySelectorAll('.tab')],dots=[...document.querySelectorAll('.dots i')],bar=document.querySelector('.prog i');
-const cl=real[0].cloneNode(true);cl.removeAttribute('id');cl.setAttribute('aria-hidden','true');cl.inert=true;tr.appendChild(cl);
+{const tr=document.querySelector('.track'),sl=[...tr.querySelectorAll('.sl')],n=sl.length,tabs=[...document.querySelectorAll('.tab')],dots=[...document.querySelectorAll('.dots i')],bar=document.querySelector('.prog i');
 const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;let i=0,auto=!rm,t=null;
-const W=()=>tr.clientWidth,jump=k=>tr.scrollTo({left:k*W(),behavior:'instant'});
 const mark=k=>{i=k;tabs.forEach((b,j)=>b.setAttribute('aria-selected',j===k));dots.forEach((d,j)=>d.classList.toggle('on',j===k));
  bar.classList.remove('run');void bar.offsetWidth;if(auto)bar.classList.add('run');};
-const go=k=>{if(k<0){jump(n);k=n-1;}tr.scrollTo({left:k*W(),behavior:rm?'instant':'smooth'});mark(k%n);};
-const loop=()=>{clearTimeout(t);if(auto)t=setTimeout(()=>{go(i+1);loop();},6000);};
+const show=k=>{k=(k%n+n)%n;sl.forEach((s,j)=>{const on=j===k;s.classList.toggle('on',on);s.setAttribute('aria-hidden',on?'false':'true');s.inert=!on;});mark(k);};
+const loop=()=>{clearTimeout(t);if(auto)t=setTimeout(()=>{show(i+1);loop();},6000);};
 const stop=()=>{auto=false;clearTimeout(t);bar.classList.remove('run');};
-tabs.forEach(b=>b.onclick=()=>{stop();go(+b.dataset.i);});
-document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{stop();go(i+ +b.dataset.d);});
-let st;const settle=()=>{let k=Math.round(tr.scrollLeft/W());if(k>=n){jump(0);k=0;}if(k!==i)mark(k);};
-tr.addEventListener('scroll',()=>{clearTimeout(st);st=setTimeout(settle,140);},{passive:true});
-tr.addEventListener('pointerdown',stop);tr.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){stop();go(i+1);}if(e.key==='ArrowLeft'){stop();go(i-1);}});
+tabs.forEach(b=>b.onclick=()=>{stop();show(+b.dataset.i);});
+document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{stop();show(i+ +b.dataset.d);});
+let x0=null;tr.addEventListener('pointerdown',e=>{x0=e.clientX;});
+tr.addEventListener('pointerup',e=>{if(x0===null)return;const dx=e.clientX-x0;x0=null;if(Math.abs(dx)>40){stop();show(i+(dx<0?1:-1));}});
+tr.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){stop();show(i+1);}if(e.key==='ArrowLeft'){stop();show(i-1);}});
 const car=document.querySelector('.car');car.addEventListener('mouseenter',()=>{clearTimeout(t);bar.classList.remove('run');});car.addEventListener('mouseleave',()=>{if(auto){mark(i);loop();}});
-addEventListener('resize',()=>jump(i));
-mark(0);loop();
+show(0);loop();
 }
 </script></body></html>
